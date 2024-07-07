@@ -1,6 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+
+    id("com.google.devtools.ksp")
+    id("kotlin-kapt")
+
+    //    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -66,4 +72,42 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
+    /*
+  Room database with using ksp
+   */
+    val roomversion = "2.6.1"
+
+    implementation("androidx.room:room-runtime:$roomversion")
+    annotationProcessor("androidx.room:room-compiler:$roomversion")
+    ksp("androidx.room:room-compiler:$roomversion")
+
+    /**
+     * Dragger
+     */
+
+    implementation("com.google.dagger:dagger:2.49")
+    kapt ("com.google.dagger:dagger-compiler:2.48")
+
+
+    // Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    /**
+     * Nav controller for JetPack Compose
+     */
+
+    val nav_version = "2.7.7"
+
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+
+
+    /**
+     * Hilt Dependency
+     */
+
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-android-compiler:2.48")
+
 }
