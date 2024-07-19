@@ -27,7 +27,7 @@ internal fun TabSelection(modifier: Modifier, onClick: (HomeTabs) -> Unit) {
     BoxWithConstraints(
         modifier = modifier
             .clip(RoundedCornerShape(Spacing.Size_5))
-            .background(Color(0xFF2F6655))
+            .background(AppColor.primaryColor)
             .fillMaxWidth()
             .onGloballyPositioned { coordinates ->
                 parentWidth = with(coordinates.size.width.dp / 2) { this }

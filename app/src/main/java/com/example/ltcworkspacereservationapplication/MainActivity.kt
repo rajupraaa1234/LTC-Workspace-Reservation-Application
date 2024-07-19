@@ -1,9 +1,11 @@
 package com.example.ltcworkspacereservationapplication
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,11 +17,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.example.ltcworkspacereservationapplication.presentation.composable.DropdownMenuSample
+import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.screens.HomeScreen
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
@@ -27,15 +33,18 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.color.A
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val viewModel: ReservationViewModel by viewModels()
         enableEdgeToEdge()
         setContent {
-            App()
+            App(viewModel)
         }
     }
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-private fun App() {
+private fun App(viewModel: ReservationViewModel) {
+    val userName = viewModel.uiState.value.employeeName
     Column(
         modifier = Modifier
             .padding(
@@ -45,6 +54,11 @@ private fun App() {
                 bottom = Spacing.Size_20
             )
     ) {
+        Text(
+            text = "Dear ${userName}",
+            modifier = Modifier.padding(vertical = Spacing.Size_8),
+            style = MaterialTheme.typography.body2
+        )
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
@@ -68,7 +82,8 @@ private fun App() {
                     .size(Spacing.Size_30)
                     .clickable { }
             )
+
         }
-        HomeScreen(modifier = Modifier)
+        HomeScreen(viewModel)
     }
 }
