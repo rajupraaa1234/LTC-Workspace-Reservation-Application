@@ -74,10 +74,15 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
 
+
+    implementation("androidx.compose.material:material:1.6.8")
+
     /*
   Room database with using ksp
    */
     val roomversion = "2.6.1"
+    val nav_version = "2.7.7"
+    val lifecycle_version = "2.8.3"
 
     implementation("androidx.room:room-runtime:$roomversion")
     annotationProcessor("androidx.room:room-compiler:$roomversion")
@@ -98,9 +103,15 @@ dependencies {
      * Nav controller for JetPack Compose
      */
 
-    val nav_version = "2.7.7"
+
 
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    // ViewModel utilities for Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
 
 
     /**
