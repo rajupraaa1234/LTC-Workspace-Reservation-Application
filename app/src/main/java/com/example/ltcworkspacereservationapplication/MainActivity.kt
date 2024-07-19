@@ -1,6 +1,5 @@
 package com.example.ltcworkspacereservationapplication
 
-import TabSelection
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,7 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.example.ltcworkspacereservationapplication.presentation.composable.DropdownMenuSample
-import com.example.ltcworkspacereservationapplication.presentation.composable.HomeComposable
+import com.example.ltcworkspacereservationapplication.presentation.screens.HomeScreen
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
@@ -36,7 +35,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun App() {
+private fun App() {
     Column(
         modifier = Modifier
             .padding(
@@ -70,6 +69,6 @@ fun App() {
                     .clickable { }
             )
         }
-        HomeComposable(modifier = Modifier)
+        HomeScreen(modifier = Modifier)
     }
 }
