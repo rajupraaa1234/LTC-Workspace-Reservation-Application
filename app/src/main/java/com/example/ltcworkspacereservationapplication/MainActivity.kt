@@ -2,7 +2,6 @@ package com.example.ltcworkspacereservationapplication
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -39,10 +38,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDatePickerDialog
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDropdownMenu
-import com.example.ltcworkspacereservationapplication.presentation.composable.LoginScreenComposable
-import com.example.ltcworkspacereservationapplication.presentation.composable.OtpComposableScreen
-import com.example.ltcworkspacereservationapplication.presentation.composable.PhoneNumberVerificationScreen
-import com.example.ltcworkspacereservationapplication.presentation.composable.ScannerScreenComposable
+import com.example.ltcworkspacereservationapplication.presentation.screens.LoginScreenComposable
+import com.example.ltcworkspacereservationapplication.presentation.screens.OtpComposableScreen
+import com.example.ltcworkspacereservationapplication.presentation.screens.PhoneNumberVerificationScreen
+import com.example.ltcworkspacereservationapplication.presentation.screens.ScannerScreenComposable
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.screens.HistoryScreen
@@ -164,7 +163,7 @@ fun AppNavHost(
     viewModel: ReservationViewModel,
     modifier: Modifier
 ) {
-    NavHost(navController, startDestination = Routes.HOME_SCREEN) {
+    NavHost(navController, startDestination = Routes.LOGIN) {
         composable(Routes.HOME_SCREEN) { HomePage(navController, modifier, viewModel) }
         composable(Routes.HISTORY_SCREEN) { HistoryScreen(viewModel, modifier) }
         composable(Routes.LOGIN) {

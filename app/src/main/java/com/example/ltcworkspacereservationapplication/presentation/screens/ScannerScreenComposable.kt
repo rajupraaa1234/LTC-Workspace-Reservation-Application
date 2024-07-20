@@ -1,4 +1,4 @@
-package com.example.ltcworkspacereservationapplication.presentation.composable
+package com.example.ltcworkspacereservationapplication.presentation.screens
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.ButtonDefaults
@@ -46,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.text.util.LinkifyCompat
-import androidx.navigation.compose.rememberNavController
 import com.example.ltcworkspacereservationapplication.QRCodeAnalyzer
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 import com.google.common.util.concurrent.ListenableFuture

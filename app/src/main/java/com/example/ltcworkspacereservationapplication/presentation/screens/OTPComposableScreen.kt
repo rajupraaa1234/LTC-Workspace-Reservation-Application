@@ -1,4 +1,4 @@
-package com.example.ltcworkspacereservationapplication.presentation.composable
+package com.example.ltcworkspacereservationapplication.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,11 +35,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
@@ -151,7 +149,8 @@ fun OtpComposableScreen(navController: NavHostController, phoneNumber: String) {
             Text(
                 text = "Confirm",
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = AppColor.whiteColor
             )
         }
     }

@@ -1,4 +1,4 @@
-package com.example.ltcworkspacereservationapplication.presentation.composable
+package com.example.ltcworkspacereservationapplication.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
