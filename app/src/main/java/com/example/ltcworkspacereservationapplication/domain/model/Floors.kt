@@ -1,4 +1,4 @@
-package com.example.ltcworkspacereservationapplication.presentation.utils
+package com.example.ltcworkspacereservationapplication.domain.model
 
 
 enum class Floors(

@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.CabinReservationComposablePage
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.DeskReservationComposablePage
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
-import com.example.ltcworkspacereservationapplication.presentation.utils.HomeTabs
+import com.example.ltcworkspacereservationapplication.domain.model.HomeTabs
 import kotlinx.coroutines.launch
 
 @SuppressLint("StateFlowValueCalledInComposition")

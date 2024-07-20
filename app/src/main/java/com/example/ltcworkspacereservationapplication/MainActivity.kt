@@ -2,7 +2,6 @@ package com.example.ltcworkspacereservationapplication
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -143,7 +142,7 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
 fun AppNavHost(navController: NavHostController, viewModel: ReservationViewModel,modifier: Modifier) {
     NavHost(navController, startDestination = "HomePage") {
         composable("HomePage") { HomePage(navController,modifier,viewModel) }
-        composable("historyScreen") { HistoryScreen(navController,viewModel) }
+        composable("historyScreen") { HistoryScreen(viewModel,modifier) }
     }
 }
 

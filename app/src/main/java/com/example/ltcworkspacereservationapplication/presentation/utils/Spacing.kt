@@ -16,4 +16,5 @@ object Spacing {
     val Size_140 = 140.dp
     val Size_8 = 8.dp
     val Size_120 = 120.dp
+    val Size_16 = 16.dp
 }
