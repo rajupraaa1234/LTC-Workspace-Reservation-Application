@@ -7,6 +7,6 @@ enum class HomeTabs(
         text = "Desk"
     ),
     Favourite(
-        text = "Cabin"
+        text = "Meeting Room"
     )
 }

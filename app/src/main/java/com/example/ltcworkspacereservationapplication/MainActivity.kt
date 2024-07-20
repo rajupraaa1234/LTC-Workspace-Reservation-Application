@@ -31,10 +31,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDatePickerDialog
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDropdownMenu
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
+import com.example.ltcworkspacereservationapplication.presentation.screens.HistoryScreen
 import com.example.ltcworkspacereservationapplication.presentation.screens.HomeScreen
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
@@ -50,15 +55,11 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 private fun BottomTabNavigation(viewModel: ReservationViewModel) {
     val selectedTab = remember { mutableStateOf(0) }
-
-    val TAG = "BottomTabNavigation"
-    Log.d(TAG, "BottomTabNavigation 1: ${selectedTab.value}")
-
+    val navController = rememberNavController()
     Scaffold(
         bottomBar = {
             BottomNavigation(
@@ -76,7 +77,13 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
                     selected = selectedTab.value == 0,
                     onClick = {
                         selectedTab.value = 0
-                        Log.d(TAG, "BottomTabNavigation: ${selectedTab.value}")
+                        navController.navigate("HomePage") {
+                            launchSingleTop = true
+                            restoreState = true
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                        }
                     },
                     selectedContentColor = AppColor.primaryColor,
                     unselectedContentColor = Color.Gray
@@ -97,7 +104,6 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
                     selected = selectedTab.value == 1,
                     onClick = {
                         selectedTab.value = 1
-                        Log.d(TAG, "BottomTabNavigation: ${selectedTab.value}")
                     },
                     selectedContentColor = AppColor.primaryColor,
                     unselectedContentColor = Color.Gray
@@ -111,9 +117,17 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
                         )
                     },
                     selected = selectedTab.value == 2,
+
+
                     onClick = {
                         selectedTab.value = 2
-                        Log.d(TAG, "BottomTabNavigation: ${selectedTab.value}")
+                        navController.navigate("historyScreen") {
+                            launchSingleTop = true
+                            restoreState = true
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                        }
                     },
                     selectedContentColor = AppColor.primaryColor,
                     unselectedContentColor = Color.Gray
@@ -121,13 +135,22 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
             }
         }
     )
-    { innerPadding -> App(modifier = Modifier.padding(innerPadding), viewModel) }
+    { innerPadding ->
+        AppNavHost(navController = navController,viewModel,modifier = Modifier.padding(innerPadding)) }
+}
+
+@Composable
+fun AppNavHost(navController: NavHostController, viewModel: ReservationViewModel,modifier: Modifier) {
+    NavHost(navController, startDestination = "HomePage") {
+        composable("HomePage") { HomePage(navController,modifier,viewModel) }
+        composable("historyScreen") { HistoryScreen(navController,viewModel) }
+    }
 }
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-private fun App(modifier: Modifier, viewModel: ReservationViewModel) {
+private fun HomePage(navController: NavHostController,modifier: Modifier, viewModel: ReservationViewModel) {
     val userName = viewModel.uiState.value.employeeName
     val selectedDate = remember { mutableStateOf(viewModel.uiState.value.selectedDate) }
     val showDialog = remember { mutableStateOf(false) }
