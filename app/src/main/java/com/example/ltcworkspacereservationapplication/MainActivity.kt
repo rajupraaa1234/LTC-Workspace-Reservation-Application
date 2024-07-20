@@ -2,6 +2,7 @@ package com.example.ltcworkspacereservationapplication
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -31,15 +32,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDatePickerDialog
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDropdownMenu
+import com.example.ltcworkspacereservationapplication.presentation.composable.LoginScreenComposable
+import com.example.ltcworkspacereservationapplication.presentation.composable.OtpComposableScreen
+import com.example.ltcworkspacereservationapplication.presentation.composable.PhoneNumberVerificationScreen
+import com.example.ltcworkspacereservationapplication.presentation.composable.ScannerScreenComposable
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.screens.HistoryScreen
 import com.example.ltcworkspacereservationapplication.presentation.screens.HomeScreen
+import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
@@ -76,7 +84,7 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
                     selected = selectedTab.value == 0,
                     onClick = {
                         selectedTab.value = 0
-                        navController.navigate("HomePage") {
+                        navController.navigate(Routes.HOME_SCREEN) {
                             launchSingleTop = true
                             restoreState = true
                             popUpTo(navController.graph.startDestinationId) {
@@ -103,6 +111,13 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
                     selected = selectedTab.value == 1,
                     onClick = {
                         selectedTab.value = 1
+                        navController.navigate(Routes.SCANNER) {
+                            launchSingleTop = true
+                            restoreState = true
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                        }
                     },
                     selectedContentColor = AppColor.primaryColor,
                     unselectedContentColor = Color.Gray
@@ -120,7 +135,7 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
 
                     onClick = {
                         selectedTab.value = 2
-                        navController.navigate("historyScreen") {
+                        navController.navigate(Routes.HISTORY_SCREEN) {
                             launchSingleTop = true
                             restoreState = true
                             popUpTo(navController.graph.startDestinationId) {
@@ -135,21 +150,50 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
         }
     )
     { innerPadding ->
-        AppNavHost(navController = navController,viewModel,modifier = Modifier.padding(innerPadding)) }
+        AppNavHost(
+            navController = navController,
+            viewModel,
+            modifier = Modifier.padding(innerPadding)
+        )
+    }
 }
 
 @Composable
-fun AppNavHost(navController: NavHostController, viewModel: ReservationViewModel,modifier: Modifier) {
-    NavHost(navController, startDestination = "HomePage") {
-        composable("HomePage") { HomePage(navController,modifier,viewModel) }
-        composable("historyScreen") { HistoryScreen(viewModel,modifier) }
+fun AppNavHost(
+    navController: NavHostController,
+    viewModel: ReservationViewModel,
+    modifier: Modifier
+) {
+    NavHost(navController, startDestination = Routes.HOME_SCREEN) {
+        composable(Routes.HOME_SCREEN) { HomePage(navController, modifier, viewModel) }
+        composable(Routes.HISTORY_SCREEN) { HistoryScreen(viewModel, modifier) }
+        composable(Routes.LOGIN) {
+            LoginScreenComposable(navController)
+        }
+        composable(Routes.SCANNER) {
+            ScannerScreenComposable()
+        }
+        composable(Routes.VERIFY_PHONE_NUMBER) {
+            PhoneNumberVerificationScreen(navController = navController)
+        }
+        composable(
+            route = Routes.OTP_SCREEN + "?phoneNumber={phoneNumber}",
+            arguments = listOf(navArgument("phoneNumber") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val phoneNumber = backStackEntry.arguments?.getString("phoneNumber") ?: ""
+            OtpComposableScreen(navController = navController, phoneNumber = phoneNumber)
+        }
     }
 }
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-private fun HomePage(navController: NavHostController,modifier: Modifier, viewModel: ReservationViewModel) {
+private fun HomePage(
+    navController: NavHostController,
+    modifier: Modifier,
+    viewModel: ReservationViewModel
+) {
     val userName = viewModel.uiState.value.employeeName
     val selectedDate = remember { mutableStateOf(viewModel.uiState.value.selectedDate) }
     val showDialog = remember { mutableStateOf(false) }

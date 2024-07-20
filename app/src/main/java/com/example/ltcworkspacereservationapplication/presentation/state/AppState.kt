@@ -10,7 +10,7 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.dummyDa
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-data class AppState(
+data class AppState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val employeeId : Int = 5605305,
     val employeeName : String = "Raju Kumar",
     val selectedDate : String = getCurrentDate(),
@@ -20,6 +20,7 @@ data class AppState(
     val deskHistoryList : List<DeskHistoryModel> = DeskHistoryList.getList,
     val cabinHistoryList : List<CabinHistoryModel> = CabinHistoryList.getList
 )
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun getCurrentDate(): String {
