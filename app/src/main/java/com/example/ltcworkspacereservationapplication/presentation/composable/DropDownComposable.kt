@@ -16,17 +16,19 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.Floors
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 
 @Composable
-fun DropdownMenuSample(modifier: Modifier, onSelect: (Int) -> Unit) {
+fun CustomDropdownMenu(modifier: Modifier, onSelect: (Int) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf("Select floor") }
 
     Box(
         modifier = modifier
-            .padding(Spacing.Size_10)
+            .padding(Spacing.Size_8)
             .clickable { expanded = true },
+        contentAlignment = Alignment.Center
     ) {
         Row(
-            horizontalArrangement = Arrangement.SpaceAround
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = selectedText,
