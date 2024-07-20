@@ -1,6 +1,5 @@
 package com.example.ltcworkspacereservationapplication.presentation.state
 
-import com.example.ltcworkspacereservationapplication.R
 import com.example.ltcworkspacereservationapplication.presentation.utils.dummyData.listData
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
