@@ -53,8 +53,13 @@ fun CustomGridItem(iconResId: Int, text: String) {
 }
 
 @Composable
-fun GridList(items: List<Pair<Int, String>>, isBookButtonVisible: Boolean) {
-    val selectedDate = remember { mutableStateOf("Select Date") }
+fun GridList(
+    items: List<Pair<Int, String>>,
+    isBookButtonVisible: Boolean,
+    selectedDate: String,
+    onDatePicker: (String) -> Unit
+) {
+    val selectedDate = remember { mutableStateOf(selectedDate) }
     val showDialog = remember { mutableStateOf(false) }
 
     Column(
@@ -102,6 +107,7 @@ fun GridList(items: List<Pair<Int, String>>, isBookButtonVisible: Boolean) {
                     CustomDatePickerDialog(onDateSelected = { date ->
                         selectedDate.value = date
                         showDialog.value = false
+                        onDatePicker(selectedDate.value)
                     })
                 }
 
