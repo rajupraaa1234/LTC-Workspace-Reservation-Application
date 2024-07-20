@@ -61,98 +61,107 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun RenderBottomTabNavigation(navController: NavHostController) {
+    val selectedTab = remember { mutableStateOf(0) }
+    BottomNavigation(
+        backgroundColor = Color.White,
+        contentColor = AppColor.primaryColor,
+    ) {
+        BottomNavigationItem(
+            icon = { Icon(painterResource(R.drawable.home), contentDescription = null) },
+            label = {
+                Text(
+                    "Home",
+                    color = if (selectedTab.value == 0) AppColor.primaryColor else Color.Gray
+                )
+            },
+            selected = selectedTab.value == 0,
+            onClick = {
+                selectedTab.value = 0
+                navController.navigate(Routes.HOME_SCREEN) {
+                    launchSingleTop = true
+                    restoreState = true
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                }
+            },
+            selectedContentColor = AppColor.primaryColor,
+            unselectedContentColor = Color.Gray
+        )
+        BottomNavigationItem(
+            icon = {
+                Icon(
+                    painterResource(R.drawable.qr_code_scan),
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text(
+                    "Scan",
+                    color = if (selectedTab.value == 1) AppColor.primaryColor else Color.Gray
+                )
+            },
+            selected = selectedTab.value == 1,
+            onClick = {
+                selectedTab.value = 1
+                navController.navigate(Routes.SCANNER) {
+                    launchSingleTop = true
+                    restoreState = true
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                }
+            },
+            selectedContentColor = AppColor.primaryColor,
+            unselectedContentColor = Color.Gray
+        )
+        BottomNavigationItem(
+            icon = { Icon(painterResource(R.drawable.history), contentDescription = null) },
+            label = {
+                Text(
+                    "History",
+                    color = if (selectedTab.value == 2) AppColor.primaryColor else Color.Gray
+                )
+            },
+            selected = selectedTab.value == 2,
+
+
+            onClick = {
+                selectedTab.value = 2
+                navController.navigate(Routes.HISTORY_SCREEN) {
+                    launchSingleTop = true
+                    restoreState = true
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                }
+            },
+            selectedContentColor = AppColor.primaryColor,
+            unselectedContentColor = Color.Gray
+        )
+    }
+}
+
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 private fun BottomTabNavigation(viewModel: ReservationViewModel) {
-    val selectedTab = remember { mutableStateOf(0) }
+    val isLogin = remember { mutableStateOf(false) }
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
-            BottomNavigation(
-                backgroundColor = Color.White,
-                contentColor = AppColor.primaryColor,
-            ) {
-                BottomNavigationItem(
-                    icon = { Icon(painterResource(R.drawable.home), contentDescription = null) },
-                    label = {
-                        Text(
-                            "Home",
-                            color = if (selectedTab.value == 0) AppColor.primaryColor else Color.Gray
-                        )
-                    },
-                    selected = selectedTab.value == 0,
-                    onClick = {
-                        selectedTab.value = 0
-                        navController.navigate(Routes.HOME_SCREEN) {
-                            launchSingleTop = true
-                            restoreState = true
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                        }
-                    },
-                    selectedContentColor = AppColor.primaryColor,
-                    unselectedContentColor = Color.Gray
-                )
-                BottomNavigationItem(
-                    icon = {
-                        Icon(
-                            painterResource(R.drawable.qr_code_scan),
-                            contentDescription = null
-                        )
-                    },
-                    label = {
-                        Text(
-                            "Scan",
-                            color = if (selectedTab.value == 1) AppColor.primaryColor else Color.Gray
-                        )
-                    },
-                    selected = selectedTab.value == 1,
-                    onClick = {
-                        selectedTab.value = 1
-                        navController.navigate(Routes.SCANNER) {
-                            launchSingleTop = true
-                            restoreState = true
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                        }
-                    },
-                    selectedContentColor = AppColor.primaryColor,
-                    unselectedContentColor = Color.Gray
-                )
-                BottomNavigationItem(
-                    icon = { Icon(painterResource(R.drawable.history), contentDescription = null) },
-                    label = {
-                        Text(
-                            "History",
-                            color = if (selectedTab.value == 2) AppColor.primaryColor else Color.Gray
-                        )
-                    },
-                    selected = selectedTab.value == 2,
-
-
-                    onClick = {
-                        selectedTab.value = 2
-                        navController.navigate(Routes.HISTORY_SCREEN) {
-                            launchSingleTop = true
-                            restoreState = true
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                        }
-                    },
-                    selectedContentColor = AppColor.primaryColor,
-                    unselectedContentColor = Color.Gray
-                )
-            }
+            if (isLogin.value) RenderBottomTabNavigation(navController)
         }
     )
     { innerPadding ->
         AppNavHost(
             navController = navController,
             viewModel,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            onLogin = {
+                isLogin.value = true
+            }
         )
     }
 }
@@ -161,7 +170,8 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
 fun AppNavHost(
     navController: NavHostController,
     viewModel: ReservationViewModel,
-    modifier: Modifier
+    modifier: Modifier,
+    onLogin: () -> Unit
 ) {
     NavHost(navController, startDestination = Routes.LOGIN) {
         composable(Routes.HOME_SCREEN) { HomePage(navController, modifier, viewModel) }
@@ -180,7 +190,9 @@ fun AppNavHost(
             arguments = listOf(navArgument("phoneNumber") { type = NavType.StringType })
         ) { backStackEntry ->
             val phoneNumber = backStackEntry.arguments?.getString("phoneNumber") ?: ""
-            OtpComposableScreen(navController = navController, phoneNumber = phoneNumber)
+            OtpComposableScreen(navController = navController, phoneNumber = phoneNumber) {
+                onLogin()
+            }
         }
     }
 }

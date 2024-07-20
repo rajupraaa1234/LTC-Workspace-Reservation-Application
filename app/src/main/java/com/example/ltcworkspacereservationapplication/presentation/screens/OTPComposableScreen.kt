@@ -42,7 +42,7 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
 @Composable
-fun OtpComposableScreen(navController: NavHostController, phoneNumber: String) {
+fun OtpComposableScreen(navController: NavHostController, phoneNumber: String,onLogin: ()-> Unit) {
     var otp by remember { mutableStateOf("") }
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
@@ -129,6 +129,7 @@ fun OtpComposableScreen(navController: NavHostController, phoneNumber: String) {
             onClick = {
                 if (isOTPValid) {
                     // Handle OTP verification logic here
+                    onLogin()
                     navController.navigate(Routes.HOME_SCREEN)
                 }
             },
