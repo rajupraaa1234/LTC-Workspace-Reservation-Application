@@ -2,6 +2,7 @@ package com.example.ltcworkspacereservationapplication
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -23,8 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import com.example.ltcworkspacereservationapplication.presentation.composable.DropdownMenuSample
+import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDropdownMenu
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.screens.HomeScreen
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
@@ -45,6 +45,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun App(viewModel: ReservationViewModel) {
     val userName = viewModel.uiState.value.employeeName
+
     Column(
         modifier = Modifier
             .padding(
@@ -63,7 +64,7 @@ private fun App(viewModel: ReservationViewModel) {
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            DropdownMenuSample(
+            CustomDropdownMenu(
                 modifier = Modifier
                     .width(Spacing.Size_160)
                     .border(
