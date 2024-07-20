@@ -1,5 +1,6 @@
 package com.example.ltcworkspacereservationapplication.presentation.mvvm
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.ltcworkspacereservationapplication.presentation.state.AppState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,10 +13,22 @@ class ReservationViewModel : ViewModel() {
     val uiState: StateFlow<AppState>
         get() = _uiState
 
+    val TAG =  "ReservationViewModel"
+
     fun sendIntent(intent: AppIntent) {
         when (intent) {
+            AppIntent.OnFilterButtonClicked -> onFilterButtonClicked()
             is AppIntent.OnDatePickerClick -> onDatePickerClicked(intent.dateSelected)
+            is AppIntent.onFloorSelect -> onFloorSelected(intent.selectedFloor)
         }
+    }
+
+    private fun onFloorSelected(selectedFloor: Int) {
+        //TODO
+    }
+
+    private fun onFilterButtonClicked() {
+        TODO("Not yet implemented")
     }
 
     private fun onDatePickerClicked(dateSelected: String) {

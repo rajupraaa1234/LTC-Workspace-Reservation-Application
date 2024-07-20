@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDropdownMenu
+import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.screens.HomeScreen
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
@@ -73,7 +74,7 @@ private fun App(viewModel: ReservationViewModel) {
                         shape = RoundedCornerShape(Spacing.Size_10)
                     )
             ) {
-                //TODO
+                viewModel.sendIntent(AppIntent.onFloorSelect(it))
             }
             Spacer(modifier = Modifier.weight(1f))
             Image(
@@ -81,7 +82,7 @@ private fun App(viewModel: ReservationViewModel) {
                 contentDescription = "Filter Icon",
                 Modifier
                     .size(Spacing.Size_30)
-                    .clickable { }
+                    .clickable { viewModel.sendIntent(AppIntent.OnFilterButtonClicked) }
             )
 
         }
