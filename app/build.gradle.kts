@@ -121,4 +121,15 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-android-compiler:2.48")
 
+    //Camera X
+
+    implementation("androidx.camera:camera-core:1.1.0")
+    implementation("androidx.camera:camera-camera2:1.3.0")
+    implementation("androidx.camera:camera-lifecycle:1.3.0")
+    implementation("androidx.camera:camera-view:1.2.0-alpha01")
+
+    //for QR code scanning
+    implementation("com.google.mlkit:barcode-scanning:17.0.3")
+
+
 }

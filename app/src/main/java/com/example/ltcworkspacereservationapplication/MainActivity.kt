@@ -20,8 +20,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.ltcworkspacereservationapplication.presentation.composable.DropdownMenuSample
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomeComposable
+import com.example.ltcworkspacereservationapplication.presentation.composable.LoginScreenComposable
+import com.example.ltcworkspacereservationapplication.presentation.composable.OtpComposableScreen
+import com.example.ltcworkspacereservationapplication.presentation.composable.PhoneNumberVerificationScreen
+import com.example.ltcworkspacereservationapplication.presentation.composable.ScannerScreenComposable
+import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
@@ -37,6 +47,33 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App() {
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = Routes.Login) {
+        composable(Routes.Login) {
+            LoginScreenComposable(navController)
+        }
+        composable(Routes.Home) {
+            HomeComposableScreen()
+        }
+        composable(Routes.Scanner) {
+            ScannerScreenComposable()
+        }
+        composable(Routes.verifyPhoneNo) {
+            PhoneNumberVerificationScreen(navController = navController)
+        }
+        composable(
+            route = Routes.otpScreen + "?phoneNumber={phoneNumber}",
+            arguments = listOf(navArgument("phoneNumber") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val phoneNumber = backStackEntry.arguments?.getString("phoneNumber") ?: ""
+            OtpComposableScreen(navController = navController, phoneNumber = phoneNumber)
+        }
+    }
+}
+
+@Composable
+fun HomeComposableScreen() {
     Column(
         modifier = Modifier
             .padding(
