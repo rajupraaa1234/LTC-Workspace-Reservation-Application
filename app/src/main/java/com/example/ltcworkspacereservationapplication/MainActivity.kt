@@ -7,15 +7,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDatePickerDialog
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDropdownMenu
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
@@ -128,6 +129,8 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
 @Composable
 private fun App(modifier: Modifier, viewModel: ReservationViewModel) {
     val userName = viewModel.uiState.value.employeeName
+    val selectedDate = remember { mutableStateOf(viewModel.uiState.value.selectedDate) }
+    val showDialog = remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -159,14 +162,29 @@ private fun App(modifier: Modifier, viewModel: ReservationViewModel) {
                 viewModel.sendIntent(AppIntent.onFloorSelect(it))
             }
             Spacer(modifier = Modifier.weight(1f))
-            Image(
-                painter = painterResource(id = R.drawable.filter_6535__1_),
-                contentDescription = "Filter Icon",
-                Modifier
-                    .size(Spacing.Size_30)
-                    .clickable { viewModel.sendIntent(AppIntent.OnFilterButtonClicked) }
-            )
-
+            Box(
+                modifier = Modifier
+                    .width(Spacing.Size_160)
+                    .height(Spacing.Size_40)
+                    .border(
+                        Spacing.Size_1,
+                        color = AppColor.primaryColor,
+                        shape = RoundedCornerShape(Spacing.Size_10)
+                    )
+                    .clickable { showDialog.value = true },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = selectedDate.value,
+                )
+            }
+            if (showDialog.value) {
+                CustomDatePickerDialog(onDateSelected = { date ->
+                    selectedDate.value = date
+                    showDialog.value = false
+                    viewModel.sendIntent(AppIntent.OnDatePickerClick(selectedDate.value))
+                })
+            }
         }
         HomeScreen(viewModel)
     }

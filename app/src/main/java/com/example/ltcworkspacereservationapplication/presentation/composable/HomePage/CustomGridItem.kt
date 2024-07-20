@@ -56,12 +56,7 @@ fun CustomGridItem(iconResId: Int, text: String) {
 fun GridList(
     items: List<Pair<Int, String>>,
     isBookButtonVisible: Boolean,
-    selectedDate: String,
-    onDatePicker: (String) -> Unit
 ) {
-    val selectedDate = remember { mutableStateOf(selectedDate) }
-    val showDialog = remember { mutableStateOf(false) }
-
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.padding(Spacing.Size_8)
@@ -81,40 +76,9 @@ fun GridList(
             }
         }
         if (isBookButtonVisible) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(Spacing.Size_160)
-                        .height(Spacing.Size_40)
-                        .border(
-                            Spacing.Size_1,
-                            color = AppColor.primaryColor,
-                            shape = RoundedCornerShape(Spacing.Size_10)
-                        )
-                        .clickable { showDialog.value = true },
-                    contentAlignment = Alignment.Center
-                ) {
-
-                    Text(
-                        text = selectedDate.value,
-                    )
-                }
-                if (showDialog.value) {
-                    CustomDatePickerDialog(onDateSelected = { date ->
-                        selectedDate.value = date
-                        showDialog.value = false
-                        onDatePicker(selectedDate.value)
-                    })
-                }
-
-                CustomButton(modifier = Modifier, "Book") {
+                CustomButton(modifier = Modifier.align(Alignment.End), "Book") {
 
                 }
             }
         }
     }
-}

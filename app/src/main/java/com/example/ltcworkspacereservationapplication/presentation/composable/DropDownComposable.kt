@@ -22,11 +22,13 @@ fun CustomDropdownMenu(modifier: Modifier, onSelect: (Int) -> Unit) {
 
     Box(
         modifier = modifier
-            .padding(Spacing.Size_10)
+            .padding(Spacing.Size_8)
             .clickable { expanded = true },
+        contentAlignment = Alignment.Center
     ) {
         Row(
-            horizontalArrangement = Arrangement.SpaceAround
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = selectedText,

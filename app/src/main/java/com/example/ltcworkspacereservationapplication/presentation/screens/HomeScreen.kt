@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.CabinReservationComposablePage
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.DeskReservationComposablePage
-import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.utils.HomeTabs
 import kotlinx.coroutines.launch
@@ -31,8 +30,6 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { HomeTabs.entries.size })
     val selectedTabIndex = remember { derivedStateOf { pagerState.currentPage } }
-
-    val TAG = "HomeScreen"
 
     Scaffold() {
         Column(
@@ -57,9 +54,7 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
                     contentAlignment = Alignment.Center
                 ) {
                     when (selectedTabIndex.value) {
-                        0 -> DeskReservationComposablePage(viewModel.uiState.value.deskList,viewModel.uiState.value.selectedDate){
-                            viewModel.sendIntent(AppIntent.OnDatePickerClick(it))
-                        }
+                        0 -> DeskReservationComposablePage(viewModel.uiState.value.deskList)
                         1 -> CabinReservationComposablePage(viewModel.uiState.value.cabinList)
                     }
                 }
