@@ -131,7 +131,7 @@ fun OtpComposableScreen(navController: NavHostController, phoneNumber: String) {
             onClick = {
                 if (isOTPValid) {
                     // Handle OTP verification logic here
-                    navController.navigate(Routes.Home)
+                    navController.navigate("HomePage")
                 }
             },
             colors = ButtonDefaults.buttonColors(
@@ -151,7 +151,8 @@ fun OtpComposableScreen(navController: NavHostController, phoneNumber: String) {
             Text(
                 text = "Confirm",
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = AppColor.backgroundColor
             )
         }
     }

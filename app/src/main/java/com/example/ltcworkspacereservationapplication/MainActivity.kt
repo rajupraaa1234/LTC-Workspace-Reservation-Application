@@ -1,6 +1,7 @@
 package com.example.ltcworkspacereservationapplication
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -30,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -57,6 +59,15 @@ class MainActivity : ComponentActivity() {
         val viewModel: ReservationViewModel by viewModels()
         enableEdgeToEdge()
         setContent {
+//            val context = LocalContext.current
+//            val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+//            val employeeId = sharedPreferences.getString("employeeId", null)
+//
+//            if (employeeId != null) {
+//                BottomTabNavigation(viewModel, startDestination = "HomePage")
+//            } else {
+//                BottomTabNavigation(viewModel, startDestination = Routes.Login)
+//            }
             BottomTabNavigation(viewModel)
         }
     }
@@ -111,6 +122,13 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
                     selected = selectedTab.value == 1,
                     onClick = {
                         selectedTab.value = 1
+                        navController.navigate(Routes.Scanner) {
+                            launchSingleTop = true
+                            restoreState = true
+                            popUpTo("HomePage") {
+                                saveState = true
+                            }
+                        }
                     },
                     selectedContentColor = AppColor.primaryColor,
                     unselectedContentColor = Color.Gray
@@ -148,11 +166,11 @@ private fun BottomTabNavigation(viewModel: ReservationViewModel) {
 
 @Composable
 fun AppNavHost(navController: NavHostController, viewModel: ReservationViewModel,modifier: Modifier) {
-    NavHost(navController, startDestination = "HomePage") {
+    NavHost(navController, startDestination = Routes.Login) {
         composable("HomePage") { HomePage(navController,modifier,viewModel) }
         composable("historyScreen") { HistoryScreen(navController,viewModel) }
         composable(Routes.Login) {
-            LoginScreenComposable(navController)
+            LoginScreenComposable(navController, viewModel = ReservationViewModel())
         }
         composable(Routes.Scanner) {
             ScannerScreenComposable()

@@ -1,6 +1,5 @@
 package com.example.ltcworkspacereservationapplication.presentation.mvvm
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.ltcworkspacereservationapplication.presentation.state.AppState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +19,12 @@ class ReservationViewModel : ViewModel() {
             AppIntent.OnFilterButtonClicked -> onFilterButtonClicked()
             is AppIntent.OnDatePickerClick -> onDatePickerClicked(intent.dateSelected)
             is AppIntent.onFloorSelect -> onFloorSelected(intent.selectedFloor)
+            is AppIntent.onLoginClick -> onLoginClicked(intent.employeeId)
         }
+    }
+
+    private fun onLoginClicked(employeeId :String) {
+        _uiState.update { it.copy(employeeId = employeeId) }
     }
 
     private fun onFloorSelected(selectedFloor: Int) {

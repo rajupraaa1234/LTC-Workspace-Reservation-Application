@@ -7,7 +7,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 data class AppState(
-    val employeeId : Int = 5605305,
+    val employeeId : String = "5605305",
     val employeeName : String = "Raju Kumar",
     val selectedDate : String = getCurrentDate(),
     val deskList: List<Pair<Int, String>> = listData.deskList,
