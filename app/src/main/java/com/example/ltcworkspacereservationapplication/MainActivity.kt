@@ -173,7 +173,7 @@ fun AppNavHost(
     modifier: Modifier,
     onLogin: () -> Unit
 ) {
-    NavHost(navController, startDestination = Routes.LOGIN) {
+    NavHost(navController, startDestination = Routes.HOME_SCREEN) {
         composable(Routes.HOME_SCREEN) { HomePage(navController, modifier, viewModel) }
         composable(Routes.HISTORY_SCREEN) { HistoryScreen(viewModel, modifier) }
         composable(Routes.LOGIN) {
@@ -236,7 +236,7 @@ private fun HomePage(
                         shape = RoundedCornerShape(Spacing.Size_10)
                     )
             ) {
-                viewModel.sendIntent(AppIntent.onFloorSelect(it))
+                viewModel.sendIntent(AppIntent.OnFloorSelect(it))
             }
             Spacer(modifier = Modifier.weight(1f))
             Box(

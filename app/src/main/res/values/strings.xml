@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">LTC Workspace Reservation Application</string>
+    <string name="popup_instruction">Please enter below details before book meeting room</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.ltcworkspacereservationapplication.presentation.screens
 
 import TabSelection
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import kotlinx.coroutines.launch
 
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HistoryScreen(
