@@ -82,12 +82,6 @@ fun GridList(
         }
     }
     if (showDialog) {
-        CabinBookingPopup(
-            onDismissRequest = { showDialog = false },
-            onSubmit = { cabinCapacity, dateTime ->
-                // Handle submit action
-                showDialog = false
-            }
-        )
+
     }
 }
