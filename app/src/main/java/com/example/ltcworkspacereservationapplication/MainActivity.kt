@@ -46,6 +46,7 @@ import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppInten
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.screens.HistoryScreen
 import com.example.ltcworkspacereservationapplication.presentation.screens.HomeScreen
+import com.example.ltcworkspacereservationapplication.presentation.utils.PreferencesManager
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
@@ -56,6 +57,9 @@ class MainActivity : ComponentActivity() {
         val viewModel: ReservationViewModel by viewModels()
         enableEdgeToEdge()
         setContent {
+            val employeeId = PreferencesManager.getEmployeeId(this)
+            val startDestination = if (employeeId.isNullOrEmpty()) Routes.LOGIN else Routes.HOME_SCREEN
+
             BottomTabNavigation(viewModel)
         }
     }
@@ -173,7 +177,7 @@ fun AppNavHost(
     modifier: Modifier,
     onLogin: () -> Unit
 ) {
-    NavHost(navController, startDestination = Routes.HOME_SCREEN) {
+    NavHost(navController, startDestination = Routes.LOGIN) {
         composable(Routes.HOME_SCREEN) { HomePage(navController, modifier, viewModel) }
         composable(Routes.HISTORY_SCREEN) { HistoryScreen(viewModel, modifier) }
         composable(Routes.LOGIN) {

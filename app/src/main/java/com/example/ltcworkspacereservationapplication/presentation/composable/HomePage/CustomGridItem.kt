@@ -1,18 +1,24 @@
 package com.example.ltcworkspacereservationapplication.presentation.composable.HomePage
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,16 +28,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.ltcworkspacereservationapplication.R
 import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import com.example.ltcworkspacereservationapplication.presentation.composable.ConfirmationPopup
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomButton
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
+import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
 
 @Composable
-fun CustomGridItem(item: MeetingItemModel, onClickItem: (MeetingItemModel) -> Unit,onSubmit : (String,String,String,String)-> Unit) {
+fun CustomGridItem(
+    item: MeetingItemModel,
+    onClickItem: (MeetingItemModel) -> Unit,
+    onSubmit: (String, String, String, String) -> Unit
+) {
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     var showDialog by remember { mutableStateOf(false) }
 
@@ -46,7 +60,9 @@ fun CustomGridItem(item: MeetingItemModel, onClickItem: (MeetingItemModel) -> Un
             }
     ) {
         Image(
-            painter = if(item.reservedSlot.size == 0) painterResource(id = R.drawable.selectedcabin) else painterResource(id = R.drawable.nonselectedcabin),
+            painter = if (item.reservedSlot.size == 0) painterResource(id = R.drawable.selectedcabin) else painterResource(
+                id = R.drawable.nonselectedcabin
+            ),
             contentDescription = "Filter Icon",
             Modifier
                 .size(Spacing.Size_40)
@@ -54,18 +70,20 @@ fun CustomGridItem(item: MeetingItemModel, onClickItem: (MeetingItemModel) -> Un
         Text(text = item.meetingRoomId, style = MaterialTheme.typography.body2)
     }
     if (showDialog) {
-        ConfirmationPopup(onDismiss = { showDialog = false }, onSubmit = { startTime, endTime, capacity ->
-            onSubmit(startTime, endTime, capacity, item.meetingRoomId)
-            showDialog = false
-        })
+        ConfirmationPopup(
+            onDismiss = { showDialog = false },
+            onSubmit = { startTime, endTime, capacity ->
+                onSubmit(startTime, endTime, capacity, item.meetingRoomId)
+                showDialog = false
+            })
     }
 }
 
 @Composable
 fun CabinGridList(
     items: List<MeetingItemModel>,
-    onClickItem: (MeetingItemModel)-> Unit,
-    onSubmit: (String,String,String,String) -> Unit
+    onClickItem: (MeetingItemModel) -> Unit,
+    onSubmit: (String, String, String, String) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -80,7 +98,7 @@ fun CabinGridList(
                 columns = GridCells.Fixed(5),
             ) {
                 items(items.size) { index ->
-                    CustomGridItem(items[index], onClickItem,onSubmit)
+                    CustomGridItem(items[index], onClickItem, onSubmit)
                 }
             }
         }
@@ -91,8 +109,10 @@ fun CabinGridList(
 @Composable
 fun DeskGridList(
     items: List<DeskItemModel>,
-    onClickItem: (DeskItemModel)-> Unit
+    onClickItem: (DeskItemModel) -> Unit
 ) {
+    var isAnyItemClicked by remember { mutableStateOf(false) }
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.padding(Spacing.Size_8)
@@ -106,17 +126,38 @@ fun DeskGridList(
                 columns = GridCells.Fixed(5),
             ) {
                 items(items.size) { index ->
-                    DeskGridItem(items[index],onClickItem)
+                    DeskGridItem(items[index], onClickItem = {
+                        onClickItem(it)
+                        isAnyItemClicked = true
+                    })
                 }
             }
         }
 
-        CustomButton(modifier = Modifier.align(Alignment.End), "Book") {
-
+        Button(
+            onClick = {
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isAnyItemClicked) AppColor.primaryColor else AppColor.primaryColorLight,
+                disabledContainerColor = AppColor.primaryColorLight
+            ),
+            enabled = isAnyItemClicked,
+            modifier = Modifier.align(Alignment.End)
+                .background(if (isAnyItemClicked) AppColor.primaryColor else AppColor.primaryColorLight)
+                .border(
+                    1.dp,
+                    if (isAnyItemClicked) AppColor.primaryColor else AppColor.primaryColorLight
+                )
+        ) {
+            Text(
+                text = "Book",
+                color = AppColor.backgroundColor,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
-
 
 
 @Composable
@@ -130,7 +171,9 @@ fun DeskGridItem(item: DeskItemModel, onClickItem: (DeskItemModel) -> Unit) {
             .clickable { onClickItem(item) }
     ) {
         Image(
-            painter = if(item.status == "reserved") painterResource(id = R.drawable.reservedseat) else painterResource(id = R.drawable.nonreservedseeat),
+            painter = if (item.status == "reserved") painterResource(id = R.drawable.reservedseat) else painterResource(
+                id = R.drawable.nonreservedseeat
+            ),
             contentDescription = "Filter Icon",
             Modifier
                 .size(Spacing.Size_40)

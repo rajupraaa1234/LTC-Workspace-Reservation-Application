@@ -46,6 +46,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ltcworkspacereservationapplication.R
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
+import com.example.ltcworkspacereservationapplication.presentation.utils.PreferencesManager
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
@@ -61,7 +62,6 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
     val employeeIdRegex = Regex("^\\d{7}\$")
     val passwordRegex = Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}\$")
     val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -184,11 +184,7 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
         Button(
             onClick = {
                 if (isButtonEnabled) {
-                    val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-                    with(sharedPreferences.edit()) {
-                        putString("employeeId", employeeId.text)
-                        apply()
-                    }
+                    PreferencesManager.setEmployeeId(context = context, employeeId = employeeId.text)
                     viewModel.sendIntent(AppIntent.onLoginClick(employeeId.text))
                     navController.navigate(Routes.VERIFY_PHONE_NUMBER)
                 }

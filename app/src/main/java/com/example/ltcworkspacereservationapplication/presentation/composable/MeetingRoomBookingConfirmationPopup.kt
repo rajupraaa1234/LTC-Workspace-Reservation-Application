@@ -58,6 +58,11 @@ fun ConfirmationPopup(onDismiss: () -> Unit, onSubmit: (String, String, String) 
     val startTime = remember { mutableStateOf(START_TIME) }
     val endTime = remember { mutableStateOf(END_TIME) }
 
+    val isCapacityValid = capacity.toIntOrNull()?.let { it in 1..50 } == true
+    val isTimeValid = startTime.value != START_TIME && endTime.value != END_TIME && startTime.value < endTime.value
+
+    val isButtonEnabled = isCapacityValid && isTimeValid
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(dismissOnClickOutside = false)
@@ -100,6 +105,14 @@ fun ConfirmationPopup(onDismiss: () -> Unit, onSubmit: (String, String, String) 
                         .border(0.dp, color = AppColor.primaryColor),
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
+                if (!isCapacityValid) {
+                    Text(
+                        text = "Capacity must be between 1 and 50",
+                        color = AppColor.errorColor,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.align(Alignment.Start)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -136,8 +149,16 @@ fun ConfirmationPopup(onDismiss: () -> Unit, onSubmit: (String, String, String) 
                     }
                 }
 
+                if (!isTimeValid && startTime.value != START_TIME && endTime.value != END_TIME) {
+                    Text(
+                        text = "Start time must be less than end time",
+                        color = AppColor.errorColor,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.align(Alignment.Start)
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(Spacing.Size_20))
-                val isButtonEnabled = false
                 Button(
                     onClick = {
                         onSubmit(startTime.value, endTime.value, capacity)
