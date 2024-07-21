@@ -12,8 +12,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -32,6 +32,8 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { HomeTabs.entries.size })
     val selectedTabIndex = remember { derivedStateOf { pagerState.currentPage } }
+
+    val uiState = viewModel.uiState.collectAsState()
 
     Scaffold() {
         Column(
@@ -56,13 +58,13 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
                     contentAlignment = Alignment.Center
                 ) {
                     when (selectedTabIndex.value) {
-                        0 -> DeskReservationComposablePage(viewModel.uiState.value.deskList) {
-                            viewModel.sendIntent(AppIntent.OnDeskItemClick(it))
+                        0 -> DeskReservationComposablePage(uiState.value.deskList) {  it,index->
+                            viewModel.sendIntent(AppIntent.OnDeskItemClick(it,index))
                         }
 
                         1 -> CabinReservationComposablePage(
-                            viewModel.uiState.value.cabinList,
-                            onClickItem = { viewModel.sendIntent(AppIntent.OnMeetingItemClick(it)) },
+                            uiState.value.cabinList,
+                            onClickItem = {it,index-> viewModel.sendIntent(AppIntent.OnMeetingItemClick(it,index)) },
                             onSubmit = { startTime, endTime, capacity, meetingId ->
                                 viewModel.sendIntent(
                                     AppIntent.OnMeetingRoomBooking(
