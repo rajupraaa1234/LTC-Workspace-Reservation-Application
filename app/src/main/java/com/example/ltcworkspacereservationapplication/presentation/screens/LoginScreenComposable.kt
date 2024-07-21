@@ -1,18 +1,22 @@
 package com.example.ltcworkspacereservationapplication.presentation.screens
 
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,28 +26,41 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.ltcworkspacereservationapplication.R
+import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
+import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
 @Composable
-fun LoginScreenComposable(navController: NavHostController) {
+fun LoginScreenComposable(navController: NavHostController,viewModel: ReservationViewModel) {
     var employeeId by remember { mutableStateOf(TextFieldValue("")) }
     var employeeIdError by remember { mutableStateOf(false) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
     var passwordError by remember { mutableStateOf(false) }
+    var passwordVisible by remember { mutableStateOf(false) }
+
 
     val employeeIdRegex = Regex("^\\d{7}\$")
     val passwordRegex = Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}\$")
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -127,19 +144,31 @@ fun LoginScreenComposable(navController: NavHostController) {
             fontSize = 16.sp,
             color = AppColor.textColorPrimary
         )
-        OutlinedTextField(
-            value = password,
-            onValueChange = {
-                password = it
-                passwordError = !passwordRegex.matches(password.text)
-            },
-            placeholder = { Text("Enter your Password") },
-            isError = passwordError,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
-        )
+        Row(modifier = Modifier.fillMaxWidth()) {
+            OutlinedTextField(
+                value = password,
+                onValueChange = {
+                    password = it
+                    passwordError = !passwordRegex.matches(password.text)
+                },
+                placeholder = { Text("Enter your Password") },
+                isError = passwordError,
+                modifier = Modifier.weight(1f),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            painterResource(id = if (passwordVisible) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
+                            contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                        )
+                    }
+                }
+            )
+        }
         if (passwordError) {
             Text(
                 text = "Password must be at least 8 characters, include a number and a special character",
@@ -155,6 +184,12 @@ fun LoginScreenComposable(navController: NavHostController) {
         Button(
             onClick = {
                 if (isButtonEnabled) {
+                    val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+                    with(sharedPreferences.edit()) {
+                        putString("employeeId", employeeId.text)
+                        apply()
+                    }
+                    viewModel.sendIntent(AppIntent.onLoginClick(employeeId.text))
                     navController.navigate(Routes.VERIFY_PHONE_NUMBER)
                 }
             },

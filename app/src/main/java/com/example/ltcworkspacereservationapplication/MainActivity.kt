@@ -177,7 +177,7 @@ fun AppNavHost(
         composable(Routes.HOME_SCREEN) { HomePage(navController, modifier, viewModel) }
         composable(Routes.HISTORY_SCREEN) { HistoryScreen(viewModel, modifier) }
         composable(Routes.LOGIN) {
-            LoginScreenComposable(navController)
+            LoginScreenComposable(navController, viewModel = viewModel)
         }
         composable(Routes.SCANNER) {
             ScannerScreenComposable()

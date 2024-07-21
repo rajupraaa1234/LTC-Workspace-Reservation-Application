@@ -31,6 +31,7 @@ class ReservationViewModel : ViewModel() {
             is AppIntent.OnMeetingItemClick -> OnMeetingItemClicked(intent.item)
             is AppIntent.OnDeskItemClick -> onDeskItemClicked(intent.item)
             is AppIntent.OnMeetingRoomBooking -> onMeetingBooking(intent.startTime,intent.endTime,intent.capacity,intent.meetingId)
+            is AppIntent.onLoginClick -> onLoginClicked(intent.employeeId)
         }
     }
 
@@ -45,6 +46,10 @@ class ReservationViewModel : ViewModel() {
     private fun OnMeetingItemClicked(item: MeetingItemModel) {
 
         Log.d(TAG, "onMeetingItemClicked: ${item.toString()}")
+    }
+
+    private fun onLoginClicked(employeeId :String) {
+        _uiState.update { it.copy(employeeId = employeeId) }
     }
 
     private fun onFloorSelected(selectedFloor: Int) {

@@ -10,4 +10,5 @@ sealed interface AppIntent {
     data class OnMeetingItemClick(val item : MeetingItemModel) : AppIntent
     data class OnDeskItemClick(val item : DeskItemModel) : AppIntent
     data class OnMeetingRoomBooking(val startTime : String,val endTime : String,val capacity : String,val meetingId : String) : AppIntent
+    data class onLoginClick(val employeeId: String) : AppIntent
 }

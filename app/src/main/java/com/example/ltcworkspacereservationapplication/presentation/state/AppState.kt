@@ -13,7 +13,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 data class AppState @RequiresApi(Build.VERSION_CODES.O) constructor(
-    val employeeId : Int = 5605305,
+    val employeeId : String = "5605305",
     val employeeName : String = "Raju Kumar",
     val selectedDate : String = getCurrentDate(),
     val deskList: List<DeskItemModel> = listData.deskList,
