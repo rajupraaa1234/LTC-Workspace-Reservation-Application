@@ -1,4 +1,4 @@
-package com.example.ltcworkspacereservationapplication.presentation.composable
+package com.example.ltcworkspacereservationapplication.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,16 +35,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
 @Composable
-fun OtpComposableScreen(navController: NavHostController, phoneNumber: String) {
+fun OtpComposableScreen(navController: NavHostController, phoneNumber: String,onLogin: ()-> Unit) {
     var otp by remember { mutableStateOf("") }
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
@@ -131,7 +129,8 @@ fun OtpComposableScreen(navController: NavHostController, phoneNumber: String) {
             onClick = {
                 if (isOTPValid) {
                     // Handle OTP verification logic here
-                    navController.navigate("HomePage")
+                    onLogin()
+                    navController.navigate(Routes.HOME_SCREEN)
                 }
             },
             colors = ButtonDefaults.buttonColors(
@@ -152,7 +151,7 @@ fun OtpComposableScreen(navController: NavHostController, phoneNumber: String) {
                 text = "Confirm",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = AppColor.backgroundColor
+                color = AppColor.whiteColor
             )
         }
     }

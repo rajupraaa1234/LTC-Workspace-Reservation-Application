@@ -22,39 +22,51 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import com.example.ltcworkspacereservationapplication.R
+import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
+import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
+import com.example.ltcworkspacereservationapplication.presentation.composable.ConfirmationPopup
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomButton
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 
 
 @Composable
-fun CustomGridItem(iconResId: Int, text: String, onClick: () -> Unit) {
+fun CustomGridItem(item: MeetingItemModel, onClickItem: (MeetingItemModel) -> Unit,onSubmit : (String,String,String,String)-> Unit) {
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    var showDialog by remember { mutableStateOf(false) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .padding(Spacing.Size_8, bottom = bottomPadding)
-            .clickable { onClick() }
+            .clickable {
+                showDialog = true
+                onClickItem(item)
+            }
     ) {
         Image(
-            painter = painterResource(id = iconResId),
+            painter = if(item.reservedSlot.size == 0) painterResource(id = R.drawable.selectedcabin) else painterResource(id = R.drawable.nonselectedcabin),
             contentDescription = "Filter Icon",
             Modifier
                 .size(Spacing.Size_40)
         )
-        Text(text = text, style = MaterialTheme.typography.body2)
+        Text(text = item.meetingRoomId, style = MaterialTheme.typography.body2)
+    }
+    if (showDialog) {
+        ConfirmationPopup(onDismiss = { showDialog = false }, onSubmit = { startTime, endTime, capacity ->
+            onSubmit(startTime, endTime, capacity, item.meetingRoomId)
+            showDialog = false
+        })
     }
 }
 
 @Composable
-fun GridList(
-    items: List<Pair<Int, String>>,
-    isBookButtonVisible: Boolean,
+fun CabinGridList(
+    items: List<MeetingItemModel>,
+    onClickItem: (MeetingItemModel)-> Unit,
+    onSubmit: (String,String,String,String) -> Unit
 ) {
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.padding(Spacing.Size_8)
@@ -68,20 +80,61 @@ fun GridList(
                 columns = GridCells.Fixed(5),
             ) {
                 items(items.size) { index ->
-                    val (iconResId, text) = items[index]
-                    CustomGridItem(iconResId = iconResId, text = text) {
-                        showDialog = true
-                    }
+                    CustomGridItem(items[index], onClickItem,onSubmit)
                 }
             }
         }
-        if (isBookButtonVisible) {
-            CustomButton(modifier = Modifier.align(Alignment.End), "Book") {
+    }
+}
 
+
+@Composable
+fun DeskGridList(
+    items: List<DeskItemModel>,
+    onClickItem: (DeskItemModel)-> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(Spacing.Size_8)
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(top = Spacing.Size_5, bottom = Spacing.Size_10)
+                .weight(1f)
+        ) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(5),
+            ) {
+                items(items.size) { index ->
+                    DeskGridItem(items[index],onClickItem)
+                }
             }
         }
-    }
-    if (showDialog) {
 
+        CustomButton(modifier = Modifier.align(Alignment.End), "Book") {
+
+        }
+    }
+}
+
+
+
+@Composable
+fun DeskGridItem(item: DeskItemModel, onClickItem: (DeskItemModel) -> Unit) {
+    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .padding(Spacing.Size_8, bottom = bottomPadding)
+            .clickable { onClickItem(item) }
+    ) {
+        Image(
+            painter = if(item.status == "reserved") painterResource(id = R.drawable.reservedseat) else painterResource(id = R.drawable.nonreservedseeat),
+            contentDescription = "Filter Icon",
+            Modifier
+                .size(Spacing.Size_40)
+        )
+        Text(text = item.deskId, style = MaterialTheme.typography.body2)
     }
 }

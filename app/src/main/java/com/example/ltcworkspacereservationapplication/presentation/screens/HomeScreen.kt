@@ -13,6 +13,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -20,7 +21,8 @@ import androidx.compose.ui.Modifier
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.CabinReservationComposablePage
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.DeskReservationComposablePage
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
-import com.example.ltcworkspacereservationapplication.presentation.utils.HomeTabs
+import com.example.ltcworkspacereservationapplication.domain.model.HomeTabs
+import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import kotlinx.coroutines.launch
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -54,8 +56,24 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
                     contentAlignment = Alignment.Center
                 ) {
                     when (selectedTabIndex.value) {
-                        0 -> DeskReservationComposablePage(viewModel.uiState.value.deskList)
-                        1 -> CabinReservationComposablePage(viewModel.uiState.value.cabinList)
+                        0 -> DeskReservationComposablePage(viewModel.uiState.value.deskList) {
+                            viewModel.sendIntent(AppIntent.OnDeskItemClick(it))
+                        }
+
+                        1 -> CabinReservationComposablePage(
+                            viewModel.uiState.value.cabinList,
+                            onClickItem = { viewModel.sendIntent(AppIntent.OnMeetingItemClick(it)) },
+                            onSubmit = { startTime, endTime, capacity, meetingId ->
+                                viewModel.sendIntent(
+                                    AppIntent.OnMeetingRoomBooking(
+                                        startTime,
+                                        endTime,
+                                        capacity,
+                                        meetingId
+                                    )
+                                )
+                            }
+                        )
                     }
                 }
             }

@@ -1,4 +1,4 @@
-package com.example.ltcworkspacereservationapplication.presentation.composable
+package com.example.ltcworkspacereservationapplication.presentation.screens
 
 
 import android.content.Context
@@ -38,7 +38,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -191,7 +190,7 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
                         apply()
                     }
                     viewModel.sendIntent(AppIntent.onLoginClick(employeeId.text))
-                    navController.navigate(Routes.verifyPhoneNo)
+                    navController.navigate(Routes.VERIFY_PHONE_NUMBER)
                 }
             },
             colors = ButtonDefaults.buttonColors(

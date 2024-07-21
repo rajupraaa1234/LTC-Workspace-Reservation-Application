@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 object AppColor {
     val primaryColor = Color(0xFF006A4D)
-    val whiteColor = Color(0xFF2F6655)
+    val whiteColor = Color.White
     val errorColor = Color(0xFFB00020)
     val backgroundColor = Color(0xFFF5F5F5)
     val textColorPrimary = Color(0xFF000000)

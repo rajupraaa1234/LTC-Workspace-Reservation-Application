@@ -1,9 +1,7 @@
 package com.example.ltcworkspacereservationapplication
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -31,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -41,10 +38,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDatePickerDialog
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDropdownMenu
-import com.example.ltcworkspacereservationapplication.presentation.composable.LoginScreenComposable
-import com.example.ltcworkspacereservationapplication.presentation.composable.OtpComposableScreen
-import com.example.ltcworkspacereservationapplication.presentation.composable.PhoneNumberVerificationScreen
-import com.example.ltcworkspacereservationapplication.presentation.composable.ScannerScreenComposable
+import com.example.ltcworkspacereservationapplication.presentation.screens.LoginScreenComposable
+import com.example.ltcworkspacereservationapplication.presentation.screens.OtpComposableScreen
+import com.example.ltcworkspacereservationapplication.presentation.screens.PhoneNumberVerificationScreen
+import com.example.ltcworkspacereservationapplication.presentation.screens.ScannerScreenComposable
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.screens.HistoryScreen
@@ -59,131 +56,143 @@ class MainActivity : ComponentActivity() {
         val viewModel: ReservationViewModel by viewModels()
         enableEdgeToEdge()
         setContent {
-//            val context = LocalContext.current
-//            val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-//            val employeeId = sharedPreferences.getString("employeeId", null)
-//
-//            if (employeeId != null) {
-//                BottomTabNavigation(viewModel, startDestination = "HomePage")
-//            } else {
-//                BottomTabNavigation(viewModel, startDestination = Routes.Login)
-//            }
             BottomTabNavigation(viewModel)
         }
+    }
+}
+
+@Composable
+fun RenderBottomTabNavigation(navController: NavHostController) {
+    val selectedTab = remember { mutableStateOf(0) }
+    BottomNavigation(
+        backgroundColor = Color.White,
+        contentColor = AppColor.primaryColor,
+    ) {
+        BottomNavigationItem(
+            icon = { Icon(painterResource(R.drawable.home), contentDescription = null) },
+            label = {
+                Text(
+                    "Home",
+                    color = if (selectedTab.value == 0) AppColor.primaryColor else Color.Gray
+                )
+            },
+            selected = selectedTab.value == 0,
+            onClick = {
+                selectedTab.value = 0
+                navController.navigate(Routes.HOME_SCREEN) {
+                    launchSingleTop = true
+                    restoreState = true
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                }
+            },
+            selectedContentColor = AppColor.primaryColor,
+            unselectedContentColor = Color.Gray
+        )
+        BottomNavigationItem(
+            icon = {
+                Icon(
+                    painterResource(R.drawable.qr_code_scan),
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text(
+                    "Scan",
+                    color = if (selectedTab.value == 1) AppColor.primaryColor else Color.Gray
+                )
+            },
+            selected = selectedTab.value == 1,
+            onClick = {
+                selectedTab.value = 1
+                navController.navigate(Routes.SCANNER) {
+                    launchSingleTop = true
+                    restoreState = true
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                }
+            },
+            selectedContentColor = AppColor.primaryColor,
+            unselectedContentColor = Color.Gray
+        )
+        BottomNavigationItem(
+            icon = { Icon(painterResource(R.drawable.history), contentDescription = null) },
+            label = {
+                Text(
+                    "History",
+                    color = if (selectedTab.value == 2) AppColor.primaryColor else Color.Gray
+                )
+            },
+            selected = selectedTab.value == 2,
+
+
+            onClick = {
+                selectedTab.value = 2
+                navController.navigate(Routes.HISTORY_SCREEN) {
+                    launchSingleTop = true
+                    restoreState = true
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                }
+            },
+            selectedContentColor = AppColor.primaryColor,
+            unselectedContentColor = Color.Gray
+        )
     }
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 private fun BottomTabNavigation(viewModel: ReservationViewModel) {
-    val selectedTab = remember { mutableStateOf(0) }
+    val isLogin = remember { mutableStateOf(false) }
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
-            BottomNavigation(
-                backgroundColor = Color.White,
-                contentColor = AppColor.primaryColor,
-            ) {
-                BottomNavigationItem(
-                    icon = { Icon(painterResource(R.drawable.home), contentDescription = null) },
-                    label = {
-                        Text(
-                            "Home",
-                            color = if (selectedTab.value == 0) AppColor.primaryColor else Color.Gray
-                        )
-                    },
-                    selected = selectedTab.value == 0,
-                    onClick = {
-                        selectedTab.value = 0
-                        navController.navigate("HomePage") {
-                            launchSingleTop = true
-                            restoreState = true
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                        }
-                    },
-                    selectedContentColor = AppColor.primaryColor,
-                    unselectedContentColor = Color.Gray
-                )
-                BottomNavigationItem(
-                    icon = {
-                        Icon(
-                            painterResource(R.drawable.qr_code_scan),
-                            contentDescription = null
-                        )
-                    },
-                    label = {
-                        Text(
-                            "Scan",
-                            color = if (selectedTab.value == 1) AppColor.primaryColor else Color.Gray
-                        )
-                    },
-                    selected = selectedTab.value == 1,
-                    onClick = {
-                        selectedTab.value = 1
-                        navController.navigate(Routes.Scanner) {
-                            launchSingleTop = true
-                            restoreState = true
-                            popUpTo("HomePage") {
-                                saveState = true
-                            }
-                        }
-                    },
-                    selectedContentColor = AppColor.primaryColor,
-                    unselectedContentColor = Color.Gray
-                )
-                BottomNavigationItem(
-                    icon = { Icon(painterResource(R.drawable.history), contentDescription = null) },
-                    label = {
-                        Text(
-                            "History",
-                            color = if (selectedTab.value == 2) AppColor.primaryColor else Color.Gray
-                        )
-                    },
-                    selected = selectedTab.value == 2,
-
-
-                    onClick = {
-                        selectedTab.value = 2
-                        navController.navigate("historyScreen") {
-                            launchSingleTop = true
-                            restoreState = true
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                        }
-                    },
-                    selectedContentColor = AppColor.primaryColor,
-                    unselectedContentColor = Color.Gray
-                )
-            }
+            if (isLogin.value) RenderBottomTabNavigation(navController)
         }
     )
     { innerPadding ->
-        AppNavHost(navController = navController,viewModel,modifier = Modifier.padding(innerPadding)) }
+        AppNavHost(
+            navController = navController,
+            viewModel,
+            modifier = Modifier.padding(innerPadding),
+            onLogin = {
+                isLogin.value = true
+            }
+        )
+    }
 }
 
 @Composable
-fun AppNavHost(navController: NavHostController, viewModel: ReservationViewModel,modifier: Modifier) {
-    NavHost(navController, startDestination = Routes.Login) {
-        composable("HomePage") { HomePage(navController,modifier,viewModel) }
-        composable("historyScreen") { HistoryScreen(navController,viewModel) }
-        composable(Routes.Login) {
-            LoginScreenComposable(navController, viewModel = ReservationViewModel())
+fun AppNavHost(
+    navController: NavHostController,
+    viewModel: ReservationViewModel,
+    modifier: Modifier,
+    onLogin: () -> Unit
+) {
+    NavHost(navController, startDestination = Routes.HOME_SCREEN) {
+        composable(Routes.HOME_SCREEN) { HomePage(navController, modifier, viewModel) }
+        composable(Routes.HISTORY_SCREEN) { HistoryScreen(viewModel, modifier) }
+        composable(Routes.LOGIN) {
+            LoginScreenComposable(navController, viewModel = viewModel)
         }
-        composable(Routes.Scanner) {
+        composable(Routes.SCANNER) {
             ScannerScreenComposable()
         }
-        composable(Routes.verifyPhoneNo) {
+        composable(Routes.VERIFY_PHONE_NUMBER) {
             PhoneNumberVerificationScreen(navController = navController)
         }
         composable(
-            route = Routes.otpScreen + "?phoneNumber={phoneNumber}",
+            route = Routes.OTP_SCREEN + "?phoneNumber={phoneNumber}",
             arguments = listOf(navArgument("phoneNumber") { type = NavType.StringType })
         ) { backStackEntry ->
             val phoneNumber = backStackEntry.arguments?.getString("phoneNumber") ?: ""
-            OtpComposableScreen(navController = navController, phoneNumber = phoneNumber)
+            OtpComposableScreen(navController = navController, phoneNumber = phoneNumber) {
+                onLogin()
+            }
         }
     }
 }
@@ -191,7 +200,11 @@ fun AppNavHost(navController: NavHostController, viewModel: ReservationViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-private fun HomePage(navController: NavHostController,modifier: Modifier, viewModel: ReservationViewModel) {
+private fun HomePage(
+    navController: NavHostController,
+    modifier: Modifier,
+    viewModel: ReservationViewModel
+) {
     val userName = viewModel.uiState.value.employeeName
     val selectedDate = remember { mutableStateOf(viewModel.uiState.value.selectedDate) }
     val showDialog = remember { mutableStateOf(false) }
@@ -223,7 +236,7 @@ private fun HomePage(navController: NavHostController,modifier: Modifier, viewMo
                         shape = RoundedCornerShape(Spacing.Size_10)
                     )
             ) {
-                viewModel.sendIntent(AppIntent.onFloorSelect(it))
+                viewModel.sendIntent(AppIntent.OnFloorSelect(it))
             }
             Spacer(modifier = Modifier.weight(1f))
             Box(

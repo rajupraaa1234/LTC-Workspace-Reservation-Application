@@ -14,7 +14,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.Dp
-import com.example.ltcworkspacereservationapplication.presentation.utils.HomeTabs
+import com.example.ltcworkspacereservationapplication.domain.model.HomeTabs
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
@@ -69,7 +69,7 @@ private fun TabItem(
             .width(width)
             .height(Spacing.Size_48)
             .background(
-                color = if (isSelected) Color.Transparent else AppColor.whiteColor,
+                color = if (isSelected) Color.Transparent else AppColor.primaryColor,
                 shape = RoundedCornerShape(Spacing.Size_5)
             )
             .clickable { onClick() }
