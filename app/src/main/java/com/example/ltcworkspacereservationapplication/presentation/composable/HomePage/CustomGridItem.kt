@@ -1,17 +1,23 @@
 package com.example.ltcworkspacereservationapplication.presentation.composable.HomePage
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.example.ltcworkspacereservationapplication.R
 import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
@@ -28,6 +35,7 @@ import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemMo
 import com.example.ltcworkspacereservationapplication.presentation.composable.ConfirmationPopup
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomButton
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
+import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
 
 @Composable
@@ -46,7 +54,7 @@ fun CustomGridItem(item: MeetingItemModel, onClickItem: (MeetingItemModel) -> Un
             }
     ) {
         Image(
-            painter = if(item.reservedSlot.size == 0) painterResource(id = R.drawable.selectedcabin) else painterResource(id = R.drawable.nonselectedcabin),
+            painter = if(item.reservedSlot.size == 0) painterResource(id = R.drawable.nonselectedcabin) else painterResource(id = R.drawable.nonselectedcabin),
             contentDescription = "Filter Icon",
             Modifier
                 .size(Spacing.Size_40)
@@ -67,6 +75,8 @@ fun CabinGridList(
     onClickItem: (MeetingItemModel)-> Unit,
     onSubmit: (String,String,String,String) -> Unit
 ) {
+    val initialImages = listOf(R.drawable.reserveddesk, R.drawable.availabledesk, R.drawable.selecteddesk)
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.padding(Spacing.Size_8)
@@ -91,7 +101,7 @@ fun CabinGridList(
 @Composable
 fun DeskGridList(
     items: List<DeskItemModel>,
-    onClickItem: (DeskItemModel)-> Unit
+    onClickItem: (DeskItemModel,Int)-> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -106,31 +116,77 @@ fun DeskGridList(
                 columns = GridCells.Fixed(5),
             ) {
                 items(items.size) { index ->
-                    DeskGridItem(items[index],onClickItem)
+                    DeskGridItem(items[index],onClickItem,index)
                 }
             }
         }
 
-        CustomButton(modifier = Modifier.align(Alignment.End), "Book") {
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
 
+            TimeCard()
+            Spacer(modifier = Modifier.weight(1f))
+            CustomButton(Modifier, "Book") {
+
+            }
         }
     }
 }
 
 
+@Composable
+fun TimeCard() {
+    Card(
+        shape = RoundedCornerShape(Spacing.Size_10),
+        backgroundColor = Color(0xFFF5F5F5),
+        modifier = Modifier
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(Spacing.Size_5)
+        ) {
+            Indicator("Reserved",AppColor.reservedIndicator)
+            Indicator("Selected",AppColor.selectedIndicator)
+            Indicator("Available",AppColor.availableIndicator)
+        }
+    }
+}
 
 @Composable
-fun DeskGridItem(item: DeskItemModel, onClickItem: (DeskItemModel) -> Unit) {
+fun Indicator(text : String,color: Color){
+    Row(modifier = Modifier.padding(Spacing.Size_3),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Canvas(modifier = Modifier.size(Spacing.Size_10)) {
+            drawCircle(
+                color = color,
+                radius = size.minDimension / 2
+            )
+        }
+        Spacer(modifier = Modifier.width(Spacing.Size_5))
+        Text(text = text, style = androidx.compose.material3.MaterialTheme.typography.labelSmall, color = Color.Gray)
+    }
+}
+
+
+
+
+@Composable
+fun DeskGridItem(item: DeskItemModel, onClickItem: (DeskItemModel,Int) -> Unit, index: Int) {
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .padding(Spacing.Size_8, bottom = bottomPadding)
-            .clickable { onClickItem(item) }
+            .clickable { onClickItem(item,index) }
     ) {
         Image(
-            painter = if(item.status == "reserved") painterResource(id = R.drawable.reservedseat) else painterResource(id = R.drawable.nonreservedseeat),
+            painter = painterResource(id = item.imageId),
             contentDescription = "Filter Icon",
             Modifier
                 .size(Spacing.Size_40)

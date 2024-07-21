@@ -6,24 +6,24 @@ import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemMo
 
 object listData {
     val deskList: List<DeskItemModel> = listOf(
-       DeskItemModel("10-01","reserved"),
-        DeskItemModel("10-03","reserved"),
-        DeskItemModel("10-02","reserved"),
-        DeskItemModel("10-04","reserved"),
-        DeskItemModel("10-05","avail"),
-        DeskItemModel("10-06","avail"),
-        DeskItemModel("10-07","reserved"),
-        DeskItemModel("10-07","avail"),
-        DeskItemModel("10-07","reserved"),
-        DeskItemModel("10-07","avail"),
-        DeskItemModel("10-07","reserved"),
-        DeskItemModel("10-07","avail"),
-        DeskItemModel("10-07","reserved"),
-        DeskItemModel("10-07","avail"),
-        DeskItemModel("10-07","reserved"),
-        DeskItemModel("10-07","avail"),
-        DeskItemModel("10-07","reserved"),
-        DeskItemModel("10-07","avail")
+       DeskItemModel("10-01","reserved",R.drawable.reserveddesk),
+        DeskItemModel("10-03","reserved",R.drawable.reserveddesk),
+        DeskItemModel("10-02","reserved",R.drawable.reserveddesk),
+        DeskItemModel("10-04","reserved",R.drawable.reserveddesk),
+        DeskItemModel("10-05","avail",R.drawable.reserveddesk),
+        DeskItemModel("10-06","avail",R.drawable.availabledesk),
+        DeskItemModel("10-07","reserved",R.drawable.availabledesk),
+        DeskItemModel("10-07","avail",R.drawable.availabledesk),
+        DeskItemModel("10-07","reserved",R.drawable.availabledesk),
+        DeskItemModel("10-07","avail",R.drawable.reserveddesk),
+        DeskItemModel("10-07","reserved",R.drawable.reserveddesk),
+        DeskItemModel("10-07","avail",R.drawable.reserveddesk),
+        DeskItemModel("10-07","reserved",R.drawable.reserveddesk),
+        DeskItemModel("10-07","avail",R.drawable.reserveddesk),
+        DeskItemModel("10-07","reserved",R.drawable.reserveddesk),
+        DeskItemModel("10-07","avail",R.drawable.reserveddesk),
+        DeskItemModel("10-07","reserved",R.drawable.reserveddesk),
+        DeskItemModel("10-07","avail",R.drawable.reserveddesk)
     )
 
 
