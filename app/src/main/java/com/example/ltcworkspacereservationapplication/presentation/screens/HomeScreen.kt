@@ -64,7 +64,7 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
 
                         1 -> CabinReservationComposablePage(
                             uiState.value.cabinList,
-                            onClickItem = { viewModel.sendIntent(AppIntent.OnMeetingItemClick(it)) },
+                            onClickItem = {it,index-> viewModel.sendIntent(AppIntent.OnMeetingItemClick(it,index)) },
                             onSubmit = { startTime, endTime, capacity, meetingId ->
                                 viewModel.sendIntent(
                                     AppIntent.OnMeetingRoomBooking(

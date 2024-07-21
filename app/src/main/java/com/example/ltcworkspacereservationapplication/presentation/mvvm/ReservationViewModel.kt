@@ -25,7 +25,7 @@ class ReservationViewModel : ViewModel() {
             AppIntent.OnFilterButtonClicked -> onFilterButtonClicked()
             is AppIntent.OnDatePickerClick -> onDatePickerClicked(intent.dateSelected)
             is AppIntent.OnFloorSelect -> onFloorSelected(intent.selectedFloor)
-            is AppIntent.OnMeetingItemClick -> OnMeetingItemClicked(intent.item)
+            is AppIntent.OnMeetingItemClick -> OnMeetingItemClicked(intent.item,intent.index)
             is AppIntent.OnDeskItemClick -> onDeskItemClicked(intent.item,intent.index)
             is AppIntent.OnMeetingRoomBooking -> onMeetingBooking(intent.startTime,intent.endTime,intent.capacity,intent.meetingId)
             is AppIntent.onLoginClick -> onLoginClicked(intent.employeeId)
@@ -53,9 +53,21 @@ class ReservationViewModel : ViewModel() {
         }
     }
 
-    private fun OnMeetingItemClicked(item: MeetingItemModel) {
-
-        Log.d(TAG, "onMeetingItemClicked: ${item.toString()}")
+    private fun OnMeetingItemClicked(item: MeetingItemModel, index: Int) {
+        _uiState.update { state ->
+            val updatedItems = state.cabinList.mapIndexed { i, item ->
+                if (i == index) {
+                    item.copy(imageId = R.drawable.selectedcabin) // Change to desired color
+                }else{
+                    if(item.reservedSlot.size == 0){
+                        item.copy(imageId = R.drawable.availablecabin)
+                    }else{
+                        item.copy(imageId = R.drawable.reservedcabin)
+                    }
+                }
+            }
+            state.copy(cabinList = updatedItems)
+        }
     }
 
     private fun onLoginClicked(employeeId :String) {

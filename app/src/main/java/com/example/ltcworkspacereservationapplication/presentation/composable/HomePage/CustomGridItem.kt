@@ -39,7 +39,12 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.color.A
 
 
 @Composable
-fun CustomGridItem(item: MeetingItemModel, onClickItem: (MeetingItemModel) -> Unit,onSubmit : (String,String,String,String)-> Unit) {
+fun CustomGridItem(
+    item: MeetingItemModel,
+    onClickItem: (MeetingItemModel, Int) -> Unit,
+    onSubmit: (String, String, String, String) -> Unit,
+    index: Int
+) {
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     var showDialog by remember { mutableStateOf(false) }
 
@@ -50,11 +55,11 @@ fun CustomGridItem(item: MeetingItemModel, onClickItem: (MeetingItemModel) -> Un
             .padding(Spacing.Size_8, bottom = bottomPadding)
             .clickable {
                 showDialog = true
-                onClickItem(item)
+                onClickItem(item,index)
             }
     ) {
         Image(
-            painter = if(item.reservedSlot.size == 0) painterResource(id = R.drawable.nonselectedcabin) else painterResource(id = R.drawable.nonselectedcabin),
+            painter = painterResource(item.imageId),
             contentDescription = "Filter Icon",
             Modifier
                 .size(Spacing.Size_40)
@@ -72,11 +77,9 @@ fun CustomGridItem(item: MeetingItemModel, onClickItem: (MeetingItemModel) -> Un
 @Composable
 fun CabinGridList(
     items: List<MeetingItemModel>,
-    onClickItem: (MeetingItemModel)-> Unit,
+    onClickItem: (MeetingItemModel,Int)-> Unit,
     onSubmit: (String,String,String,String) -> Unit
 ) {
-    val initialImages = listOf(R.drawable.reserveddesk, R.drawable.availabledesk, R.drawable.selecteddesk)
-
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.padding(Spacing.Size_8)
@@ -90,10 +93,11 @@ fun CabinGridList(
                 columns = GridCells.Fixed(5),
             ) {
                 items(items.size) { index ->
-                    CustomGridItem(items[index], onClickItem,onSubmit)
+                    CustomGridItem(items[index], onClickItem,onSubmit,index)
                 }
             }
         }
+        TimeCard()
     }
 }
 

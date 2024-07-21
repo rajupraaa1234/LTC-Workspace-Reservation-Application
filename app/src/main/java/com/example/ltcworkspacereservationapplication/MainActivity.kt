@@ -173,7 +173,7 @@ fun AppNavHost(
     modifier: Modifier,
     onLogin: () -> Unit
 ) {
-    NavHost(navController, startDestination = Routes.LOGIN) {
+    NavHost(navController, startDestination = Routes.HOME_SCREEN) {
         composable(Routes.HOME_SCREEN) { HomePage(navController, modifier, viewModel) }
         composable(Routes.HISTORY_SCREEN) { HistoryScreen(viewModel, modifier) }
         composable(Routes.LOGIN) {
