@@ -4,6 +4,6 @@ import androidx.compose.runtime.Composable
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 
 @Composable
-internal fun CabinReservationComposablePage(cabinList: List<MeetingItemModel>,onClickItem: (MeetingItemModel)-> Unit,onSubmit: (String,String,String,String) -> Unit) {
+internal fun CabinReservationComposablePage(cabinList: List<MeetingItemModel>,onClickItem: (MeetingItemModel,Int)-> Unit,onSubmit: (String,String,String,String) -> Unit) {
     CabinGridList(items = cabinList,onClickItem,onSubmit)
 }
