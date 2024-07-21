@@ -31,16 +31,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.ltcworkspacereservationapplication.R
 import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import com.example.ltcworkspacereservationapplication.presentation.composable.ConfirmationPopup
-import com.example.ltcworkspacereservationapplication.presentation.composable.CustomButton
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
@@ -112,7 +109,8 @@ fun CabinGridList(
 @Composable
 fun DeskGridList(
     items: List<DeskItemModel>,
-    onClickItem: (DeskItemModel,Int)-> Unit
+    onClickItem: (DeskItemModel,Int)-> Unit,
+    onSubmit: () -> Unit
 ) {
     var isAnyItemClicked by remember { mutableStateOf(false) }
 
@@ -146,6 +144,7 @@ fun DeskGridList(
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = {
+                    onSubmit()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (isAnyItemClicked) AppColor.primaryColor else AppColor.primaryColorLight,
@@ -154,16 +153,17 @@ fun DeskGridList(
                 enabled = isAnyItemClicked,
                 modifier = Modifier
                     .background(if (isAnyItemClicked) AppColor.primaryColor else AppColor.primaryColorLight)
+                    .clip(shape = RoundedCornerShape(10.dp))
                     .border(
                         1.dp,
-                        if (isAnyItemClicked) AppColor.primaryColor else AppColor.primaryColorLight
+                        if (isAnyItemClicked) AppColor.primaryColor else AppColor.primaryColorLight,
                     )
+
             ) {
                 Text(
                     text = "Book",
                     color = AppColor.backgroundColor,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.button,
                 )
             }
             }

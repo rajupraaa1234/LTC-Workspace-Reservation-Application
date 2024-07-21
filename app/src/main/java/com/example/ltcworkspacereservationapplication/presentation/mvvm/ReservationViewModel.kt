@@ -23,6 +23,7 @@ class ReservationViewModel : ViewModel() {
     fun sendIntent(intent: AppIntent) {
         when (intent) {
             AppIntent.OnFilterButtonClicked -> onFilterButtonClicked()
+            AppIntent.OnDeskBookButtonClicked -> onDeskBookButtonClicked()
             is AppIntent.OnDatePickerClick -> onDatePickerClicked(intent.dateSelected)
             is AppIntent.OnFloorSelect -> onFloorSelected(intent.selectedFloor)
             is AppIntent.OnMeetingItemClick -> OnMeetingItemClicked(intent.item,intent.index)
@@ -30,6 +31,10 @@ class ReservationViewModel : ViewModel() {
             is AppIntent.OnMeetingRoomBooking -> onMeetingBooking(intent.startTime,intent.endTime,intent.capacity,intent.meetingId)
             is AppIntent.onLoginClick -> onLoginClicked(intent.employeeId)
         }
+    }
+
+    private fun onDeskBookButtonClicked() {
+        Log.d(TAG, "onDeskBookButtonClicked: onDeskBookButtonClicked")
     }
 
     private fun onMeetingBooking(startTime: String, endTime: String, capacity: String, meetingId: String) {

@@ -6,7 +6,8 @@ import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
 @Composable
 internal fun DeskReservationComposablePage(
     deskList: List<DeskItemModel>,
-    onClickItem: (DeskItemModel,Int)-> Unit
+    onClickItem: (DeskItemModel,Int)-> Unit,
+    onSubmit: ()-> Unit
 ) {
-    DeskGridList(items = deskList,onClickItem)
+    DeskGridList(items = deskList,onClickItem,onSubmit)
 }

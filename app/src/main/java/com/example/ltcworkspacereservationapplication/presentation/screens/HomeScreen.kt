@@ -58,10 +58,10 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
                     contentAlignment = Alignment.Center
                 ) {
                     when (selectedTabIndex.value) {
-                        0 -> DeskReservationComposablePage(uiState.value.deskList) {  it,index->
-                            viewModel.sendIntent(AppIntent.OnDeskItemClick(it,index))
+                        0 -> DeskReservationComposablePage(uiState.value.deskList, onClickItem = { it, index ->
+                            viewModel.sendIntent(AppIntent.OnDeskItemClick(it, index)) }){
+                            viewModel.sendIntent(AppIntent.OnDeskBookButtonClicked)
                         }
-
                         1 -> CabinReservationComposablePage(
                             uiState.value.cabinList,
                             onClickItem = {it,index-> viewModel.sendIntent(AppIntent.OnMeetingItemClick(it,index)) },

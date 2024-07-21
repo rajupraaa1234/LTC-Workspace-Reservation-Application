@@ -17,4 +17,5 @@ sealed interface AppIntent {
     ) : AppIntent
 
     data class onLoginClick(val employeeId: String) : AppIntent
+    data object OnDeskBookButtonClicked : AppIntent
 }
