@@ -12,13 +12,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Button
@@ -49,40 +55,69 @@ fun CustomGridItem(
     onSubmit: (String, String, String, String) -> Unit,
     index: Int
 ) {
-    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     var showDialog by remember { mutableStateOf(false) }
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .padding(Spacing.Size_8, bottom = bottomPadding)
-            .clickable {
-                showDialog = true
-                onClickItem(item, index)
-            }
-    ) {
-        Image(
-            painter = painterResource(item.imageId),
-            contentDescription = "Filter Icon",
-            Modifier
-                .size(Spacing.Size_40)
-        )
-        Text(text = item.meetingRoomId, style = MaterialTheme.typography.body2)
-    }
     if (showDialog) {
-        ConfirmationPopup(onDismiss = { showDialog = false }, onSubmit = { startTime, endTime, capacity ->
-            onSubmit(startTime, endTime, capacity, item.meetingRoomId)
-            showDialog = false
-        })
+        ConfirmationPopup(
+            onDismiss = { showDialog = false },
+            onSubmit = { startTime, endTime, capacity ->
+                onSubmit(startTime, endTime, capacity, item.meetingRoomId)
+                showDialog = false
+            })
+    }
+
+    Card(
+        shape = RoundedCornerShape(Spacing.Size_10),
+        backgroundColor = Color(0xFFF5F5F5),
+        modifier = Modifier.padding(8.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .padding(Spacing.Size_5, top = Spacing.Size_8, bottom = Spacing.Size_8)
+                .clickable {
+                    showDialog = true
+                    onClickItem(item, index)
+                }
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(item.imageId),
+                    contentDescription = "Filter Icon",
+                    Modifier
+                        .size(Spacing.Size_40)
+                )
+                Text(text = "R-${item.meetingRoomId}", style = MaterialTheme.typography.body2)
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Spacing.Size_5)
+                    .background(AppColor.primaryColorLight)
+            ) {
+                LazyRow {
+                    items(item.reservedSlot.size) { index ->
+                        if (item.reservedSlot.size == index + 1)
+                            Text(text = item.reservedSlot[index], color = Color.White)
+                        else
+                            Text(text = "${item.reservedSlot[index]}, ", color = Color.White)
+                    }
+                }
+            }
+        }
     }
 }
+
 
 @Composable
 fun CabinGridList(
     items: List<MeetingItemModel>,
-    onClickItem: (MeetingItemModel,Int)-> Unit,
-    onSubmit: (String,String,String,String) -> Unit
+    onClickItem: (MeetingItemModel, Int) -> Unit,
+    onSubmit: (String, String, String, String) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -94,10 +129,10 @@ fun CabinGridList(
                 .weight(1f)
         ) {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(5),
+                columns = GridCells.Fixed(3),
             ) {
                 items(items.size) { index ->
-                    CustomGridItem(items[index], onClickItem,onSubmit,index)
+                    CustomGridItem(items[index], onClickItem, onSubmit, index)
                 }
             }
         }
@@ -109,7 +144,7 @@ fun CabinGridList(
 @Composable
 fun DeskGridList(
     items: List<DeskItemModel>,
-    onClickItem: (DeskItemModel,Int)-> Unit,
+    onClickItem: (DeskItemModel, Int) -> Unit,
     onSubmit: () -> Unit
 ) {
     var isAnyItemClicked by remember { mutableStateOf(false) }
@@ -166,9 +201,9 @@ fun DeskGridList(
                     style = MaterialTheme.typography.button,
                 )
             }
-            }
         }
     }
+}
 
 @Composable
 fun TimeCard() {
@@ -182,16 +217,17 @@ fun TimeCard() {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(Spacing.Size_5)
         ) {
-            Indicator("Reserved",AppColor.reservedIndicator)
-            Indicator("Selected",AppColor.selectedIndicator)
-            Indicator("Available",AppColor.availableIndicator)
+            Indicator("Reserved", AppColor.reservedIndicator)
+            Indicator("Selected", AppColor.selectedIndicator)
+            Indicator("Available", AppColor.availableIndicator)
         }
     }
 }
 
 @Composable
-fun Indicator(text : String,color: Color){
-    Row(modifier = Modifier.padding(Spacing.Size_3),
+fun Indicator(text: String, color: Color) {
+    Row(
+        modifier = Modifier.padding(Spacing.Size_3),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -202,15 +238,17 @@ fun Indicator(text : String,color: Color){
             )
         }
         Spacer(modifier = Modifier.width(Spacing.Size_5))
-        Text(text = text, style = androidx.compose.material3.MaterialTheme.typography.labelSmall, color = Color.Gray)
+        Text(
+            text = text,
+            style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
+            color = Color.Gray
+        )
     }
 }
 
 
-
-
 @Composable
-fun DeskGridItem(item: DeskItemModel, onClickItem: (DeskItemModel,Int) -> Unit, index: Int) {
+fun DeskGridItem(item: DeskItemModel, onClickItem: (DeskItemModel, Int) -> Unit, index: Int) {
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

@@ -12,5 +12,6 @@ object AppColor {
     val primaryColorLight = Color(0xFF489E7E)
     val reservedIndicator = Color(0xFF006A4D)
     val selectedIndicator = Color(0xFF800080)
+    val reserveBackground = Color(0xFFE6CCCA)
     val availableIndicator = Color(0xFF808080)
 }
