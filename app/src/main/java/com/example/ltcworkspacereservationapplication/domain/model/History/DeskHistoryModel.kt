@@ -2,8 +2,11 @@ package com.example.ltcworkspacereservationapplication.domain.model.History
 
 
 data class DeskHistoryModel(
-    val deskId: String,
+    val bookingId: Int,
+    val employId: String,
+    val name: String,
     val date: String,
-    val floor : Int,
-    val status : String
+    val seatNumber: Int,
+    val floorNumber: Int,
+    val reservationStatus: String
 )
