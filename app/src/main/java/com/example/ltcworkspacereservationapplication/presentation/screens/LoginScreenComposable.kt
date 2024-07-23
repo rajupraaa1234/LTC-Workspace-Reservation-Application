@@ -40,15 +40,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.ltcworkspacereservationapplication.R
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.utils.PreferencesManager
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreenComposable(navController: NavHostController,viewModel: ReservationViewModel) {
@@ -185,7 +185,9 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
             onClick = {
                 if (isButtonEnabled) {
                     PreferencesManager.setEmployeeId(context = context, employeeId = employeeId.text)
-                    viewModel.sendIntent(AppIntent.onLoginClick(employeeId.text))
+                    viewModel.viewModelScope.launch {
+                        viewModel.sendIntent(AppIntent.onLoginClick(employeeId.text))
+                    }
                     navController.navigate(Routes.VERIFY_PHONE_NUMBER)
                 }
             },

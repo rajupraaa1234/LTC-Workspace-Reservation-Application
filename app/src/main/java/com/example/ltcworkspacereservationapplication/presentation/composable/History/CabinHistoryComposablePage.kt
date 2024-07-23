@@ -18,14 +18,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
 import com.example.ltcworkspacereservationapplication.domain.model.History.CabinHistoryModel
+import com.example.ltcworkspacereservationapplication.presentation.composable.EmptyMessageComposable
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
 @Composable
 fun CabinHistoryComposablePage(cabinHistoryList: List<CabinHistoryModel>) {
-    LazyColumn(modifier = Modifier.padding(top = Spacing.Size_10)) {
-        items(cabinHistoryList) { item ->
-            CabinHistoryItem(item)
+    if (cabinHistoryList.size == 0) {
+        EmptyMessageComposable(
+            title = "There is no any history available for meeting room reservation",
+            subtitle = "You can book your interesting workSpot from home screen"
+        )
+    } else {
+        LazyColumn(modifier = Modifier.padding(top = Spacing.Size_10)) {
+            items(cabinHistoryList) { item ->
+                CabinHistoryItem(item)
+            }
         }
     }
 }

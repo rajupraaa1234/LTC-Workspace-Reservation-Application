@@ -41,6 +41,7 @@ import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityT
 import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import com.example.ltcworkspacereservationapplication.presentation.composable.ConfirmationPopup
+import com.example.ltcworkspacereservationapplication.presentation.composable.EmptyMessageComposable
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
@@ -125,10 +126,18 @@ fun CabinGridList(
                 .padding(top = Spacing.Size_5, bottom = Spacing.Size_10)
                 .weight(1f)
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-            ) {
-                items(items.size) { index -> CustomGridItem(items[index], onClickItem, onSubmit, index)
+            if (items.size == 0) {
+                EmptyMessageComposable(
+                    title = "No meetings room available at this floor",
+                    subtitle = "There is no data to show you right now."
+                )
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                ) {
+                    items(items.size) { index ->
+                        CustomGridItem(items[index], onClickItem, onSubmit, index)
+                    }
                 }
             }
         }
@@ -154,14 +163,21 @@ fun DeskGridList(
                 .padding(top = Spacing.Size_5, bottom = Spacing.Size_10)
                 .weight(1f)
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(5),
-            ) {
-                items(items.size) { index ->
-                    DeskGridItem(items[index], onClickItem = { item, idx ->
-                        onClickItem(item, idx)
-                        isAnyItemClicked = true
-                    }, index)
+            if (items.size == 0) {
+                EmptyMessageComposable(
+                    title = "No desk available at this floor",
+                    subtitle = "There is no data to show you at the moment."
+                )
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(5),
+                ) {
+                    items(items.size) { index ->
+                        DeskGridItem(items[index], onClickItem = { item, idx ->
+                            onClickItem(item, idx)
+                            isAnyItemClicked = true
+                        }, index)
+                    }
                 }
             }
         }
@@ -212,8 +228,8 @@ fun TimeCard(isBookedShow: Boolean) {
             Indicator("Reserved", AppColor.reservedIndicator)
             Indicator("Selected", AppColor.selectedIndicator)
             Indicator("Available", AppColor.availableIndicator)
-            if(isBookedShow)
-             Indicator("Booked", AppColor.bookedDeskBackgroundColour)
+            if (isBookedShow)
+                Indicator("Booked", AppColor.bookedDeskBackgroundColour)
         }
     }
 }
@@ -249,7 +265,12 @@ fun DeskGridItem(item: DeskItemModel, onClickItem: (DeskItemModel, Int) -> Unit,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .padding(Spacing.Size_8, bottom = bottomPadding)
-            .clickable { if(item.reservationStatus == AvailabilityType.AVAILABLE.type) onClickItem(item, index) }
+            .clickable {
+                if (item.reservationStatus == AvailabilityType.AVAILABLE.type) onClickItem(
+                    item,
+                    index
+                )
+            }
     ) {
         Image(
             painter = painterResource(id = item.imageId),
@@ -257,6 +278,9 @@ fun DeskGridItem(item: DeskItemModel, onClickItem: (DeskItemModel, Int) -> Unit,
             Modifier
                 .size(Spacing.Size_40)
         )
-        Text(text = "${item.floorNumber} - ${item.seatNumber}", style = MaterialTheme.typography.body2)
+        Text(
+            text = "${item.floorNumber} - ${item.seatNumber}",
+            style = MaterialTheme.typography.body2
+        )
     }
 }

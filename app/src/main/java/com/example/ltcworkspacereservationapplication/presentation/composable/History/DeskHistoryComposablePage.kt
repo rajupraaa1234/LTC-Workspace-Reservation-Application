@@ -18,16 +18,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
 import com.example.ltcworkspacereservationapplication.domain.model.History.DeskHistoryModel
+import com.example.ltcworkspacereservationapplication.presentation.composable.EmptyMessageComposable
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
 @Composable
 fun DeskHistoryComposablePage(deskHistoryList: List<DeskHistoryModel>) {
+    if (deskHistoryList.size == 0) {
+        EmptyMessageComposable(
+            title = "There is no any history available for desk reservation",
+            subtitle = "You can book your interesting workSpot from home screen"
+        )
+    } else {
         LazyColumn(modifier = Modifier.padding(top = Spacing.Size_10)) {
             items(deskHistoryList) { item ->
                 DeskHistoryItem(item)
             }
         }
+    }
 }
 
 
@@ -57,7 +65,7 @@ private fun ElevatedCard(item: DeskHistoryModel) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            with(item){
+            with(item) {
                 Column {
                     Text(
                         text = "Desk Id : $seatNumber",
@@ -65,7 +73,7 @@ private fun ElevatedCard(item: DeskHistoryModel) {
                     )
                     Text(
                         text = "Status : $reservationStatus",
-                        color = if(reservationStatus == AvailabilityType.RESERVED.type) AppColor.primaryColorLight else if(reservationStatus == AvailabilityType.BOOKED.type) AppColor.bookedDeskBackgroundColour else Color.Red ,
+                        color = if (reservationStatus == AvailabilityType.RESERVED.type) AppColor.primaryColorLight else if (reservationStatus == AvailabilityType.BOOKED.type) AppColor.bookedDeskBackgroundColour else Color.Red,
                         style = MaterialTheme.typography.subtitle2,
                     )
                 }

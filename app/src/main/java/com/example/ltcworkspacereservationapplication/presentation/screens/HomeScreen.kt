@@ -25,6 +25,7 @@ import com.example.ltcworkspacereservationapplication.presentation.composable.Ho
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.DeskReservationComposablePage
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.domain.model.HomeTabs
+import com.example.ltcworkspacereservationapplication.presentation.composable.Loader.LoaderOverlay
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModelEffects
 import kotlinx.coroutines.flow.collect
@@ -76,47 +77,70 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
             }
        }
 
-    Scaffold() {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = it.calculateTopPadding())
-        ) {
-            TabSelection(modifier = Modifier) {
-                scope.launch {
-                    pagerState.animateScrollToPage(it.ordinal)
-                }
-            }
 
-            HorizontalPager(
-                state = pagerState,
+
+    LoaderOverlay(isLoading = viewModel.isLoading.value) {
+        Scaffold() {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
+                    .fillMaxSize()
+                    .padding(top = it.calculateTopPadding())
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                TabSelection(modifier = Modifier) {
+                    scope.launch {
+                        pagerState.animateScrollToPage(it.ordinal)
+                    }
+                }
+
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 ) {
-                    when (selectedTabIndex.value) {
-                        0 -> DeskReservationComposablePage(deskList.value, onClickItem = { it, index ->
-                            viewModel.sendIntent(AppIntent.OnDeskItemClick(it, index)) }){
-                            viewModel.sendIntent(AppIntent.OnDeskBookButtonClicked)
-                        }
-                        1 -> CabinReservationComposablePage(
-                            meetingList.value,
-                            onClickItem = {it,index-> viewModel.sendIntent(AppIntent.OnMeetingItemClick(it,index)) },
-                            onSubmit = { startTime, endTime, capacity, meetingId ->
-                                viewModel.sendIntent(
-                                    AppIntent.OnMeetingRoomBooking(
-                                        startTime,
-                                        endTime,
-                                        capacity,
-                                        meetingId
-                                    )
-                                )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        when (selectedTabIndex.value) {
+                            0 -> DeskReservationComposablePage(
+                                deskList.value,
+                                onClickItem = { it, index ->
+                                    scope.launch{
+                                        viewModel.sendIntent(AppIntent.OnDeskItemClick(it, index))
+                                    }
+                                }) {
+                                scope.launch{
+                                    viewModel.sendIntent(AppIntent.OnDeskBookButtonClicked)
+                                }
                             }
-                        )
+
+                            1 -> CabinReservationComposablePage(
+                                meetingList.value,
+                                onClickItem = { it, index ->
+                                    scope.launch {
+                                        viewModel.sendIntent(
+                                            AppIntent.OnMeetingItemClick(
+                                                it,
+                                                index
+                                            )
+                                        )
+                                    }
+                                },
+                                onSubmit = { startTime, endTime, capacity, meetingId ->
+                                    scope.launch {
+                                        viewModel.sendIntent(
+                                            AppIntent.OnMeetingRoomBooking(
+                                                startTime,
+                                                endTime,
+                                                capacity,
+                                                meetingId
+                                            )
+                                        )
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }

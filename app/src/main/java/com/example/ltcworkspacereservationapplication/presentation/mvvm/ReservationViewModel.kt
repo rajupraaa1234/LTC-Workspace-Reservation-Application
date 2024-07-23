@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 
 class ReservationViewModel(val context: Context) : ViewModel() {
@@ -36,21 +37,29 @@ class ReservationViewModel(val context: Context) : ViewModel() {
     var isLoading = mutableStateOf(false)
         protected set
 
-   private val selectedFloor = mutableIntStateOf(-1)
+    private val selectedFloor = mutableIntStateOf(-1)
+
+    private var selectedDesk = mutableStateOf<DeskItemModel?>(null)
 
 
-    val TAG =  "ReservationViewModel"
+    val TAG = "ReservationViewModel"
 
 
-    fun sendIntent(intent: AppIntent) {
+    suspend fun sendIntent(intent: AppIntent) {
         when (intent) {
             AppIntent.OnFilterButtonClicked -> onFilterButtonClicked()
             AppIntent.OnDeskBookButtonClicked -> onDeskBookButtonClicked()
             is AppIntent.OnDatePickerClick -> onDatePickerClicked(intent.dateSelected)
             is AppIntent.OnFloorSelect -> onFloorSelected(intent.selectedFloor)
-            is AppIntent.OnMeetingItemClick -> OnMeetingItemClicked(intent.item,intent.index)
-            is AppIntent.OnDeskItemClick -> onDeskItemClicked(intent.item,intent.index)
-            is AppIntent.OnMeetingRoomBooking -> onMeetingBooking(intent.startTime,intent.endTime,intent.capacity,intent.meetingId)
+            is AppIntent.OnMeetingItemClick -> OnMeetingItemClicked(intent.item, intent.index)
+            is AppIntent.OnDeskItemClick -> onDeskItemClicked(intent.item, intent.index)
+            is AppIntent.OnMeetingRoomBooking -> onMeetingBooking(
+                intent.startTime,
+                intent.endTime,
+                intent.capacity,
+                intent.meetingId
+            )
+
             is AppIntent.onLoginClick -> onLoginClicked(intent.employeeId)
             is AppIntent.OnDeskListFilter -> OnDeskListFilterUpdate(intent.listItem)
             is AppIntent.OnMeetingListFilterUpdate -> onMeetingListFilterUpdate(intent.listItem)
@@ -65,41 +74,56 @@ class ReservationViewModel(val context: Context) : ViewModel() {
         _uiState.update { it.copy(currentMeetingRoomFilteredList = listItem) }
     }
 
-    private fun callBookDeskApi() {
-//        {
-//            "employId": "5605969",
-//            "name": "Gaurav",
-//            "date":"2024-07-23",
-//            "seatNumber": 52,
-//            "floorNumber": 5,
-//            "reservationStatus":"Booked"
-//        }
-
-    }
-
-    private fun onDeskBookButtonClicked() {
-        if(selectedFloor.value == -1){
-            Toast.makeText(context, "Please select floor to book", Toast.LENGTH_SHORT).show()
-        }else{
-            Log.d(TAG, "onDeskBookButtonClicked: booked")
+    // Api Calls for Booking the Desk
+    private suspend fun callBookDeskApi() {
+        selectedDesk.value.let {
+            val response = true
+            if(response){
+                viewModelScope.launch {
+                    isLoading.value = true
+                    delay(2000)
+                    updateCurrentDeskList()
+                    updateDeskList()
+                    isLoading.value = false
+                }
+            }
         }
     }
 
-    private fun onMeetingBooking(startTime: String, endTime: String, capacity: String, meetingId: String) {
+    private suspend fun onDeskBookButtonClicked() {
+        if (selectedFloor.value == -1) {
+            Toast.makeText(context, "Please select floor to book", Toast.LENGTH_SHORT).show()
+        } else {
+            callBookDeskApi()
+        }
+    }
+
+    private fun onMeetingBooking(
+        startTime: String,
+        endTime: String,
+        capacity: String,
+        meetingId: String
+    ) {
+        if (selectedFloor.value == -1) {
+            Toast.makeText(context, "Please select floor to book", Toast.LENGTH_SHORT).show()
+        } else {
+            Log.d(TAG, "onDeskBookButtonClicked: booked")
+        }
         Log.d(TAG, "onMeetingBooking: ${startTime} ${endTime} ${capacity} ${meetingId}")
     }
 
     private fun onDeskItemClicked(itm: DeskItemModel, index: Int) {
+        selectedDesk.value = itm
         _uiState.update { state ->
             val updatedItems = state.currentFilteredList.mapIndexed { i, item ->
                 if (item.seatId == itm.seatId) {
                     item.copy(imageId = R.drawable.selecteddesk) // Change to desired color
-                }else{
-                    if (item.reservationStatus == AvailabilityType.RESERVED.type){
+                } else {
+                    if (item.reservationStatus == AvailabilityType.RESERVED.type) {
                         item.copy(imageId = R.drawable.reserveddesk)
-                    }else if(item.reservationStatus == AvailabilityType.BOOKED.type){
+                    } else if (item.reservationStatus == AvailabilityType.BOOKED.type) {
                         item.copy(imageId = R.drawable.deskbooked)
-                    }else{
+                    } else {
                         item.copy(imageId = R.drawable.availabledesk)
                     }
                 }
@@ -115,10 +139,10 @@ class ReservationViewModel(val context: Context) : ViewModel() {
             val updatedItems = state.currentMeetingRoomFilteredList.mapIndexed { i, item ->
                 if (itm.meetingRoomId == item.meetingRoomId) {
                     item.copy(imageId = R.drawable.selectedcabin) // Change to desired color
-                }else{
-                    if(item.reservedSlot.size == 0){
+                } else {
+                    if (item.reservedSlot.size == 0) {
                         item.copy(imageId = R.drawable.availablecabin)
-                    }else{
+                    } else {
                         item.copy(imageId = R.drawable.reservedcabin)
                     }
                 }
@@ -128,14 +152,18 @@ class ReservationViewModel(val context: Context) : ViewModel() {
         ReservationViewModelEffects.Composable.meetingListUpdated.send()
     }
 
-    private fun onLoginClicked(employeeId :String) {
+    private fun onLoginClicked(employeeId: String) {
         _uiState.update { it.copy(employeeId = employeeId) }
     }
 
     private fun onFloorSelected(floor: Int) {
         selectedFloor.intValue = floor
         ReservationViewModelEffects.Composable.SelectedFloor(filterByFloor(floor)).send()
-        ReservationViewModelEffects.Composable.MeetingRoomListByFilter(meetingRoomFilterByFloor(floor)).send()
+        ReservationViewModelEffects.Composable.MeetingRoomListByFilter(
+            meetingRoomFilterByFloor(
+                floor
+            )
+        ).send()
     }
 
     private fun onFilterButtonClicked() {
@@ -146,17 +174,58 @@ class ReservationViewModel(val context: Context) : ViewModel() {
         _uiState.update { it.copy(selectedDate = dateSelected) }
     }
 
-    private fun ReservationViewModelEffects.send(){
+    private fun ReservationViewModelEffects.send() {
         viewModelScope.launch { _effects.emit(this@send) }
     }
 
 
     fun filterByFloor(floorNumber: Int): List<DeskItemModel> {
-       return _uiState.value.deskList.filter { it.floorNumber == floorNumber }
+        return _uiState.value.deskList.filter { it.floorNumber == floorNumber }
     }
 
     fun meetingRoomFilterByFloor(floorNumber: Int): List<MeetingItemModel> {
         return _uiState.value.cabinList.filter { it.floor == floorNumber }
+    }
+
+    fun updateCurrentDeskList() {
+        _uiState.update { state ->
+            val updatedItems = state.currentFilteredList.mapIndexed { i, item ->
+                if (item.seatId == selectedDesk.value?.seatId) {
+                    item.copy(
+                        imageId = R.drawable.deskbooked,
+                        reservationStatus = AvailabilityType.BOOKED.type
+                    )// Change to desired color
+                } else {
+                    if (item.reservationStatus == AvailabilityType.RESERVED.type) {
+                        item.copy(imageId = R.drawable.reserveddesk)
+                    } else if (item.reservationStatus == AvailabilityType.BOOKED.type) {
+                        item.copy(imageId = R.drawable.deskbooked)
+                    } else {
+                        item.copy(imageId = R.drawable.availabledesk)
+                    }
+                }
+            }
+            state.copy(currentFilteredList = updatedItems)
+        }
+        ReservationViewModelEffects.Composable.deskListUpdated.send()
+    }
+
+    fun updateDeskList() {
+        _uiState.update { state ->
+            val selectedDeskId = selectedDesk.value?.seatId
+            val index = state.deskList.indexOfFirst { it.seatId == selectedDeskId }
+            if (index != -1) {
+                val updatedItems = state.deskList.toMutableList()
+                val selectedItem = updatedItems[index]
+                updatedItems[index] = selectedItem.copy(
+                    imageId = R.drawable.deskbooked,
+                    reservationStatus = AvailabilityType.BOOKED.type
+                )
+                state.copy(deskList = updatedItems)
+            } else {
+                state
+            }
+        }
     }
 
 }

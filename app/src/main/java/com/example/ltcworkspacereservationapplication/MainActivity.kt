@@ -31,8 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -54,6 +54,7 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.Prefere
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -248,7 +249,9 @@ private fun HomePage(
                         shape = RoundedCornerShape(Spacing.Size_10)
                     )
             ) {
-                viewModel.sendIntent(AppIntent.OnFloorSelect(it))
+                viewModel.viewModelScope.launch {
+                    viewModel.sendIntent(AppIntent.OnFloorSelect(it))
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
             Box(
@@ -271,7 +274,9 @@ private fun HomePage(
                 CustomDatePickerDialog(onDateSelected = { date ->
                     selectedDate.value = date
                     showDialog.value = false
-                    viewModel.sendIntent(AppIntent.OnDatePickerClick(selectedDate.value))
+                    viewModel.viewModelScope.launch {
+                        viewModel.sendIntent(AppIntent.OnDatePickerClick(selectedDate.value))
+                    }
                 })
             }
         }
