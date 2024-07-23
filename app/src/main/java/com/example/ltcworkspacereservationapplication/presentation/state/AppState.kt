@@ -16,8 +16,11 @@ data class AppState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val employeeId : String = "5605305",
     val employeeName : String = "Raju Kumar",
     val selectedDate : String = getCurrentDate(),
+
     val deskList: List<DeskItemModel> = listData.deskList,
     val cabinList: List<MeetingItemModel> = listData.cabinList,
+
+    var currentFilteredList: List<DeskItemModel> = listData.deskList,
 
     val deskHistoryList : List<DeskHistoryModel> = DeskHistoryList.getList,
     val cabinHistoryList : List<CabinHistoryModel> = CabinHistoryList.getList
@@ -27,6 +30,6 @@ data class AppState @RequiresApi(Build.VERSION_CODES.O) constructor(
 @RequiresApi(Build.VERSION_CODES.O)
 fun getCurrentDate(): String {
     val currentDate = LocalDate.now()
-    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     return currentDate.format(formatter)
 }

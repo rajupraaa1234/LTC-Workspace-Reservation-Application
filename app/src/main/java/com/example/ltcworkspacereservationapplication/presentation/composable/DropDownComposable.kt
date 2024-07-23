@@ -18,7 +18,7 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 @Composable
 fun CustomDropdownMenu(modifier: Modifier, onSelect: (Int) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf("Select floor") }
+    var selectedText by remember { mutableStateOf("All Floor") }
 
     Box(
         modifier = modifier

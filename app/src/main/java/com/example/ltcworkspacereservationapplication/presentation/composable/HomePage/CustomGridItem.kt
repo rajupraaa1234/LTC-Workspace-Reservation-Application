@@ -41,6 +41,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
 import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import com.example.ltcworkspacereservationapplication.presentation.composable.ConfirmationPopup
@@ -181,6 +183,7 @@ fun DeskGridList(
                 onClick = {
                     onSubmit()
                 },
+
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (isAnyItemClicked) AppColor.primaryColor else AppColor.primaryColorLight,
                     disabledContainerColor = AppColor.primaryColorLight
@@ -188,17 +191,13 @@ fun DeskGridList(
                 enabled = isAnyItemClicked,
                 modifier = Modifier
                     .background(if (isAnyItemClicked) AppColor.primaryColor else AppColor.primaryColorLight)
-                    .clip(shape = RoundedCornerShape(10.dp))
-                    .border(
-                        1.dp,
-                        if (isAnyItemClicked) AppColor.primaryColor else AppColor.primaryColorLight,
-                    )
-
+                    .height(40.dp)
+                    .width(80.dp)
             ) {
                 Text(
                     text = "Book",
                     color = AppColor.backgroundColor,
-                    style = MaterialTheme.typography.button,
+                    fontSize = 10.sp
                 )
             }
         }
@@ -210,7 +209,6 @@ fun TimeCard() {
     Card(
         shape = RoundedCornerShape(Spacing.Size_10),
         backgroundColor = Color(0xFFF5F5F5),
-        modifier = Modifier
     ) {
         Row(
             horizontalArrangement = Arrangement.Start,
@@ -220,6 +218,7 @@ fun TimeCard() {
             Indicator("Reserved", AppColor.reservedIndicator)
             Indicator("Selected", AppColor.selectedIndicator)
             Indicator("Available", AppColor.availableIndicator)
+            Indicator("Booked", AppColor.bookedDeskBackgroundColour)
         }
     }
 }
@@ -227,7 +226,7 @@ fun TimeCard() {
 @Composable
 fun Indicator(text: String, color: Color) {
     Row(
-        modifier = Modifier.padding(Spacing.Size_3),
+        modifier = Modifier.padding(2.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -255,7 +254,7 @@ fun DeskGridItem(item: DeskItemModel, onClickItem: (DeskItemModel, Int) -> Unit,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .padding(Spacing.Size_8, bottom = bottomPadding)
-            .clickable { onClickItem(item, index) }
+            .clickable { if(item.reservationStatus == AvailabilityType.AVAILABLE.type) onClickItem(item, index) }
     ) {
         Image(
             painter = painterResource(id = item.imageId),
@@ -263,6 +262,6 @@ fun DeskGridItem(item: DeskItemModel, onClickItem: (DeskItemModel, Int) -> Unit,
             Modifier
                 .size(Spacing.Size_40)
         )
-        Text(text = item.deskId, style = MaterialTheme.typography.body2)
+        Text(text = "${item.floorNumber} - ${item.seatNumber}", style = MaterialTheme.typography.body2)
     }
 }

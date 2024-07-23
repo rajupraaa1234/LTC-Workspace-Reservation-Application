@@ -1,6 +1,7 @@
 package com.example.ltcworkspacereservationapplication
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,6 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -43,6 +46,7 @@ import com.example.ltcworkspacereservationapplication.presentation.screens.OtpCo
 import com.example.ltcworkspacereservationapplication.presentation.screens.PhoneNumberVerificationScreen
 import com.example.ltcworkspacereservationapplication.presentation.screens.ScannerScreenComposable
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
+import com.example.ltcworkspacereservationapplication.presentation.mvvm.MyViewModelFactory
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.screens.HistoryScreen
 import com.example.ltcworkspacereservationapplication.presentation.screens.HomeScreen
@@ -54,12 +58,16 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.color.A
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel: ReservationViewModel by viewModels()
+        val viewModel = ViewModelProvider(
+            this,
+            MyViewModelFactory(application)
+        ).get(ReservationViewModel::class.java)
+
         enableEdgeToEdge()
         setContent {
             val employeeId = PreferencesManager.getEmployeeId(this)
-            val startDestination = if (employeeId.isNullOrEmpty()) Routes.LOGIN else Routes.HOME_SCREEN
-
+            val startDestination =
+                if (employeeId.isNullOrEmpty()) Routes.LOGIN else Routes.HOME_SCREEN
             BottomTabNavigation(viewModel)
         }
     }
@@ -175,9 +183,9 @@ fun AppNavHost(
     navController: NavHostController,
     viewModel: ReservationViewModel,
     modifier: Modifier,
-    onLogin: () -> Unit
+    onLogin: () -> Unit,
 ) {
-    NavHost(navController, startDestination = Routes.LOGIN) {
+    NavHost(navController, startDestination = Routes.HOME_SCREEN) {
         composable(Routes.HOME_SCREEN) { HomePage(navController, modifier, viewModel) }
         composable(Routes.HISTORY_SCREEN) { HistoryScreen(viewModel, modifier) }
         composable(Routes.LOGIN) {
@@ -207,7 +215,7 @@ fun AppNavHost(
 private fun HomePage(
     navController: NavHostController,
     modifier: Modifier,
-    viewModel: ReservationViewModel
+    viewModel: ReservationViewModel,
 ) {
     val userName = viewModel.uiState.value.employeeName
     val selectedDate = remember { mutableStateOf(viewModel.uiState.value.selectedDate) }

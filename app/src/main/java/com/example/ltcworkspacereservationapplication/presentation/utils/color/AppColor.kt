@@ -13,5 +13,6 @@ object AppColor {
     val reservedIndicator = Color(0xFF006A4D)
     val selectedIndicator = Color(0xFF800080)
     val reserveBackground = Color(0xFFE6CCCA)
+    val bookedDeskBackgroundColour = Color(0xFFFFA500)
     val availableIndicator = Color(0xFF808080)
 }

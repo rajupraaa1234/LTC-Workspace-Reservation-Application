@@ -6,25 +6,27 @@ import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemMo
 
 object listData {
     val deskList: List<DeskItemModel> = listOf(
-       DeskItemModel("10-01","reserved",R.drawable.reserveddesk),
-        DeskItemModel("10-03","reserved",R.drawable.reserveddesk),
-        DeskItemModel("10-02","reserved",R.drawable.reserveddesk),
-        DeskItemModel("10-04","reserved",R.drawable.reserveddesk),
-        DeskItemModel("10-05","avail",R.drawable.availabledesk),
-        DeskItemModel("10-06","avail",R.drawable.availabledesk),
-        DeskItemModel("10-07","reserved",R.drawable.reserveddesk),
-        DeskItemModel("10-07","avail",R.drawable.availabledesk),
-        DeskItemModel("10-07","reserved",R.drawable.reserveddesk),
-        DeskItemModel("10-05","avail",R.drawable.availabledesk),
-        DeskItemModel("10-06","avail",R.drawable.availabledesk),
-        DeskItemModel("10-07","reserved",R.drawable.reserveddesk),
-        DeskItemModel("10-07","avail",R.drawable.availabledesk),
-        DeskItemModel("10-07","reserved",R.drawable.reserveddesk),
-        DeskItemModel("10-05","avail",R.drawable.availabledesk),
-        DeskItemModel("10-06","avail",R.drawable.availabledesk),
-        DeskItemModel("10-07","reserved",R.drawable.reserveddesk),
-        DeskItemModel("10-07","avail",R.drawable.availabledesk),
-        DeskItemModel("10-07","reserved",R.drawable.reserveddesk),
+
+        DeskItemModel(155, 1,  5, "Booked",R.drawable.deskbooked),
+        DeskItemModel(156, 2,  5, "Reserved",R.drawable.reserveddesk),
+        DeskItemModel(110, 3,  5, "Booked",R.drawable.deskbooked),
+        DeskItemModel(157, 4,  10, "Reserved",R.drawable.reserveddesk),
+
+        DeskItemModel(158, 6,  5, "Available",R.drawable.availabledesk),
+        DeskItemModel(159, 2,  5, "Available",R.drawable.availabledesk),
+        DeskItemModel(160, 10,  5, "Booked",R.drawable.deskbooked),
+        DeskItemModel(162, 11,  10, "Reserved",R.drawable.reserveddesk),
+
+
+        DeskItemModel(1581, 16,  5, "Available",R.drawable.availabledesk),
+        DeskItemModel(1591, 21,  5, "Available",R.drawable.availabledesk),
+        DeskItemModel(1602, 12,  10, "Booked",R.drawable.deskbooked),
+        DeskItemModel(1601, 13,  10, "Reserved",R.drawable.reserveddesk),
+
+        DeskItemModel(15811, 16,  5, "Available",R.drawable.availabledesk),
+        DeskItemModel(1599, 21,  5, "Available",R.drawable.availabledesk),
+        DeskItemModel(1612, 12,  10, "Booked",R.drawable.deskbooked),
+        DeskItemModel(1611, 13,  10, "Reserved",R.drawable.reserveddesk),
 
     )
 
