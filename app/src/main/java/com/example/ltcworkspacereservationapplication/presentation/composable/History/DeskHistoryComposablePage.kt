@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
 import com.example.ltcworkspacereservationapplication.domain.model.History.DeskHistoryModel
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
@@ -59,22 +60,26 @@ private fun ElevatedCard(item: DeskHistoryModel) {
             with(item){
                 Column {
                     Text(
-                        text = "Desk Id : $deskId",
+                        text = "Desk Id : $seatNumber",
                         style = MaterialTheme.typography.subtitle2,
                     )
                     Text(
-                        text = "Status : $status",
-                        color = if(status == "reserved") AppColor.primaryColor else Color.Red ,
+                        text = "Status : $reservationStatus",
+                        color = if(reservationStatus == AvailabilityType.RESERVED.type) AppColor.primaryColorLight else if(reservationStatus == AvailabilityType.BOOKED.type) AppColor.bookedDeskBackgroundColour else Color.Red ,
                         style = MaterialTheme.typography.subtitle2,
                     )
                 }
                 Column {
                     Text(
-                        text = "Floor : $floor",
+                        text = "Floor : $floorNumber",
                         style = MaterialTheme.typography.caption,
                     )
                     Text(
                         text = "Booking Date : $date",
+                        style = MaterialTheme.typography.caption,
+                    )
+                    Text(
+                        text = "Booking Id : $bookingId",
                         style = MaterialTheme.typography.caption,
                     )
                 }

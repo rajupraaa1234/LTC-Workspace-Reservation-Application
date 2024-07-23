@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
 import com.example.ltcworkspacereservationapplication.domain.model.History.CabinHistoryModel
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
@@ -64,7 +65,7 @@ private fun ElevatedCard(item: CabinHistoryModel) {
                     )
                     Text(
                         text = "Status : $status",
-                        color = if (status == "Reserved") AppColor.primaryColor else Color.Red,
+                        color = if (status == AvailabilityType.RESERVED.type) AppColor.primaryColorLight else Color.Red,
                         style = MaterialTheme.typography.subtitle2,
                     )
                 }
