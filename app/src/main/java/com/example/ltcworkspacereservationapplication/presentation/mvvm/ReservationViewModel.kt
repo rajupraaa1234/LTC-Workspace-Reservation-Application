@@ -1,6 +1,7 @@
 package com.example.ltcworkspacereservationapplication.presentation.mvvm
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.ltcworkspacereservationapplication.R
 import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
@@ -16,6 +17,9 @@ class ReservationViewModel : ViewModel() {
 
     val uiState: StateFlow<AppState>
         get() = _uiState
+
+    var isLoading = mutableStateOf(false)
+        protected set
 
     val TAG =  "ReservationViewModel"
 
