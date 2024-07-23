@@ -53,12 +53,28 @@ class ReservationViewModel(val context: Context) : ViewModel() {
             is AppIntent.OnMeetingRoomBooking -> onMeetingBooking(intent.startTime,intent.endTime,intent.capacity,intent.meetingId)
             is AppIntent.onLoginClick -> onLoginClicked(intent.employeeId)
             is AppIntent.OnDeskListFilter -> OnDeskListFilterUpdate(intent.listItem)
+            is AppIntent.OnMeetingListFilterUpdate -> onMeetingListFilterUpdate(intent.listItem)
         }
     }
 
     private fun OnDeskListFilterUpdate(listItem: List<DeskItemModel>) {
-        Log.d(TAG, "OnDeskListFilterUpdate: ${listItem}")
         _uiState.update { it.copy(currentFilteredList = listItem) }
+    }
+
+    private fun onMeetingListFilterUpdate(listItem: List<MeetingItemModel>) {
+        _uiState.update { it.copy(currentMeetingRoomFilteredList = listItem) }
+    }
+
+    private fun callBookDeskApi() {
+//        {
+//            "employId": "5605969",
+//            "name": "Gaurav",
+//            "date":"2024-07-23",
+//            "seatNumber": 52,
+//            "floorNumber": 5,
+//            "reservationStatus":"Booked"
+//        }
+
     }
 
     private fun onDeskBookButtonClicked() {
@@ -94,10 +110,10 @@ class ReservationViewModel(val context: Context) : ViewModel() {
     }
 
 
-    private fun OnMeetingItemClicked(item: MeetingItemModel, index: Int) {
+    private fun OnMeetingItemClicked(itm: MeetingItemModel, index: Int) {
         _uiState.update { state ->
-            val updatedItems = state.cabinList.mapIndexed { i, item ->
-                if (i == index) {
+            val updatedItems = state.currentMeetingRoomFilteredList.mapIndexed { i, item ->
+                if (itm.meetingRoomId == item.meetingRoomId) {
                     item.copy(imageId = R.drawable.selectedcabin) // Change to desired color
                 }else{
                     if(item.reservedSlot.size == 0){
@@ -107,8 +123,9 @@ class ReservationViewModel(val context: Context) : ViewModel() {
                     }
                 }
             }
-            state.copy(cabinList = updatedItems)
+            state.copy(currentMeetingRoomFilteredList = updatedItems)
         }
+        ReservationViewModelEffects.Composable.meetingListUpdated.send()
     }
 
     private fun onLoginClicked(employeeId :String) {
@@ -118,6 +135,7 @@ class ReservationViewModel(val context: Context) : ViewModel() {
     private fun onFloorSelected(floor: Int) {
         selectedFloor.intValue = floor
         ReservationViewModelEffects.Composable.SelectedFloor(filterByFloor(floor)).send()
+        ReservationViewModelEffects.Composable.MeetingRoomListByFilter(meetingRoomFilterByFloor(floor)).send()
     }
 
     private fun onFilterButtonClicked() {
@@ -135,6 +153,10 @@ class ReservationViewModel(val context: Context) : ViewModel() {
 
     fun filterByFloor(floorNumber: Int): List<DeskItemModel> {
        return _uiState.value.deskList.filter { it.floorNumber == floorNumber }
+    }
+
+    fun meetingRoomFilterByFloor(floorNumber: Int): List<MeetingItemModel> {
+        return _uiState.value.cabinList.filter { it.floor == floorNumber }
     }
 
 }

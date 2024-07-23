@@ -43,6 +43,8 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
 
     val deskList = remember { mutableStateOf(uiState.value.currentFilteredList) }
 
+    val meetingList = remember { mutableStateOf(uiState.value.currentMeetingRoomFilteredList) }
+
     LaunchedEffect(viewModel.effects) {
         viewModel.effects
             .filterIsInstance<ReservationViewModelEffects.Composable>()
@@ -56,6 +58,18 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
                     ReservationViewModelEffects.Composable.deskListUpdated -> {
                         scope.launch {
                             deskList.value = uiState.value.currentFilteredList
+                        }
+                    }
+
+                    is ReservationViewModelEffects.Composable.MeetingRoomListByFilter -> scope.launch {
+                        meetingList.value = it.list
+                        uiState.value.currentMeetingRoomFilteredList = it.list
+                        viewModel.sendIntent(AppIntent.OnMeetingListFilterUpdate(uiState.value.currentMeetingRoomFilteredList))
+                    }
+
+                    ReservationViewModelEffects.Composable.meetingListUpdated -> {
+                        scope.launch {
+                            meetingList.value = uiState.value.currentMeetingRoomFilteredList
                         }
                     }
                 }
@@ -90,7 +104,7 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
                             viewModel.sendIntent(AppIntent.OnDeskBookButtonClicked)
                         }
                         1 -> CabinReservationComposablePage(
-                            uiState.value.cabinList,
+                            meetingList.value,
                             onClickItem = {it,index-> viewModel.sendIntent(AppIntent.OnMeetingItemClick(it,index)) },
                             onSubmit = { startTime, endTime, capacity, meetingId ->
                                 viewModel.sendIntent(

@@ -21,6 +21,7 @@ data class AppState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val cabinList: List<MeetingItemModel> = listData.cabinList,
 
     var currentFilteredList: List<DeskItemModel> = listData.deskList,
+    var currentMeetingRoomFilteredList: List<MeetingItemModel> = listData.cabinList,
 
     val deskHistoryList : List<DeskHistoryModel> = DeskHistoryList.getList,
     val cabinHistoryList : List<CabinHistoryModel> = CabinHistoryList.getList

@@ -3,7 +3,6 @@ package com.example.ltcworkspacereservationapplication.presentation.composable.H
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,13 +17,10 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Button
@@ -37,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -62,7 +57,7 @@ fun CustomGridItem(
         ConfirmationPopup(
             onDismiss = { showDialog = false },
             onSubmit = { startTime, endTime, capacity ->
-                onSubmit(startTime, endTime, capacity, item.meetingRoomId)
+                onSubmit(startTime, endTime, capacity, item.meetingRoomId.toString())
                 showDialog = false
             })
     }
@@ -133,12 +128,11 @@ fun CabinGridList(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
             ) {
-                items(items.size) { index ->
-                    CustomGridItem(items[index], onClickItem, onSubmit, index)
+                items(items.size) { index -> CustomGridItem(items[index], onClickItem, onSubmit, index)
                 }
             }
         }
-        TimeCard()
+        TimeCard(false)
     }
 }
 
@@ -177,7 +171,7 @@ fun DeskGridList(
             verticalAlignment = Alignment.CenterVertically,
         ) {
 
-            TimeCard()
+            TimeCard(true)
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = {
@@ -205,7 +199,7 @@ fun DeskGridList(
 }
 
 @Composable
-fun TimeCard() {
+fun TimeCard(isBookedShow: Boolean) {
     Card(
         shape = RoundedCornerShape(Spacing.Size_10),
         backgroundColor = Color(0xFFF5F5F5),
@@ -218,7 +212,8 @@ fun TimeCard() {
             Indicator("Reserved", AppColor.reservedIndicator)
             Indicator("Selected", AppColor.selectedIndicator)
             Indicator("Available", AppColor.availableIndicator)
-            Indicator("Booked", AppColor.bookedDeskBackgroundColour)
+            if(isBookedShow)
+             Indicator("Booked", AppColor.bookedDeskBackgroundColour)
         }
     }
 }
