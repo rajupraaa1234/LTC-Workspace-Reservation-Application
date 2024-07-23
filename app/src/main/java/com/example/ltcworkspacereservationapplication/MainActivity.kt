@@ -190,14 +190,19 @@ fun AppNavHost(
             PhoneNumberVerificationScreen(navController = navController)
         }
         composable(
-            route = Routes.OTP_SCREEN + "?phoneNumber={phoneNumber}",
-            arguments = listOf(navArgument("phoneNumber") { type = NavType.StringType })
+            route = "${Routes.OTP_SCREEN}?verificationId={verificationId}&phoneNumber={phoneNumber}",
+            arguments = listOf(
+                navArgument("verificationId") { type = NavType.StringType },
+                navArgument("phoneNumber") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
+            val verificationId = backStackEntry.arguments?.getString("verificationId") ?: ""
             val phoneNumber = backStackEntry.arguments?.getString("phoneNumber") ?: ""
-            OtpComposableScreen(navController = navController, phoneNumber = phoneNumber) {
+            OtpComposableScreen(navController = navController, verificationId = verificationId, phoneNumber = phoneNumber) {
                 onLogin()
             }
         }
+
     }
 }
 

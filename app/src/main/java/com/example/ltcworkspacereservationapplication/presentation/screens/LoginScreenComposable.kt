@@ -52,16 +52,19 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.color.A
 
 @Composable
 fun LoginScreenComposable(navController: NavHostController,viewModel: ReservationViewModel) {
+    var employeeName by remember { mutableStateOf(TextFieldValue("")) }
+    var employeeNameError by remember { mutableStateOf(false) }
     var employeeId by remember { mutableStateOf(TextFieldValue("")) }
     var employeeIdError by remember { mutableStateOf(false) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
     var passwordError by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
 
-
+    val employeeNameRegex = Regex("^[A-Za-z ]+$")
     val employeeIdRegex = Regex("^\\d{7}\$")
     val passwordRegex = Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}\$")
     val context = LocalContext.current
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -135,6 +138,36 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
                     .padding(bottom = 16.dp)
             )
         }
+        Text(
+            text = "Employee Name",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 4.dp),
+            fontSize = 16.sp,
+            color = AppColor.textColorPrimary
+        )
+        OutlinedTextField(
+            value = employeeName,
+            onValueChange = {
+                employeeName = it
+                employeeNameError = !employeeNameRegex.matches(employeeName.text)
+            },
+            placeholder = { Text("Enter your Employee Name") },
+            isError = employeeNameError,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
+        )
+        if (employeeNameError) {
+            Text(
+                text = "Employee Name must contain only letters",
+                color = AppColor.errorColor,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+        }
 
         Text(
             text = "Password",
@@ -179,8 +212,8 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
             )
         }
 
-        val isButtonEnabled =
-            !employeeIdError && !passwordError && employeeId.text.isNotEmpty() && password.text.isNotEmpty()
+        val isButtonEnabled = !employeeNameError && !employeeIdError && !passwordError &&
+                    employeeName.text.isNotEmpty() && employeeId.text.isNotEmpty() && password.text.isNotEmpty()
         Button(
             onClick = {
                 if (isButtonEnabled) {

@@ -1,5 +1,7 @@
 package com.example.ltcworkspacereservationapplication.presentation.screens
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -31,8 +33,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.ltcworkspacereservationapplication.PhoneAuth
+import com.example.ltcworkspacereservationapplication.presentation.utils.FirebaseUtils
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
+import com.example.ltcworkspacereservationapplication.presentation.utils.getActivity
+import com.example.ltcworkspacereservationapplication.storedVerificationId
+import com.google.firebase.FirebaseException
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun PhoneNumberVerificationScreen(navController: NavHostController) {
@@ -99,7 +110,12 @@ fun PhoneNumberVerificationScreen(navController: NavHostController) {
         Button(
             onClick = {
                 if (isPhoneNumberValid) {
-                    navController.navigate("${Routes.OTP_SCREEN}?phoneNumber=$phoneNumber")
+
+                    PhoneAuth(navController.context, phoneNumber) {
+                        val verificationId = storedVerificationId ?: ""
+                        navController.navigate("${Routes.OTP_SCREEN}?verificationId=$verificationId&phoneNumber=$phoneNumber")
+                    }
+
                 }
             },
             colors = ButtonDefaults.buttonColors(
