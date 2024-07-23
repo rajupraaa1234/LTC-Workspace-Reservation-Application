@@ -1,6 +1,7 @@
 package com.example.ltcworkspacereservationapplication.presentation.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -147,7 +148,6 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
         Button(
             onClick = {
                 if (isOTPValid) {
-                    // Handle OTP verification logic here
                     try {
                         val credential = PhoneAuthProvider.getCredential(verificationId, otp)
                         Log.d("otp", "Credential: $credential")
@@ -156,12 +156,11 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
                         FirebaseUtils.firebaseAuth.signInWithCredential(credential)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-                                    // Sign in success, update UI with the signed-in user's information
                                     Log.d("firebase", "Sign in successful")
                                     onLogin()
                                     navController.navigate(Routes.HOME_SCREEN)
                                 } else {
-                                    // Sign in failed, display a message and update the UI
+                                    Toast.makeText(navController.context, "Invalid OTP, Please try again",Toast.LENGTH_SHORT).show()
                                     Log.d("firebase", "Sign in failed: ${task.exception?.message}")
                                 }
                             }
@@ -169,6 +168,7 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
                         Log.d("otp", "Exception: ${e.message}")
                     }
                 } else {
+                    Toast.makeText(navController.context, "Invalid OTP, Please try again",Toast.LENGTH_SHORT).show()
                     Log.d("otp", "Invalid OTP")
                 }
 
