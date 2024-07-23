@@ -17,7 +17,7 @@ class ReservationViewModel : ViewModel() {
     val uiState: StateFlow<AppState>
         get() = _uiState
 
-    val TAG =  "ReservationViewModel"
+    val TAG = "ReservationViewModel"
 
 
     fun sendIntent(intent: AppIntent) {
@@ -25,15 +25,30 @@ class ReservationViewModel : ViewModel() {
             AppIntent.OnFilterButtonClicked -> onFilterButtonClicked()
             is AppIntent.OnDatePickerClick -> onDatePickerClicked(intent.dateSelected)
             is AppIntent.OnFloorSelect -> onFloorSelected(intent.selectedFloor)
-            is AppIntent.OnMeetingItemClick -> OnMeetingItemClicked(intent.item,intent.index)
-            is AppIntent.OnDeskItemClick -> onDeskItemClicked(intent.item,intent.index)
-            is AppIntent.OnMeetingRoomBooking -> onMeetingBooking(intent.startTime,intent.endTime,intent.capacity,intent.meetingId)
+            is AppIntent.OnMeetingItemClick -> OnMeetingItemClicked(intent.item, intent.index)
+            is AppIntent.OnDeskItemClick -> onDeskItemClicked(intent.item, intent.index)
+            is AppIntent.OnMeetingRoomBooking -> onMeetingBooking(
+                intent.startTime,
+                intent.endTime,
+                intent.capacity,
+                intent.meetingId
+            )
+
             is AppIntent.onLoginClick -> onLoginClicked(intent.employeeId)
         }
     }
 
-    private fun onMeetingBooking(startTime: String, endTime: String, capacity: String, meetingId: String) {
+    private fun onMeetingBooking(
+        startTime: String,
+        endTime: String,
+        capacity: String,
+        meetingId: String
+    ) {
         Log.d(TAG, "onMeetingBooking: ${startTime} ${endTime} ${capacity} ${meetingId}")
+    }
+
+    fun updateStartDestination(startDestination: String) {
+        _uiState.update { it.copy(startDestination = startDestination) }
     }
 
     private fun onDeskItemClicked(item: DeskItemModel, index: Int) {
@@ -41,10 +56,10 @@ class ReservationViewModel : ViewModel() {
             val updatedItems = state.deskList.mapIndexed { i, item ->
                 if (i == index) {
                     item.copy(imageId = R.drawable.selecteddesk) // Change to desired color
-                }else{
-                    if(item.status == "reserved"){
+                } else {
+                    if (item.status == "reserved") {
                         item.copy(imageId = R.drawable.reserveddesk)
-                    }else{
+                    } else {
                         item.copy(imageId = R.drawable.availabledesk)
                     }
                 }
@@ -58,10 +73,10 @@ class ReservationViewModel : ViewModel() {
             val updatedItems = state.cabinList.mapIndexed { i, item ->
                 if (i == index) {
                     item.copy(imageId = R.drawable.selectedcabin) // Change to desired color
-                }else{
-                    if(item.reservedSlot.size == 0){
+                } else {
+                    if (item.reservedSlot.size == 0) {
                         item.copy(imageId = R.drawable.availablecabin)
-                    }else{
+                    } else {
                         item.copy(imageId = R.drawable.reservedcabin)
                     }
                 }
@@ -70,7 +85,7 @@ class ReservationViewModel : ViewModel() {
         }
     }
 
-    private fun onLoginClicked(employeeId :String) {
+    private fun onLoginClicked(employeeId: String) {
         _uiState.update { it.copy(employeeId = employeeId) }
     }
 

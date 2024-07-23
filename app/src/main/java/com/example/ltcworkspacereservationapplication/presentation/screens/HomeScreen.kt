@@ -2,6 +2,8 @@ package com.example.ltcworkspacereservationapplication.presentation.screens
 
 import TabSelection
 import android.annotation.SuppressLint
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,11 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import com.example.ltcworkspacereservationapplication.domain.model.HomeTabs
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.CabinReservationComposablePage
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.DeskReservationComposablePage
-import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
-import com.example.ltcworkspacereservationapplication.domain.model.HomeTabs
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
+import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -32,9 +35,12 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { HomeTabs.entries.size })
     val selectedTabIndex = remember { derivedStateOf { pagerState.currentPage } }
-
+    val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsState()
 
+    BackHandler {
+        (context as? Activity)?.finishAffinity()
+    }
     Scaffold() {
         Column(
             modifier = Modifier
