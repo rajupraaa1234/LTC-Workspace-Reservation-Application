@@ -74,11 +74,12 @@ class ReservationViewModel(val context: Context) : ViewModel() {
         _uiState.update { it.copy(currentMeetingRoomFilteredList = listItem) }
     }
 
+
     // Api Calls for Booking the Desk
     private suspend fun callBookDeskApi() {
         selectedDesk.value.let {
             val response = true
-            if(response){
+            if (response) {
                 viewModelScope.launch {
                     isLoading.value = true
                     delay(2000)
@@ -112,6 +113,10 @@ class ReservationViewModel(val context: Context) : ViewModel() {
         Log.d(TAG, "onMeetingBooking: ${startTime} ${endTime} ${capacity} ${meetingId}")
     }
 
+    fun updateStartDestination(startDestination: String) {
+        _uiState.update { it.copy(startDestination = startDestination) }
+    }
+
     private fun onDeskItemClicked(itm: DeskItemModel, index: Int) {
         selectedDesk.value = itm
         _uiState.update { state ->
@@ -119,6 +124,7 @@ class ReservationViewModel(val context: Context) : ViewModel() {
                 if (item.seatId == itm.seatId) {
                     item.copy(imageId = R.drawable.selecteddesk) // Change to desired color
                 } else {
+
                     if (item.reservationStatus == AvailabilityType.RESERVED.type) {
                         item.copy(imageId = R.drawable.reserveddesk)
                     } else if (item.reservationStatus == AvailabilityType.BOOKED.type) {

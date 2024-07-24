@@ -7,6 +7,8 @@ plugins {
 
     //    kotlin("kapt")
     id("com.google.dagger.hilt.android")
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -143,4 +145,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
 
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth-ktx")
 }

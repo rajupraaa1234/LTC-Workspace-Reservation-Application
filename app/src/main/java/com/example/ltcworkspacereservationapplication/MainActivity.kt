@@ -3,6 +3,7 @@ package com.example.ltcworkspacereservationapplication
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -25,6 +27,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -41,15 +44,16 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDatePickerDialog
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDropdownMenu
-import com.example.ltcworkspacereservationapplication.presentation.screens.LoginScreenComposable
-import com.example.ltcworkspacereservationapplication.presentation.screens.OtpComposableScreen
-import com.example.ltcworkspacereservationapplication.presentation.screens.PhoneNumberVerificationScreen
-import com.example.ltcworkspacereservationapplication.presentation.screens.ScannerScreenComposable
+import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.LogoutButton
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.MyViewModelFactory
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.screens.HistoryScreen
 import com.example.ltcworkspacereservationapplication.presentation.screens.HomeScreen
+import com.example.ltcworkspacereservationapplication.presentation.screens.LoginScreenComposable
+import com.example.ltcworkspacereservationapplication.presentation.screens.OtpComposableScreen
+import com.example.ltcworkspacereservationapplication.presentation.screens.PhoneNumberVerificationScreen
+import com.example.ltcworkspacereservationapplication.presentation.screens.ScannerScreenComposable
 import com.example.ltcworkspacereservationapplication.presentation.utils.PreferencesManager
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
@@ -69,6 +73,8 @@ class MainActivity : ComponentActivity() {
             val employeeId = PreferencesManager.getEmployeeId(this)
             val startDestination =
                 if (employeeId.isNullOrEmpty()) Routes.LOGIN else Routes.HOME_SCREEN
+            viewModel.updateStartDestination(startDestination)
+
             BottomTabNavigation(viewModel)
         }
     }
@@ -161,10 +167,14 @@ fun RenderBottomTabNavigation(navController: NavHostController) {
 @Composable
 private fun BottomTabNavigation(viewModel: ReservationViewModel) {
     val isLogin = remember { mutableStateOf(false) }
+    val uiState = viewModel.uiState.collectAsState()
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
-            if (isLogin.value) RenderBottomTabNavigation(navController)
+            if (uiState.value.startDestination == Routes.HOME_SCREEN) {
+                Log.d("BottomTabNavigation", "BottomTabNavigation: in if ")
+                RenderBottomTabNavigation(navController)
+            }
         }
     )
     { innerPadding ->
@@ -186,7 +196,8 @@ fun AppNavHost(
     modifier: Modifier,
     onLogin: () -> Unit,
 ) {
-    NavHost(navController, startDestination = Routes.LOGIN) {
+    val uiState = viewModel.uiState.collectAsState()
+    NavHost(navController, startDestination = uiState.value.startDestination) {
         composable(Routes.HOME_SCREEN) { HomePage(navController, modifier, viewModel) }
         composable(Routes.HISTORY_SCREEN) { HistoryScreen(viewModel, modifier) }
         composable(Routes.LOGIN) {
@@ -199,14 +210,24 @@ fun AppNavHost(
             PhoneNumberVerificationScreen(navController = navController)
         }
         composable(
-            route = Routes.OTP_SCREEN + "?phoneNumber={phoneNumber}",
-            arguments = listOf(navArgument("phoneNumber") { type = NavType.StringType })
+            route = "${Routes.OTP_SCREEN}?verificationId={verificationId}&phoneNumber={phoneNumber}",
+            arguments = listOf(
+                navArgument("verificationId") { type = NavType.StringType },
+                navArgument("phoneNumber") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
+            val verificationId = backStackEntry.arguments?.getString("verificationId") ?: ""
             val phoneNumber = backStackEntry.arguments?.getString("phoneNumber") ?: ""
-            OtpComposableScreen(navController = navController, phoneNumber = phoneNumber) {
+            OtpComposableScreen(
+                navController = navController,
+                verificationId = verificationId,
+                phoneNumber = phoneNumber
+            ) {
+                viewModel.updateStartDestination(Routes.HOME_SCREEN)
                 onLogin()
             }
         }
+
     }
 }
 
@@ -231,11 +252,26 @@ private fun HomePage(
                 bottom = Spacing.Size_0
             )
     ) {
-        Text(
-            text = "Dear ${userName}",
-            modifier = Modifier.padding(vertical = Spacing.Size_8),
-            style = MaterialTheme.typography.body2
-        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "Dear $userName",
+                modifier = Modifier.padding(vertical = Spacing.Size_8),
+                style = MaterialTheme.typography.body2
+            )
+            LogoutButton(onLogout = {
+                PreferencesManager.clearEmployeeId(navController.context)
+                viewModel.updateStartDestination(Routes.LOGIN)
+                navController.navigate(Routes.LOGIN) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            })
+        }
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically

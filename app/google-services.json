@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "866741623122",
+    "project_id": "ltc-workspace-reservation",
+    "storage_bucket": "ltc-workspace-reservation.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866741623122:android:7950d9ae77961452f1028b",
+        "android_client_info": {
+          "package_name": "com.example.ltcworkspacereservationapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANlAzcYB504XIz7DE2mYf3m9eYfeSZx2U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
