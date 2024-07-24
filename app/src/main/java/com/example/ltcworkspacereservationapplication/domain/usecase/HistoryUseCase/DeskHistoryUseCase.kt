@@ -2,9 +2,10 @@ package com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUse
 
 import com.example.ltcworkspacereservationapplication.domain.model.History.DeskHistoryModel
 import com.example.ltcworkspacereservationapplication.domain.repository.HistoryRepository.HistoryRepository
+import javax.inject.Inject
 
-class DeskHistoryUseCase(private val repository: HistoryRepository) {
-    suspend operator fun invoke(employeeId : Int): List<DeskHistoryModel> {
+class DeskHistoryUseCase @Inject constructor(private val repository: HistoryRepository) {
+    suspend operator fun invoke(employeeId: Int): List<DeskHistoryModel> {
         return repository.getDeskHistory(employeeId)
     }
 }

@@ -1,4 +1,4 @@
-package com.example.ltcworkspacereservationapplication.data.Repository.DeskHistory
+package com.example.ltcworkspacereservationapplication.data.Repository.History
 
 import com.example.ltcworkspacereservationapplication.domain.model.History.DeskHistoryModel
 import com.example.ltcworkspacereservationapplication.domain.model.History.MeetingHistory.MeetingRoomHistoryResponse

@@ -1,12 +1,15 @@
 package com.example.ltcworkspacereservationapplication.di
 
-import com.example.ltcworkspacereservationapplication.data.Repository.DeskHistory.HistoryUseCaseImpl
+import com.example.ltcworkspacereservationapplication.data.Repository.History.HistoryUseCaseImpl
 import com.example.ltcworkspacereservationapplication.data.Repository.DeskReservation.DeskUseCaseImpl
+import com.example.ltcworkspacereservationapplication.data.Repository.MeetingReservation.MeetingUseCaseImpl
 import com.example.ltcworkspacereservationapplication.domain.repository.DeskReservation.DeskReservationRepository
 import com.example.ltcworkspacereservationapplication.domain.repository.HistoryRepository.HistoryRepository
+import com.example.ltcworkspacereservationapplication.domain.repository.MeetingRoomRepository.MeetingRoomReservationRepository
 import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.BookDeskUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseCase.DeskHistoryUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseCase.MeetingHistoryUseCase
+import com.example.ltcworkspacereservationapplication.domain.usecase.MeetingRoomReservationUseCase.MeetingRoomReservationUseCase
 import com.example.ltcworkspacereservationapplication.network.ApiService
 import dagger.Module
 import dagger.Provides
@@ -20,7 +23,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    private const val BASE_URL = "https://api.example.com/"
+    private const val BASE_URL = "https://dummyapi.online/api/"
 
     @Provides
     @Singleton
@@ -31,6 +34,8 @@ object AppModule {
             .build()
             .create(ApiService::class.java)
     }
+
+    // Desk Room Related provider
 
     @Provides
     @Singleton
@@ -62,6 +67,22 @@ object AppModule {
     @Singleton
     fun provideMeetingHistoryUseCase(repository: HistoryRepository): MeetingHistoryUseCase {
         return MeetingHistoryUseCase(repository)
+    }
+
+
+    // Meeting Room Related provider
+
+    @Provides
+    @Singleton
+    fun provideMeetingRoomReservationRepository(apiService: ApiService): MeetingRoomReservationRepository {
+        return MeetingUseCaseImpl(apiService)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideMeetingRoomReservationUseCase(repository: MeetingRoomReservationRepository): MeetingRoomReservationUseCase {
+        return MeetingRoomReservationUseCase(repository)
     }
 
 }
