@@ -6,9 +6,8 @@ import com.example.ltcworkspacereservationapplication.domain.repository.DeskRese
 
 class BookDeskUseCase(
     private val repository: DeskReservationRepository,
-    private val request: DeskReservationRequest
 ) {
-    suspend operator fun invoke(): DeskReservationResponse {
+    suspend operator fun invoke(request: DeskReservationRequest): DeskReservationResponse {
         return repository.bookDesk(request)
     }
 }

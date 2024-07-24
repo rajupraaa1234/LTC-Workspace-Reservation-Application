@@ -16,14 +16,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
 import com.example.ltcworkspacereservationapplication.domain.model.History.CabinHistoryModel
+import com.example.ltcworkspacereservationapplication.domain.model.History.MeetingRoomHistoryResponse
 import com.example.ltcworkspacereservationapplication.presentation.composable.EmptyMessageComposable
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
 @Composable
-fun CabinHistoryComposablePage(cabinHistoryList: List<CabinHistoryModel>) {
+fun CabinHistoryComposablePage(cabinHistoryList: List<MeetingRoomHistoryResponse>) {
     if (cabinHistoryList.size == 0) {
         EmptyMessageComposable(
             title = "There is no any history available for meeting room reservation",
@@ -40,7 +42,7 @@ fun CabinHistoryComposablePage(cabinHistoryList: List<CabinHistoryModel>) {
 
 
 @Composable
-private fun CabinHistoryItem(item: CabinHistoryModel) {
+private fun CabinHistoryItem(item: MeetingRoomHistoryResponse) {
     Surface(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -48,8 +50,18 @@ private fun CabinHistoryItem(item: CabinHistoryModel) {
     }
 }
 
+
 @Composable
-private fun ElevatedCard(item: CabinHistoryModel) {
+fun extractHourAndMinute(time: String): String {
+    val parts = time.split(":")
+    if (parts.size >= 2) {
+        return "${parts[0]}:${parts[1]}"
+    }
+    return ""
+}
+
+@Composable
+private fun ElevatedCard(item: MeetingRoomHistoryResponse) {
     Card(
         shape = MaterialTheme.shapes.medium,
         backgroundColor = AppColor.whiteColor,
@@ -68,18 +80,18 @@ private fun ElevatedCard(item: CabinHistoryModel) {
             with(item) {
                 Column {
                     Text(
-                        text = "Meeting Room Id : $meetingRoomId",
-                        style = MaterialTheme.typography.subtitle2,
+                        text = "Meeting Room Id : R:$floorNumber-$roomNumber",
+                        style = MaterialTheme.typography.subtitle1.copy(fontSize = 12.sp),
                     )
                     Text(
-                        text = "Status : $status",
-                        color = if (status == AvailabilityType.RESERVED.type) AppColor.primaryColorLight else Color.Red,
+                        text = "Status : $reservationStatus",
+                        color = if (reservationStatus == AvailabilityType.RESERVED.type) AppColor.primaryColorLight else AppColor.bookedDeskBackgroundColour,
                         style = MaterialTheme.typography.subtitle2,
                     )
                 }
                 Column {
                     Text(
-                        text = "Floor : $floor",
+                        text = "Floor : $bookingId",
                         style = MaterialTheme.typography.caption,
                     )
                     Text(
@@ -87,7 +99,7 @@ private fun ElevatedCard(item: CabinHistoryModel) {
                         style = MaterialTheme.typography.caption,
                     )
                     Text(
-                        text = "Booking Time : $time",
+                        text = "Booking Time : ${extractHourAndMinute(startTime)}-${extractHourAndMinute(endTime)}",
                         style = MaterialTheme.typography.caption,
                     )
                 }

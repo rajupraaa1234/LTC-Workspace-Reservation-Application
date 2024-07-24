@@ -6,6 +6,6 @@ import com.example.ltcworkspacereservationapplication.domain.model.DeskReservati
 import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.DeskReservationResponse
 
 interface DeskReservationRepository {
-    suspend fun getDeskList(request : GetDeskReservationRequest) : List<DeskItemModel>
+    suspend fun getDeskList(date: String) : List<DeskItemModel>
     suspend fun bookDesk(deskReservationRequest: DeskReservationRequest) : DeskReservationResponse
 }

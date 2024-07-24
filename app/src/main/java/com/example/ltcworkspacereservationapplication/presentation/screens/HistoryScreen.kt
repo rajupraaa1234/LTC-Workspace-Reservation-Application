@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.ltcworkspacereservationapplication.presentation.composable.History.CabinHistoryComposablePage
 import com.example.ltcworkspacereservationapplication.presentation.composable.History.DeskHistoryComposablePage
@@ -58,7 +57,7 @@ fun HistoryScreen(
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                //contentAlignment = Alignment.Center
             ) {
                 when (selectedTabIndex.value) {
                     0 -> DeskHistoryComposablePage(viewModel.uiState.value.deskHistoryList)

@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.History.CabinHistoryModel
 import com.example.ltcworkspacereservationapplication.domain.model.History.DeskHistoryModel
+import com.example.ltcworkspacereservationapplication.domain.model.History.MeetingRoomHistoryResponse
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.dummyData.CabinHistoryList
@@ -26,7 +27,7 @@ data class AppState @RequiresApi(Build.VERSION_CODES.O) constructor(
 
     val startDestination : String = Routes.LOGIN,
     val deskHistoryList : List<DeskHistoryModel> = DeskHistoryList.getList,
-    val cabinHistoryList : List<CabinHistoryModel> = CabinHistoryList.getList
+    val cabinHistoryList : List<MeetingRoomHistoryResponse> = CabinHistoryList.getList
 )
 
 
