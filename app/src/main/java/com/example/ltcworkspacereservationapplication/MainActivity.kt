@@ -2,6 +2,7 @@ package com.example.ltcworkspacereservationapplication
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -157,10 +158,14 @@ fun RenderBottomTabNavigation(navController: NavHostController) {
 @Composable
 private fun BottomTabNavigation(viewModel: ReservationViewModel) {
     val isLogin = remember { mutableStateOf(false) }
+    val uiState = viewModel.uiState.collectAsState()
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
-            if (isLogin.value) RenderBottomTabNavigation(navController)
+            if (uiState.value.startDestination == Routes.HOME_SCREEN) {
+                Log.d("BottomTabNavigation", "BottomTabNavigation: in if ")
+                RenderBottomTabNavigation(navController)
+            }
         }
     )
     { innerPadding ->
@@ -209,6 +214,7 @@ fun AppNavHost(
                 verificationId = verificationId,
                 phoneNumber = phoneNumber
             ) {
+                viewModel.updateStartDestination(Routes.HOME_SCREEN)
                 onLogin()
             }
         }
@@ -249,6 +255,7 @@ private fun HomePage(
             )
             LogoutButton(onLogout = {
                 PreferencesManager.clearEmployeeId(navController.context)
+                viewModel.updateStartDestination(Routes.LOGIN)
                 navController.navigate(Routes.LOGIN) {
                     popUpTo(navController.graph.startDestinationId) {
                         inclusive = true
