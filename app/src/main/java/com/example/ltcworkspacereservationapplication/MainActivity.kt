@@ -91,7 +91,7 @@ fun RenderBottomTabNavigation(navController: NavHostController) {
                 navController.navigate(Routes.HOME_SCREEN) {
                     launchSingleTop = true
                     restoreState = true
-                    popUpTo(navController.graph.startDestinationId) {
+                    popUpTo(Routes.HOME_SCREEN) {
                         saveState = true
                     }
                 }
@@ -118,7 +118,7 @@ fun RenderBottomTabNavigation(navController: NavHostController) {
                 navController.navigate(Routes.SCANNER) {
                     launchSingleTop = true
                     restoreState = true
-                    popUpTo(navController.graph.startDestinationId) {
+                    popUpTo(Routes.HOME_SCREEN) {
                         saveState = true
                     }
                 }
@@ -142,7 +142,7 @@ fun RenderBottomTabNavigation(navController: NavHostController) {
                 navController.navigate(Routes.HISTORY_SCREEN) {
                     launchSingleTop = true
                     restoreState = true
-                    popUpTo(navController.graph.startDestinationId) {
+                    popUpTo(Routes.HOME_SCREEN) {
                         saveState = true
                     }
                 }
