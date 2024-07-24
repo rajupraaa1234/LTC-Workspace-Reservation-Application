@@ -6,6 +6,7 @@ import com.example.ltcworkspacereservationapplication.domain.repository.DeskRese
 import com.example.ltcworkspacereservationapplication.domain.repository.HistoryRepository.HistoryRepository
 import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.BookDeskUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseCase.DeskHistoryUseCase
+import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseCase.MeetingHistoryUseCase
 import com.example.ltcworkspacereservationapplication.network.ApiService
 import dagger.Module
 import dagger.Provides
@@ -54,6 +55,13 @@ object AppModule {
     @Singleton
     fun provideDeskHistoryUseCase(repository: HistoryRepository): DeskHistoryUseCase {
         return DeskHistoryUseCase(repository)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideMeetingHistoryUseCase(repository: HistoryRepository): MeetingHistoryUseCase {
+        return MeetingHistoryUseCase(repository)
     }
 
 }

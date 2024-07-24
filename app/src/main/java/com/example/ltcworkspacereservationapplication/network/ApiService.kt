@@ -4,6 +4,7 @@ import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Request.DeskReservationRequest
 import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.DeskReservationResponse
 import com.example.ltcworkspacereservationapplication.domain.model.History.DeskHistoryModel
+import com.example.ltcworkspacereservationapplication.domain.model.History.MeetingHistory.MeetingRoomHistoryResponse
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -25,6 +26,9 @@ interface ApiService {
 
     @GET("deskHistory/{employeeId}")
     suspend fun getAllDeskHistory(@Query("employeeId") employeeId:Int): List<DeskHistoryModel>
+
+    @GET("roomHistory/{employeeId}")
+    suspend fun getAllMeetingHistory(@Query("employeeId") employeeId:Int): List<MeetingRoomHistoryResponse>
 
 
 

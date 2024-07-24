@@ -2,7 +2,6 @@ package com.example.ltcworkspacereservationapplication.data.Repository.DeskReser
 
 import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Request.DeskReservationRequest
-import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Request.GetDeskReservationRequest
 import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.DeskReservationResponse
 import com.example.ltcworkspacereservationapplication.domain.repository.DeskReservation.DeskReservationRepository
 import com.example.ltcworkspacereservationapplication.network.ApiService
