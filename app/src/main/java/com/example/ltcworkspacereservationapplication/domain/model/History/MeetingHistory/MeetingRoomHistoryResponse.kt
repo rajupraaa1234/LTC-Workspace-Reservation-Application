@@ -1,4 +1,4 @@
-package com.example.ltcworkspacereservationapplication.domain.model.History
+package com.example.ltcworkspacereservationapplication.domain.model.History.MeetingHistory
 
 data class MeetingRoomHistoryResponse(
     val bookingId: Int,
@@ -6,7 +6,6 @@ data class MeetingRoomHistoryResponse(
     val empName: String,
     val roomNumber: Int,
     val floorNumber: Int,
-    val capacity: Int,
     val date: String,
     val startTime: String,
     val endTime: String,

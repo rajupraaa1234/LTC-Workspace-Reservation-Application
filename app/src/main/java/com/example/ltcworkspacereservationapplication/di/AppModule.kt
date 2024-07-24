@@ -1,8 +1,11 @@
 package com.example.ltcworkspacereservationapplication.di
 
+import com.example.ltcworkspacereservationapplication.data.Repository.DeskHistory.HistoryUseCaseImpl
 import com.example.ltcworkspacereservationapplication.data.Repository.DeskReservation.DeskUseCaseImpl
 import com.example.ltcworkspacereservationapplication.domain.repository.DeskReservation.DeskReservationRepository
+import com.example.ltcworkspacereservationapplication.domain.repository.HistoryRepository.HistoryRepository
 import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.BookDeskUseCase
+import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseCase.DeskHistoryUseCase
 import com.example.ltcworkspacereservationapplication.network.ApiService
 import dagger.Module
 import dagger.Provides
@@ -36,7 +39,21 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideBookDeskUseCase(userRepository: DeskReservationRepository): BookDeskUseCase {
-        return BookDeskUseCase(userRepository)
+    fun provideBookDeskUseCase(repository: DeskReservationRepository): BookDeskUseCase {
+        return BookDeskUseCase(repository)
     }
+
+
+    @Provides
+    @Singleton
+    fun provideHistoryRepository(apiService: ApiService): HistoryRepository {
+        return HistoryUseCaseImpl(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeskHistoryUseCase(repository: HistoryRepository): DeskHistoryUseCase {
+        return DeskHistoryUseCase(repository)
+    }
+
 }

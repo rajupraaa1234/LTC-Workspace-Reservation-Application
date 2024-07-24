@@ -5,7 +5,7 @@ import com.example.ltcworkspacereservationapplication.domain.repository.HistoryR
 
 
 class MeetingHistoryUseCase(private val repository: HistoryRepository) {
-    suspend operator fun invoke(employeeId : String): List<DeskHistoryModel> {
+    suspend operator fun invoke(employeeId : Int): List<DeskHistoryModel> {
         return repository.getDeskHistory(employeeId)
     }
 }

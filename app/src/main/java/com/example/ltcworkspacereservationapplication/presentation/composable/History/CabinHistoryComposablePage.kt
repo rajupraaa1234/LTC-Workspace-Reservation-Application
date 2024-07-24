@@ -15,11 +15,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
-import com.example.ltcworkspacereservationapplication.domain.model.History.CabinHistoryModel
-import com.example.ltcworkspacereservationapplication.domain.model.History.MeetingRoomHistoryResponse
+import com.example.ltcworkspacereservationapplication.domain.model.History.MeetingHistory.MeetingRoomHistoryResponse
 import com.example.ltcworkspacereservationapplication.presentation.composable.EmptyMessageComposable
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
