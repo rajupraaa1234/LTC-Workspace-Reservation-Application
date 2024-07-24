@@ -1,7 +1,5 @@
 package com.example.ltcworkspacereservationapplication.presentation.screens
 
-import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -34,22 +32,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ltcworkspacereservationapplication.PhoneAuth
-import com.example.ltcworkspacereservationapplication.presentation.utils.FirebaseUtils
+import com.example.ltcworkspacereservationapplication.presentation.utils.ProgressBar
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
-import com.example.ltcworkspacereservationapplication.presentation.utils.getActivity
 import com.example.ltcworkspacereservationapplication.storedVerificationId
-import com.google.firebase.FirebaseException
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthOptions
-import com.google.firebase.auth.PhoneAuthProvider
-import java.util.concurrent.TimeUnit
 
 @Composable
 fun PhoneNumberVerificationScreen(navController: NavHostController) {
     var phoneNumber by remember { mutableStateOf("") }
     var isPhoneNumberValid by remember { mutableStateOf(false) }
-
+    var isLoading by remember { mutableStateOf(false) }
     isPhoneNumberValid = phoneNumber.length == 10 && phoneNumber.all { it.isDigit() }
 
     Column(
@@ -110,9 +102,10 @@ fun PhoneNumberVerificationScreen(navController: NavHostController) {
         Button(
             onClick = {
                 if (isPhoneNumberValid) {
-
+                    isLoading = true
                     PhoneAuth(navController.context, phoneNumber) {
                         val verificationId = storedVerificationId ?: ""
+                        isLoading = false
                         navController.navigate("${Routes.OTP_SCREEN}?verificationId=$verificationId&phoneNumber=$phoneNumber")
                     }
 
@@ -141,4 +134,5 @@ fun PhoneNumberVerificationScreen(navController: NavHostController) {
             )
         }
     }
+    ProgressBar(isDisplayed = isLoading)
 }

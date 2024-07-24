@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ltcworkspacereservationapplication.presentation.utils.FirebaseUtils
+import com.example.ltcworkspacereservationapplication.presentation.utils.ProgressBar
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 import com.google.firebase.auth.PhoneAuthProvider
@@ -55,6 +56,7 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
     val focusRequester5 = remember { FocusRequester() }
     val focusRequester6 = remember { FocusRequester() }
     var isOTPValid by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -148,6 +150,7 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
         Button(
             onClick = {
                 if (isOTPValid) {
+                    isLoading = true
                     try {
                         val credential = PhoneAuthProvider.getCredential(verificationId, otp)
                         Log.d("otp", "Credential: $credential")
@@ -165,6 +168,7 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
                                 }
                             }
                     } catch (e: Exception) {
+                        isLoading = false
                         Log.d("otp", "Exception: ${e.message}")
                     }
                 } else {
@@ -199,6 +203,7 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
     LaunchedEffect(Unit) {
         focusRequester1.requestFocus()
     }
+    ProgressBar(isDisplayed = isLoading)
 }
 
 @Composable
