@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.util.copy
 import com.example.ltcworkspacereservationapplication.R
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
 import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Request.DeskReservationRequest
@@ -106,6 +107,14 @@ class ReservationViewModel @Inject constructor(
         }
     }
 
+    fun saveEmployeeName(employeeName: String) {
+        if (employeeName.isNotEmpty() && employeeName.length > 0) {
+           _uiState.update {
+               it.copy(employeeName = employeeName)
+           }
+        }
+    }
+
     private fun saveEmployeeIdInAppState(employeeId: String) {
         _uiState.update {
             it.copy(employeeId = employeeId)
@@ -150,6 +159,7 @@ class ReservationViewModel @Inject constructor(
             val response = instantDeskBookUseCase(request)
             if (response.status == AvailabilityType.RESERVED.type) {
                 setToastMessage("Your desk has been reserved")
+                deskHistoryAPICall(_uiState.value.employeeId)
                 updateInstantBookingDeskList(seatId = seatId)
                 updateInstantBookingList(seatId)
                 _uiState.update {
@@ -500,6 +510,10 @@ class ReservationViewModel @Inject constructor(
 
     private fun onDatePickerClicked(dateSelected: String) {
         _uiState.update { it.copy(selectedDate = dateSelected) }
+        viewModelScope.launch {
+            getDeskListApiCall()
+            getMeetingRoomList()
+        }
     }
 
     private fun ReservationViewModelEffects.send() {
@@ -663,5 +677,21 @@ class ReservationViewModel @Inject constructor(
             }
         }
         ReservationViewModelEffects.Composable.meetingListUpdated.send()
+    }
+
+    fun clearAllAppStateWhileLogout() {
+        _uiState.value.copy(
+            selectedDate = Utils.getCurrentDate(),
+            deskList = listOf(),
+            cabinList = listOf(),
+            currentFilteredList = listOf(),
+            currentMeetingRoomFilteredList = listOf(),
+            deskHistoryList = listOf(),
+            cabinHistoryList = listOf(),
+            showBanner = false,
+            seatId = 0,
+            floorNumber = 0,
+            bookingId = 0,
+        )
     }
 }

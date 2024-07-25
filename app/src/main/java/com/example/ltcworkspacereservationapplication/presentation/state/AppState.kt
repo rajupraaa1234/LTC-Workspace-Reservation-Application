@@ -16,14 +16,14 @@ import java.time.format.DateTimeFormatter
 
 data class AppState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val employeeId: String = "",
-    val employeeName: String = "Raju Kumar",
+    val employeeName: String = "",
     val selectedDate: String = Utils.getCurrentDate(),
 
     var deskList: List<DeskResponseItemModel> = listOf(),
-    val cabinList: List<MeetingItemModel> = listData.cabinList,
+    val cabinList: List<MeetingItemModel> = listOf(),
 
     var currentFilteredList: List<DeskResponseItemModel> = listOf(),
-    var currentMeetingRoomFilteredList: List<MeetingItemModel> = listData.cabinList,
+    var currentMeetingRoomFilteredList: List<MeetingItemModel> = listOf(),
 
     val startDestination : String = Routes.LOGIN,
     val deskHistoryList : List<DeskHistoryModel> = listOf(),
@@ -31,7 +31,6 @@ data class AppState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val showBanner : Boolean = false,
 
     // For Reservation
-
     val seatId: Int = 0,
     val floorNumber: Int = 0,
     val bookingId : Int = 0

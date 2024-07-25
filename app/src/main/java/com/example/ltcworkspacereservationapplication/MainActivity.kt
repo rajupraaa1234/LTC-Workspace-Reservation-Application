@@ -73,9 +73,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             showToastMessage(viewModel, this@MainActivity)
             val employeeId = PreferencesManager.getEmployeeId(this)
+            val employeeName = PreferencesManager.getEmployeeName(this)
             if (!employeeId.isNullOrEmpty()){
                 viewModel.viewModelScope.launch {
                     viewModel.saveEmployeeId(employeeId)
+                }
+            }
+            if(!employeeName.isNullOrEmpty()){
+                viewModel.viewModelScope.launch {
+                    viewModel.saveEmployeeName(employeeName)
                 }
             }
             val startDestination =
@@ -284,6 +290,9 @@ private fun HomePage(
             LogoutButton(onLogout = {
                 PreferencesManager.clearEmployeeId(navController.context)
                 viewModel.updateStartDestination(Routes.LOGIN)
+                viewModel.viewModelScope.launch {
+                    viewModel.clearAllAppStateWhileLogout()
+                }
                 navController.navigate(Routes.LOGIN) {
                     popUpTo(navController.graph.startDestinationId) {
                         inclusive = true
