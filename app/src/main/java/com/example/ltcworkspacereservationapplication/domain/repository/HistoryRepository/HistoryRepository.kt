@@ -5,6 +5,5 @@ import com.example.ltcworkspacereservationapplication.domain.model.History.Meeti
 
 interface HistoryRepository {
     suspend fun getDeskHistory(employeeId : Int) : List<DeskHistoryModel>
-
     suspend fun getMeetingHistory(employeeId : Int) : List<MeetingRoomHistoryResponse>
 }

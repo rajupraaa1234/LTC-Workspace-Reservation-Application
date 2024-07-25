@@ -38,7 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
-import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
+import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.DeskResponseItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import com.example.ltcworkspacereservationapplication.presentation.composable.ConfirmationPopup
 import com.example.ltcworkspacereservationapplication.presentation.composable.EmptyMessageComposable
@@ -148,8 +148,8 @@ fun CabinGridList(
 
 @Composable
 fun DeskGridList(
-    items: List<DeskItemModel>,
-    onClickItem: (DeskItemModel, Int) -> Unit,
+    items: List<DeskResponseItemModel>,
+    onClickItem: (DeskResponseItemModel, Int) -> Unit,
     onSubmit: () -> Unit
 ) {
     var isAnyItemClicked by remember { mutableStateOf(false) }
@@ -258,7 +258,7 @@ fun Indicator(text: String, color: Color) {
 
 
 @Composable
-fun DeskGridItem(item: DeskItemModel, onClickItem: (DeskItemModel, Int) -> Unit, index: Int) {
+fun DeskGridItem(item: DeskResponseItemModel, onClickItem: (DeskResponseItemModel, Int) -> Unit, index: Int) {
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

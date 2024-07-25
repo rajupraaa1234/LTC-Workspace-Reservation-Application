@@ -1,6 +1,6 @@
-package com.example.ltcworkspacereservationapplication.domain.model
+package com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response
 
-data class DeskItemModel(
+data class DeskResponseItemModel(
     val seatId : Int,
     val seatNumber : Int,
     val floorNumber : Int,

@@ -1,18 +1,18 @@
 package com.example.ltcworkspacereservationapplication.presentation.mvvm
 
-import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ltcworkspacereservationapplication.R
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
-import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
+import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.DeskResponseItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.BookDeskUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.GetDeskListUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseCase.DeskHistoryUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseCase.MeetingHistoryUseCase
+import com.example.ltcworkspacereservationapplication.domain.usecase.MeetingRoomReservationUseCase.GetMeetingListUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.MeetingRoomReservationUseCase.MeetingRoomReservationUseCase
 import com.example.ltcworkspacereservationapplication.presentation.state.AppState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +33,8 @@ class ReservationViewModel @Inject constructor(
     private val bookDeskUseCase: BookDeskUseCase,
     private val deskHistoryUseCase: DeskHistoryUseCase,
     private val meetingHistoryUseCase: MeetingHistoryUseCase,
-    private val meetingRoomReservationUseCase: MeetingRoomReservationUseCase
+    private val meetingRoomReservationUseCase: MeetingRoomReservationUseCase,
+    private val getMeetingRoomListUseCase: GetMeetingListUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AppState())
@@ -58,7 +59,7 @@ class ReservationViewModel @Inject constructor(
 
     private val selectedFloor = mutableIntStateOf(-1)
 
-    private var selectedDesk = mutableStateOf<DeskItemModel?>(null)
+    private var selectedDesk = mutableStateOf<DeskResponseItemModel?>(null)
 
     init {
         viewModelScope.launch {
@@ -88,7 +89,7 @@ class ReservationViewModel @Inject constructor(
         }
     }
 
-    private fun OnDeskListFilterUpdate(listItem: List<DeskItemModel>) {
+    private fun OnDeskListFilterUpdate(listItem: List<DeskResponseItemModel>) {
         _uiState.update { it.copy(currentFilteredList = listItem) }
     }
 
@@ -140,7 +141,7 @@ class ReservationViewModel @Inject constructor(
         _uiState.update { it.copy(startDestination = startDestination) }
     }
 
-    private fun onDeskItemClicked(itm: DeskItemModel, index: Int) {
+    private fun onDeskItemClicked(itm: DeskResponseItemModel, index: Int) {
         selectedDesk.value = itm
         _uiState.update { state ->
             val updatedItems = state.currentFilteredList.mapIndexed { i, item ->
@@ -208,7 +209,7 @@ class ReservationViewModel @Inject constructor(
     }
 
 
-    fun filterByFloor(floorNumber: Int): List<DeskItemModel> {
+    fun filterByFloor(floorNumber: Int): List<DeskResponseItemModel> {
         return _uiState.value.deskList.filter { it.floorNumber == floorNumber }
     }
 
