@@ -29,7 +29,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class ReservationViewModel @Inject constructor(
     private val getDeskListUseCase: GetDeskListUseCase,
