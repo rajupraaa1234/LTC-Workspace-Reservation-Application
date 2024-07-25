@@ -1,5 +1,7 @@
 package com.example.ltcworkspacereservationapplication.presentation.mvvm
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -26,7 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class ReservationViewModel @Inject constructor(
     private val getDeskListUseCase: GetDeskListUseCase,
