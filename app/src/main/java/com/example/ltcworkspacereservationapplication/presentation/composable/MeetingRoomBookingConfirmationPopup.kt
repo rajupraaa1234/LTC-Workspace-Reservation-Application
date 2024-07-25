@@ -61,7 +61,7 @@ fun ConfirmationPopup(onDismiss: () -> Unit, onSubmit: (String, String, String) 
     val isCapacityValid = capacity.toIntOrNull()?.let { it in 1..50 } == true
     val isTimeValid = startTime.value != START_TIME && endTime.value != END_TIME && startTime.value < endTime.value
 
-    val isButtonEnabled = isCapacityValid && isTimeValid
+    val isButtonEnabled =isTimeValid
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -93,26 +93,26 @@ fun ConfirmationPopup(onDismiss: () -> Unit, onSubmit: (String, String, String) 
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedTextField(
-                    value = capacity,
-                    onValueChange = {
-                        capacity = it
-                    },
-                    placeholder = { Text("Capacity") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                        .border(0.dp, color = AppColor.primaryColor),
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-                )
-                if (!isCapacityValid) {
-                    Text(
-                        text = "Capacity must be between 1 and 50",
-                        color = AppColor.errorColor,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.align(Alignment.Start)
-                    )
-                }
+//                OutlinedTextField(
+//                    value = capacity,
+//                    onValueChange = {
+//                        capacity = it
+//                    },
+//                    placeholder = { Text("Capacity") },
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(bottom = 16.dp)
+//                        .border(0.dp, color = AppColor.primaryColor),
+//                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+//                )
+//                if (!isCapacityValid) {
+//                    Text(
+//                        text = "Capacity must be between 1 and 50",
+//                        color = AppColor.errorColor,
+//                        style = MaterialTheme.typography.bodySmall,
+//                        modifier = Modifier.align(Alignment.Start)
+//                    )
+//                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
