@@ -5,13 +5,14 @@ import com.example.ltcworkspacereservationapplication.domain.model.MeetingReserv
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingReservation.Response.GetMeetingItemResponse
 import com.example.ltcworkspacereservationapplication.domain.repository.MeetingRoomRepository.MeetingRoomReservationRepository
 import com.example.ltcworkspacereservationapplication.network.ApiService
+import com.example.ltcworkspacereservationapplication.network.MeetingApiService
 
-class MeetingUseCaseImpl(private val apiService: ApiService) : MeetingRoomReservationRepository {
+class MeetingUseCaseImpl(private val meetingApiService: MeetingApiService) : MeetingRoomReservationRepository {
     override suspend fun bookMeetingRoom(request: BookMeetingRoomRequest): BookMeetingRoomResponse {
-        return apiService.bookMeetingRoom(request)
+        return meetingApiService.bookMeetingRoom(request)
     }
 
     override suspend fun getMeetingRoom(date : String): GetMeetingItemResponse {
-        return apiService.getAllMeetingRooms(date)
+        return meetingApiService.getAllMeetingRooms(date)
     }
 }

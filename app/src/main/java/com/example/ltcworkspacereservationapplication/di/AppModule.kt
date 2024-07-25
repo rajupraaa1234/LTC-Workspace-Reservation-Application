@@ -3,11 +3,13 @@ package com.example.ltcworkspacereservationapplication.di
 import com.example.ltcworkspacereservationapplication.data.Repository.History.HistoryUseCaseImpl
 import com.example.ltcworkspacereservationapplication.data.Repository.DeskReservation.DeskUseCaseImpl
 import com.example.ltcworkspacereservationapplication.data.Repository.DeskReservation.InstantDeskBookUseCseImpl
+import com.example.ltcworkspacereservationapplication.data.Repository.History.MeetingHistoryUseCaseImpl
 import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.InstantBookingResponse
 import com.example.ltcworkspacereservationapplication.data.Repository.MeetingReservation.MeetingUseCaseImpl
 import com.example.ltcworkspacereservationapplication.domain.repository.DeskReservation.DeskReservationRepository
 import com.example.ltcworkspacereservationapplication.domain.repository.DeskReservation.InstantDeskBookingRepository
 import com.example.ltcworkspacereservationapplication.domain.repository.HistoryRepository.HistoryRepository
+import com.example.ltcworkspacereservationapplication.domain.repository.HistoryRepository.MeetingHistoryRepository
 import com.example.ltcworkspacereservationapplication.domain.repository.MeetingRoomRepository.MeetingRoomReservationRepository
 import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.BookDeskUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseCase.DeskHistoryUseCase
@@ -16,6 +18,7 @@ import com.example.ltcworkspacereservationapplication.domain.usecase.MeetingRoom
 import com.example.ltcworkspacereservationapplication.domain.usecase.MeetingRoomReservationUseCase.MeetingRoomReservationUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.InstantDeskBookUseCase
 import com.example.ltcworkspacereservationapplication.network.ApiService
+import com.example.ltcworkspacereservationapplication.network.MeetingApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +33,8 @@ object AppModule {
 
     private const val BASE_URL = "https://student-management-system1-li3krvyppa-uc.a.run.app/workspot/"
 
+    private const val BASE_URL_MEETING = "https://meetingroombooking-0-0-1-li3krvyppa-uc.a.run.app/workspot/"
+
     @Provides
     @Singleton
     fun provideApiService(): ApiService {
@@ -38,6 +43,16 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMeetingApiService(): MeetingApiService {
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL_MEETING)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(MeetingApiService::class.java)
     }
 
     // Desk Room Related provider
@@ -67,10 +82,16 @@ object AppModule {
         return DeskHistoryUseCase(repository)
     }
 
+    @Provides
+    @Singleton
+    fun provideMeetingHistoryRepository(apiService: MeetingApiService): MeetingHistoryRepository {
+        return MeetingHistoryUseCaseImpl(apiService)
+    }
+
 
     @Provides
     @Singleton
-    fun provideMeetingHistoryUseCase(repository: HistoryRepository): MeetingHistoryUseCase {
+    fun provideMeetingHistoryUseCase(repository: MeetingHistoryRepository): MeetingHistoryUseCase {
         return MeetingHistoryUseCase(repository)
     }
 
@@ -79,7 +100,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMeetingRoomReservationRepository(apiService: ApiService): MeetingRoomReservationRepository {
+    fun provideMeetingRoomReservationRepository(apiService: MeetingApiService): MeetingRoomReservationRepository {
         return MeetingUseCaseImpl(apiService)
     }
 

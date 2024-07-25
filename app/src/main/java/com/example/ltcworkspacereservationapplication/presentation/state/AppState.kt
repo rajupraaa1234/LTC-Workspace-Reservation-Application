@@ -27,7 +27,7 @@ data class AppState @RequiresApi(Build.VERSION_CODES.O) constructor(
 
     val startDestination : String = Routes.LOGIN,
     val deskHistoryList : List<DeskHistoryModel> = listOf(),
-    val cabinHistoryList : List<MeetingRoomHistoryResponse> = CabinHistoryList.getList,
+    val cabinHistoryList : List<MeetingRoomHistoryResponse> = listOf(),
     val showBanner : Boolean = false,
 
     // For Reservation

@@ -9,8 +9,4 @@ class HistoryUseCaseImpl(private val apiService: ApiService) : HistoryRepository
     override suspend fun getDeskHistory(employeeId: Int): List<DeskHistoryModel> {
         return apiService.getAllDeskHistory(employeeId)
     }
-
-    override suspend fun getMeetingHistory(employeeId: Int): List<MeetingRoomHistoryResponse> {
-        return apiService.getAllMeetingHistory(employeeId)
-    }
 }

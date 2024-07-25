@@ -73,12 +73,6 @@ class ReservationViewModel @Inject constructor(
 
     private var selectedDesk = mutableStateOf<DeskResponseItemModel?>(null)
 
-    init {
-        viewModelScope.launch {
-//            val response = getDeskListUseCase()
-//            Log.d(TAG, ": ${response} ")
-        }
-    }
 
     suspend fun sendIntent(intent: AppIntent) {
         when (intent) {
@@ -304,8 +298,20 @@ class ReservationViewModel @Inject constructor(
     //Call All Api from here
     private suspend fun callAllApi(employeeId: String) {
         deskHistoryAPICall(employeeId)
+        meetingHistoryAPICall(employeeId)
         getDeskListApiCall()
         checkForBanner()
+    }
+
+    private fun meetingHistoryAPICall(employeeId: String) {
+        viewModelScope.launch {
+            try {
+                val response = meetingHistoryUseCase(employeeId.toInt())
+                _uiState.update { it.copy(cabinHistoryList = response) }
+            }catch (e : Exception){
+                Log.d(TAG, "meetingHistoryAPICall: ${e}")
+            }
+        }
     }
 
     private fun checkForBanner() {

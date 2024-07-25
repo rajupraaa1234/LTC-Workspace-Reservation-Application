@@ -34,20 +34,4 @@ interface ApiService {
     suspend fun bookInstantDesk(@Body body: InstantBookingRequest) : InstantBookingResponse
 
 
-    // Meeting Related Api
-
-    @POST("room/create-booking")
-    suspend fun bookMeetingRoom(@Body body : BookMeetingRoomRequest): BookMeetingRoomResponse
-
-    @GET("/room/bookings/{employeeId}")
-    suspend fun getAllMeetingHistory(@Query("employeeId") employeeId:Int): List<MeetingRoomHistoryResponse>
-
-    @GET("/room/bookings/{date}")
-    suspend fun getAllMeetingRooms(@Query("date") date : String) : GetMeetingItemResponse
-
-
-    // Dummy Api for Testing Api Services Layer
-    @GET("movies")
-    suspend fun getData() : Any
-
 }
