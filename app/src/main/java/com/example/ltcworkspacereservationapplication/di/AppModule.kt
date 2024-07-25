@@ -28,7 +28,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    private const val BASE_URL = "https://dummyapi.online/api/"
+    private const val BASE_URL = "https://student-management-system1-li3krvyppa-uc.a.run.app/workspot/"
 
     @Provides
     @Singleton

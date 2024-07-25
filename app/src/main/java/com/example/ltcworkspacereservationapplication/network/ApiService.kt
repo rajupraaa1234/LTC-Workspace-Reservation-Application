@@ -27,7 +27,7 @@ interface ApiService {
     suspend fun bookDesk(@Body body : DeskReservationRequest): DeskReservationResponse
 
 
-    @GET("/deskdeskHistory/{employeeId}")
+    @GET("desk/deskHistory")
     suspend fun getAllDeskHistory(@Query("employeeId") employeeId:Int): List<DeskHistoryModel>
 
     @PUT("")
