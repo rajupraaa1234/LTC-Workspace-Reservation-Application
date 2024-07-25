@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +49,7 @@ import com.example.ltcworkspacereservationapplication.presentation.composable.Ho
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.MyViewModelFactory
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
+import com.example.ltcworkspacereservationapplication.presentation.screens.BannerScreen
 import com.example.ltcworkspacereservationapplication.presentation.screens.HistoryScreen
 import com.example.ltcworkspacereservationapplication.presentation.screens.HomeScreen
 import com.example.ltcworkspacereservationapplication.presentation.screens.LoginScreenComposable
@@ -204,7 +206,7 @@ fun AppNavHost(
             LoginScreenComposable(navController, viewModel = viewModel)
         }
         composable(Routes.SCANNER) {
-            ScannerScreenComposable(viewModel,navController)
+            ScannerScreenComposable(viewModel, navController)
         }
         composable(Routes.VERIFY_PHONE_NUMBER) {
             PhoneNumberVerificationScreen(navController = navController)
@@ -315,6 +317,16 @@ private fun HomePage(
                     }
                 })
             }
+        }
+        if (viewModel.uiState.value.showBanner) {
+            BannerScreen(onSubmit = {
+                navController.navigate(Routes.SCANNER)
+                //viewModel.updateStartDestination(startDestination = Routes.SCANNER)
+            }, onCancel = {
+                viewModel.viewModelScope.launch {
+                    viewModel.sendIntent(AppIntent.AddBanner(false))
+                }
+            })
         }
         HomeScreen(viewModel)
     }

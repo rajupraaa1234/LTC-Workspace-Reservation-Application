@@ -65,7 +65,14 @@ class ReservationViewModel(val context: Context) : ViewModel() {
             is AppIntent.OnDeskListFilter -> OnDeskListFilterUpdate(intent.listItem)
             is AppIntent.OnMeetingListFilterUpdate -> onMeetingListFilterUpdate(intent.listItem)
             is AppIntent.OnQRCodeScanned -> onQRCodeScanned(intent.seatId)
+            is AppIntent.AddBanner -> addBanner(intent.showBanner)
         }
+    }
+
+    private fun addBanner(showBanner: Boolean) {
+        _uiState.update { it.copy(showBanner=showBanner)
+        }
+
     }
 
     private fun OnDeskListFilterUpdate(listItem: List<DeskItemModel>) {

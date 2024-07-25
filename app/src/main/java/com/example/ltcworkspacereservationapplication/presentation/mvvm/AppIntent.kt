@@ -22,4 +22,5 @@ sealed interface AppIntent {
 
     data class OnMeetingListFilterUpdate(val listItem : List<MeetingItemModel>) : AppIntent
     data class OnQRCodeScanned(val seatId : String) :AppIntent
+    data class AddBanner(val showBanner : Boolean) : AppIntent
 }
