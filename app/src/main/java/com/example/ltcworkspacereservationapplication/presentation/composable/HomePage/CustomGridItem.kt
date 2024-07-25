@@ -94,18 +94,20 @@ fun CustomGridItem(
                 }
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(Spacing.Size_5)
-                    .background(AppColor.primaryColorLight)
-            ) {
-                LazyRow {
-                    items(item.reservedSlot.size) { index ->
-                        if (item.reservedSlot.size == index + 1)
-                            Text(text = item.reservedSlot[index], color = Color.White)
-                        else
-                            Text(text = "${item.reservedSlot[index]}, ", color = Color.White)
+            if(item.reservedSlot.size > 0) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Spacing.Size_5)
+                        .background(AppColor.primaryColorLight)
+                ) {
+                    LazyRow(modifier = Modifier.padding(2.dp)) {
+                        items(item.reservedSlot.size) { index ->
+                            if (item.reservedSlot.size == index + 1)
+                                Text(text = item.reservedSlot[index], color = Color.White)
+                            else
+                                Text(text = "${item.reservedSlot[index]}, ", color = Color.White)
+                        }
                     }
                 }
             }

@@ -19,7 +19,7 @@ interface MeetingApiService {
     @GET("room/bookings")
     suspend fun getAllMeetingHistory(@Query("empId") empId:Int): List<MeetingRoomHistoryResponse>
 
-    @GET("/room/bookings/{date}")
+    @GET("room/bookings")
     suspend fun getAllMeetingRooms(@Query("date") date : String) : GetMeetingItemResponse
 
 
