@@ -8,7 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -65,13 +64,20 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModel: ReservationViewModel by viewModels()
+        val TAG = "MainActivity1"
         enableEdgeToEdge()
         setContent {
             showToastMessage(viewModel, this@MainActivity)
             val employeeId = PreferencesManager.getEmployeeId(this)
+            if (!employeeId.isNullOrEmpty()){
+                viewModel.viewModelScope.launch {
+                    viewModel.saveEmployeeId(employeeId)
+                }
+            }
             val startDestination =
                 if (employeeId.isNullOrEmpty()) Routes.LOGIN else Routes.HOME_SCREEN
             viewModel.updateStartDestination(startDestination)

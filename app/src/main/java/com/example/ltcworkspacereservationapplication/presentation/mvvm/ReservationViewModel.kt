@@ -1,6 +1,7 @@
 package com.example.ltcworkspacereservationapplication.presentation.mvvm
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -93,6 +94,19 @@ class ReservationViewModel @Inject constructor(
             is AppIntent.OnMeetingListFilterUpdate -> onMeetingListFilterUpdate(intent.listItem)
             is AppIntent.OnQRCodeScanned -> onQRCodeScanned(intent.seatId)
             is AppIntent.AddBanner -> addBanner(intent.showBanner)
+        }
+    }
+
+
+    suspend fun saveEmployeeId(employeeId: String) {
+        if(employeeId.isNotEmpty() && employeeId.length >0 ){
+            saveEmployeeIdInAppState(employeeId)
+            callAllApi(employeeId)
+        }
+    }
+
+    private fun saveEmployeeIdInAppState(employeeId: String) {
+        _uiState.update { it.copy(employeeId=employeeId)
         }
     }
 
@@ -191,6 +205,15 @@ class ReservationViewModel @Inject constructor(
         _uiState.update { it.copy(startDestination = startDestination) }
     }
 
+
+
+    //Call All Api from here
+   suspend private fun callAllApi(employeeId: String) {
+        val response = deskHistoryUseCase(employeeId.toInt())
+        Log.d(TAG, ":  ${response}")
+        Log.d(TAG, "onLoginClicked: onLoginClicked ${employeeId}")
+    }
+
     private fun onDeskItemClicked(itm: DeskResponseItemModel, index: Int) {
         selectedDesk.value = itm
         _uiState.update { state ->
@@ -232,8 +255,9 @@ class ReservationViewModel @Inject constructor(
         ReservationViewModelEffects.Composable.meetingListUpdated.send()
     }
 
-    private fun onLoginClicked(employeeId: String) {
+   suspend private fun onLoginClicked(employeeId: String) {
         _uiState.update { it.copy(employeeId = employeeId) }
+       callAllApi(employeeId)
     }
 
     private fun onFloorSelected(floor: Int) {
