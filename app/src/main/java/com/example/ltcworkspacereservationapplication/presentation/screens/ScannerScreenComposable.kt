@@ -33,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,14 +46,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.text.util.LinkifyCompat
+import androidx.navigation.NavController
 import com.example.ltcworkspacereservationapplication.QRCodeAnalyzer
+import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
+import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
+import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModelEffects
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 import com.google.common.util.concurrent.ListenableFuture
+import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 @Composable
-fun ScannerScreenComposable() {
+fun ScannerScreenComposable(viewModel: ReservationViewModel) {
+    val scope = rememberCoroutineScope()
     val barCodeVal = remember { mutableStateOf("") }
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -100,7 +107,7 @@ fun ScannerScreenComposable() {
                         .padding(bottom = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Selected Seat -> ", color = AppColor.backgroundColor)
+                    Text(text = "Selected Seat -> ${barCodeVal.value}", color = AppColor.backgroundColor)
                     AndroidView(
                         factory = {
                             TextView(context).apply {
@@ -108,6 +115,7 @@ fun ScannerScreenComposable() {
                             }
                         },
                         update = { textView ->
+                            Log.d("code",barCodeVal.value)
                             textView.text = barCodeVal.value
                             LinkifyCompat.addLinks(textView, Linkify.ALL)
                             textView.movementMethod = LinkMovementMethod.getInstance()
@@ -213,6 +221,11 @@ fun ScannerScreenComposable() {
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
                     onClick = {
+                        scope.launch {
+                            var result = barCodeVal.value
+                            viewModel.sendIntent(AppIntent.OnQRCodeScanned(seatId = result.toInt()))
+                        }
+
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = AppColor.primaryColor),
                     shape = RectangleShape,

@@ -1,8 +1,12 @@
 package com.example.ltcworkspacereservationapplication.di
 
 import com.example.ltcworkspacereservationapplication.data.Repository.DeskReservation.DeskUseCaseImpl
+import com.example.ltcworkspacereservationapplication.data.Repository.DeskReservation.InstantDeskBookUseCseImpl
+import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.InstantBookingResponse
 import com.example.ltcworkspacereservationapplication.domain.repository.DeskReservation.DeskReservationRepository
+import com.example.ltcworkspacereservationapplication.domain.repository.DeskReservation.InstantDeskBookingRepository
 import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.BookDeskUseCase
+import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.InstantDeskBookUseCase
 import com.example.ltcworkspacereservationapplication.network.ApiService
 import dagger.Module
 import dagger.Provides
@@ -38,5 +42,17 @@ object AppModule {
     @Singleton
     fun provideBookDeskUseCase(userRepository: DeskReservationRepository): BookDeskUseCase {
         return BookDeskUseCase(userRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideInstantDeskBookingRepository(apiService: ApiService):InstantDeskBookingRepository {
+        return InstantDeskBookUseCseImpl(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideInstantBookingUseCase(instantDeskBookingRepository: InstantDeskBookingRepository) : InstantDeskBookUseCase {
+        return InstantDeskBookUseCase(instantDeskBookingRepository)
     }
 }

@@ -1,0 +1,8 @@
+package com.example.ltcworkspacereservationapplication.domain.repository.DeskReservation
+
+import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Request.InstantBookingRequest
+import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.InstantBookingResponse
+
+interface InstantDeskBookingRepository {
+    suspend fun bookInstantDesk(instantBookingRequest: InstantBookingRequest): InstantBookingResponse
+}

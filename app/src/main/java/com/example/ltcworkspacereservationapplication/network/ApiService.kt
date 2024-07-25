@@ -2,12 +2,15 @@ package com.example.ltcworkspacereservationapplication.network
 
 import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Request.DeskReservationRequest
+import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Request.InstantBookingRequest
 import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.DeskReservationResponse
+import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.InstantBookingResponse
 import com.example.ltcworkspacereservationapplication.domain.model.History.DeskHistoryModel
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -26,7 +29,8 @@ interface ApiService {
     @GET("deskHistory/{employeeId}")
     suspend fun getAllDeskHistory(@Query("employeeId") employeeId:Int): List<DeskHistoryModel>
 
-
+    @PUT("")
+    suspend fun bookInstantDesk(@Body body: InstantBookingRequest) : InstantBookingResponse
 
 
 //

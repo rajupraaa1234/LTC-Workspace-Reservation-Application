@@ -12,6 +12,7 @@ import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityT
 import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import com.example.ltcworkspacereservationapplication.presentation.state.AppState
+import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,6 +64,7 @@ class ReservationViewModel(val context: Context) : ViewModel() {
             is AppIntent.onLoginClick -> onLoginClicked(intent.employeeId)
             is AppIntent.OnDeskListFilter -> OnDeskListFilterUpdate(intent.listItem)
             is AppIntent.OnMeetingListFilterUpdate -> onMeetingListFilterUpdate(intent.listItem)
+            is AppIntent.OnQRCodeScanned -> onQRCodeScanned(intent.seatId)
         }
     }
 
@@ -74,6 +76,24 @@ class ReservationViewModel(val context: Context) : ViewModel() {
         _uiState.update { it.copy(currentMeetingRoomFilteredList = listItem) }
     }
 
+    private fun onQRCodeScanned(seatId: Int) {
+        val response = true
+        if (response) {
+            viewModelScope.launch {
+                isLoading.value = true
+                delay(2000)
+                updateInstantBookingDeskList(seatId = seatId)
+                updateInstantBookingList(seatId)
+                isLoading.value = false
+                navigateToHome()
+            }
+        }
+    }
+
+    private fun navigateToHome() {
+        updateStartDestination(Routes.HOME_SCREEN)
+
+    }
 
     // Api Calls for Booking the Desk
     private suspend fun callBookDeskApi() {
@@ -214,6 +234,40 @@ class ReservationViewModel(val context: Context) : ViewModel() {
             state.copy(currentFilteredList = updatedItems)
         }
         ReservationViewModelEffects.Composable.deskListUpdated.send()
+    }
+
+    fun updateInstantBookingDeskList(seatId: Int) {
+        _uiState.update { state ->
+            val index = state.deskList.indexOfFirst { it.seatId == seatId }
+            if (index != -1) {
+                val updatedItems = state.deskList.toMutableList()
+                val selectedItem = updatedItems[index]
+                updatedItems[index] = selectedItem.copy(
+                    imageId = R.drawable.reserveddesk,
+                    reservationStatus = AvailabilityType.RESERVED.type
+                )
+                state.copy(deskList = updatedItems)
+            } else {
+                state
+            }
+        }
+    }
+
+    fun updateInstantBookingList(seatId: Int) {
+        _uiState.update { state ->
+            val index = state.currentFilteredList.indexOfFirst { it.seatId == seatId }
+            if (index != -1) {
+                val updatedItems = state.deskList.toMutableList()
+                val selectedItem = updatedItems[index]
+                updatedItems[index] = selectedItem.copy(
+                    imageId = R.drawable.reserveddesk,
+                    reservationStatus = AvailabilityType.RESERVED.type
+                )
+                state.copy(currentFilteredList = updatedItems)
+            } else {
+                state
+            }
+        }
     }
 
     fun updateDeskList() {
