@@ -79,7 +79,7 @@ fun CustomGridItem(
                 }
         ) {
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
@@ -88,7 +88,10 @@ fun CustomGridItem(
                     Modifier
                         .size(Spacing.Size_40)
                 )
-                Text(text = "R-${item.meetingRoomId}", style = MaterialTheme.typography.body2)
+                Column(modifier = Modifier.padding(Spacing.Size_10)) {
+                    Text(text = "R-${item.meetingRoomId}", style = MaterialTheme.typography.body2)
+                    Text(text = "Size-${item.capacity}", style = MaterialTheme.typography.subtitle2)
+                }
             }
 
             Box(
@@ -133,7 +136,7 @@ fun CabinGridList(
                 )
             } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
+                    columns = GridCells.Fixed(2),
                 ) {
                     items(items.size) { index ->
                         CustomGridItem(items[index], onClickItem, onSubmit, index)
