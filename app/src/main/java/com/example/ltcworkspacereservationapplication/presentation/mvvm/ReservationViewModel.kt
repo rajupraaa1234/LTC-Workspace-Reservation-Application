@@ -222,9 +222,7 @@ class ReservationViewModel @Inject constructor(
     private suspend fun deskHistoryAPICall(employeeId: String) {
         try {
             val response = deskHistoryUseCase(employeeId.toInt())
-            //Log.d(TAG, ":  ${response}")
             _uiState.update { it.copy(deskHistoryList = response) }
-            //Log.d(TAG, "onLoginClicked: onLoginClicked ${employeeId}")
         } catch (e:Exception) {
             Log.d("Exception","Desk history api call failed")
         }
