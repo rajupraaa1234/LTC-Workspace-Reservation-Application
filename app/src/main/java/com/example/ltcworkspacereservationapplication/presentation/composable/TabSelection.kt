@@ -14,20 +14,20 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.Dp
-import com.example.ltcworkspacereservationapplication.presentation.utils.HomeTabs
+import com.example.ltcworkspacereservationapplication.domain.model.HomeTabs
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun TabSelection(modifier: Modifier, onClick: (HomeTabs) -> Unit) {
+internal fun TabSelection(modifier: Modifier, onClick: (HomeTabs) -> Unit) {
     var selectedTab by remember { mutableStateOf(HomeTabs.entries.get(0).text) }
     var parentWidth by remember { mutableStateOf(Spacing.Size_0) }
 
     BoxWithConstraints(
         modifier = modifier
             .clip(RoundedCornerShape(Spacing.Size_5))
-            .background(Color(0xFF2F6655))
+            .background(AppColor.primaryColor)
             .fillMaxWidth()
             .onGloballyPositioned { coordinates ->
                 parentWidth = with(coordinates.size.width.dp / 2) { this }
@@ -57,7 +57,7 @@ fun TabSelection(modifier: Modifier, onClick: (HomeTabs) -> Unit) {
 }
 
 @Composable
-fun TabItem(
+private fun TabItem(
     text: String,
     isSelected: Boolean,
     onClick: () -> Unit,
@@ -69,7 +69,7 @@ fun TabItem(
             .width(width)
             .height(Spacing.Size_48)
             .background(
-                color = if (isSelected) Color.Transparent else AppColor.whiteColor,
+                color = if (isSelected) Color.Transparent else AppColor.primaryColor,
                 shape = RoundedCornerShape(Spacing.Size_5)
             )
             .clickable { onClick() }
