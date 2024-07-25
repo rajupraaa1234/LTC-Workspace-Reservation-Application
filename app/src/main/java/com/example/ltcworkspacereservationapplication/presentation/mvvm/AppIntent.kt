@@ -16,7 +16,7 @@ sealed interface AppIntent {
         val meetingId: String
     ) : AppIntent
 
-    data class onLoginClick(val employeeId: String) : AppIntent
+    data class onLoginClick(val employeeId: String, val employeeName: String) : AppIntent
     data object OnDeskBookButtonClicked : AppIntent
     data class OnDeskListFilter(val listItem : List<DeskResponseItemModel>) : AppIntent
 
