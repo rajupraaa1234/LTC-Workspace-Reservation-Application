@@ -7,6 +7,7 @@ import android.text.util.Linkify
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
@@ -51,6 +52,7 @@ import com.example.ltcworkspacereservationapplication.QRCodeAnalyzer
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModelEffects
+import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.launch
@@ -58,7 +60,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 @Composable
-fun ScannerScreenComposable(viewModel: ReservationViewModel) {
+fun ScannerScreenComposable(viewModel: ReservationViewModel,navController: NavController) {
     val scope = rememberCoroutineScope()
     val barCodeVal = remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -222,8 +224,9 @@ fun ScannerScreenComposable(viewModel: ReservationViewModel) {
                 Button(
                     onClick = {
                         scope.launch {
-                            var result = barCodeVal.value
-                            viewModel.sendIntent(AppIntent.OnQRCodeScanned(seatId = result.toInt()))
+                            viewModel.sendIntent(AppIntent.OnQRCodeScanned(seatId = barCodeVal.value))
+                            navController.navigate(Routes.HOME_SCREEN)
+                            Toast.makeText(context,"Your Booking ${barCodeVal.value} is confirmed",Toast.LENGTH_SHORT).show()
                         }
 
                     },

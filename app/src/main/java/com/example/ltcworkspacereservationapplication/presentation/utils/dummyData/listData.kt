@@ -19,7 +19,6 @@ object listData {
 
 
         DeskItemModel(1581, 16, 5, "Available", R.drawable.availabledesk),
-        DeskItemModel(1591, 21, 5, "Available", R.drawable.availabledesk),
         DeskItemModel(1602, 12, 10, "Booked", R.drawable.deskbooked),
         DeskItemModel(1601, 13, 10, "Reserved", R.drawable.reserveddesk),
 

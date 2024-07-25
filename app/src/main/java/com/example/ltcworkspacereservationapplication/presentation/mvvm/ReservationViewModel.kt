@@ -76,24 +76,24 @@ class ReservationViewModel(val context: Context) : ViewModel() {
         _uiState.update { it.copy(currentMeetingRoomFilteredList = listItem) }
     }
 
-    private fun onQRCodeScanned(seatId: Int) {
+    private fun onQRCodeScanned(seatId: String) {
+        val seatString = seatId.split("-")
+        val floorNo = seatString[0]
+        val seatNumber = seatString[1].toInt()
+        Log.d("scanner", seatNumber.toString())
         val response = true
         if (response) {
             viewModelScope.launch {
+                Log.d("scanner", "onQRCodeScanned inside")
                 isLoading.value = true
                 delay(2000)
-                updateInstantBookingDeskList(seatId = seatId)
-                updateInstantBookingList(seatId)
+                updateInstantBookingDeskList(seatId = seatNumber)
+                updateInstantBookingList(seatNumber)
                 isLoading.value = false
-                navigateToHome()
             }
         }
     }
 
-    private fun navigateToHome() {
-        updateStartDestination(Routes.HOME_SCREEN)
-
-    }
 
     // Api Calls for Booking the Desk
     private suspend fun callBookDeskApi() {
@@ -238,7 +238,7 @@ class ReservationViewModel(val context: Context) : ViewModel() {
 
     fun updateInstantBookingDeskList(seatId: Int) {
         _uiState.update { state ->
-            val index = state.deskList.indexOfFirst { it.seatId == seatId }
+            val index = state.deskList.indexOfFirst { it.seatNumber == seatId }
             if (index != -1) {
                 val updatedItems = state.deskList.toMutableList()
                 val selectedItem = updatedItems[index]
@@ -251,11 +251,12 @@ class ReservationViewModel(val context: Context) : ViewModel() {
                 state
             }
         }
+        ReservationViewModelEffects.Composable.deskListUpdated.send()
     }
 
     fun updateInstantBookingList(seatId: Int) {
         _uiState.update { state ->
-            val index = state.currentFilteredList.indexOfFirst { it.seatId == seatId }
+            val index = state.currentFilteredList.indexOfFirst { it.seatNumber == seatId }
             if (index != -1) {
                 val updatedItems = state.deskList.toMutableList()
                 val selectedItem = updatedItems[index]
@@ -268,6 +269,7 @@ class ReservationViewModel(val context: Context) : ViewModel() {
                 state
             }
         }
+        ReservationViewModelEffects.Composable.deskListUpdated.send()
     }
 
     fun updateDeskList() {

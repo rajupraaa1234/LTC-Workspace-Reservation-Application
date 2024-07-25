@@ -204,7 +204,7 @@ fun AppNavHost(
             LoginScreenComposable(navController, viewModel = viewModel)
         }
         composable(Routes.SCANNER) {
-            ScannerScreenComposable(viewModel)
+            ScannerScreenComposable(viewModel,navController)
         }
         composable(Routes.VERIFY_PHONE_NUMBER) {
             PhoneNumberVerificationScreen(navController = navController)
