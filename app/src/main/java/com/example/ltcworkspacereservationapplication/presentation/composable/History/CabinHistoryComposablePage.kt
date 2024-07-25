@@ -82,8 +82,8 @@ private fun ElevatedCard(item: MeetingRoomHistoryResponse) {
                         style = MaterialTheme.typography.subtitle1.copy(fontSize = 12.sp),
                     )
                     Text(
-                        text = "Status : $reservationStatus",
-                        color = if (reservationStatus == AvailabilityType.RESERVED.type) AppColor.primaryColorLight else AppColor.bookedDeskBackgroundColour,
+                        text = "Status : Booked",
+                        color =  AppColor.primaryColorLight,
                         style = MaterialTheme.typography.subtitle2,
                     )
                 }

@@ -13,7 +13,6 @@ object CabinHistoryList {
             "2024-07-27",
             "08:30:00",
             "10:00:00",
-            "Booked"
         ),
         MeetingRoomHistoryResponse(
             11,
@@ -24,7 +23,6 @@ object CabinHistoryList {
             "2024-08-27",
             "08:30:00",
             "10:00:00",
-            "Booked"
         ),
         MeetingRoomHistoryResponse(
             12,
@@ -35,7 +33,6 @@ object CabinHistoryList {
             "2024-08-29",
             "09:30:00",
             "10:00:00",
-            "Booked"
         ),
         MeetingRoomHistoryResponse(
             14,
@@ -46,7 +43,6 @@ object CabinHistoryList {
             "2024-08-29",
             "09:30:00",
             "10:00:00",
-            "Reserved"
         ),
         MeetingRoomHistoryResponse(
             15,
@@ -57,7 +53,6 @@ object CabinHistoryList {
             "2024-08-30",
             "09:30:00",
             "10:00:00",
-            "Reserved"
         ),
     )
 }
