@@ -13,6 +13,7 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.dummyDa
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 data class AppState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val employeeId: String = "",
     val employeeName: String = "Raju Kumar",
