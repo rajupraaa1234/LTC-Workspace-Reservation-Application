@@ -257,6 +257,8 @@ private fun HomePage(
     viewModel: ReservationViewModel,
 ) {
     val userName = viewModel.uiState.value.employeeName
+    val userId = viewModel.uiState.value.employeeId
+
     val selectedDate = remember { mutableStateOf(viewModel.uiState.value.selectedDate) }
     val showDialog = remember { mutableStateOf(false) }
 
@@ -275,7 +277,7 @@ private fun HomePage(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Dear $userName",
+                text = "Dear $userName (${userId})",
                 modifier = Modifier.padding(vertical = Spacing.Size_8),
                 style = MaterialTheme.typography.body2
             )
@@ -334,7 +336,11 @@ private fun HomePage(
             }
         }
         if (viewModel.uiState.value.showBanner) {
-            BannerScreen(onSubmit = {
+            BannerScreen(
+                bookingId = viewModel.uiState.value.bookingId,
+                floorNumber = viewModel.uiState.value.floorNumber,
+                seatNumber = viewModel.uiState.value.seatId,
+                onSubmit = {
                 navController.navigate(Routes.SCANNER)
                 //viewModel.updateStartDestination(startDestination = Routes.SCANNER)
             }, onCancel = {

@@ -10,16 +10,19 @@ import androidx.lifecycle.viewModelScope
 import com.example.ltcworkspacereservationapplication.R
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
 import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Request.DeskReservationRequest
+import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Request.InstantBookingRequest
 import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.DeskResponseItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.BookDeskUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.GetDeskListUseCase
+import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.InstantDeskBookUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseCase.DeskHistoryUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseCase.MeetingHistoryUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.MeetingRoomReservationUseCase.GetMeetingListUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.MeetingRoomReservationUseCase.MeetingRoomReservationUseCase
 import com.example.ltcworkspacereservationapplication.presentation.state.AppState
 import com.example.ltcworkspacereservationapplication.presentation.utils.Utils
+import com.example.ltcworkspacereservationapplication.showToastMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -40,7 +43,8 @@ class ReservationViewModel @Inject constructor(
     private val deskHistoryUseCase: DeskHistoryUseCase,
     private val meetingHistoryUseCase: MeetingHistoryUseCase,
     private val meetingRoomReservationUseCase: MeetingRoomReservationUseCase,
-    private val getMeetingRoomListUseCase: GetMeetingListUseCase
+    private val getMeetingRoomListUseCase: GetMeetingListUseCase,
+    private val  instantDeskBookUseCase: InstantDeskBookUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AppState())
@@ -131,15 +135,33 @@ class ReservationViewModel @Inject constructor(
         val seatString = seatId.split("-")
         val floorNo = seatString[0]
         val seatNumber = seatString[1].toInt()
-        val response = true
-        if (response) {
+        val todayDAte = Utils.getCurrentDate()
             viewModelScope.launch {
                 isLoading.value = true
-                delay(2000)
-                updateInstantBookingDeskList(seatId = seatNumber)
-                updateInstantBookingList(seatNumber)
+                deskReserveApiCall(seatNumber,floorNo.toInt(),todayDAte)
                 isLoading.value = false
+        }
+    }
+
+    private suspend fun deskReserveApiCall(seatId: Int, floorNumber: Int, date : String) {
+        try {
+            val request = InstantBookingRequest(uiState.value.employeeId.toInt(),date,seatId,floorNumber,AvailabilityType.RESERVED.type)
+            val response = instantDeskBookUseCase(request)
+            if(response.status == AvailabilityType.RESERVED.type){
+                setToastMessage("Your desk has been reserved")
+                updateInstantBookingDeskList(seatId = seatId)
+                updateInstantBookingList(seatId)
+                _uiState.update {
+                    it.copy(
+                        bookingId = 0,
+                        floorNumber = 0,
+                        seatId = 0,
+                        showBanner = false
+                    )
+                }
             }
+        }catch (e:Exception){
+            Log.d(TAG, "deskReserveApiCall: ${e}")
         }
     }
 
@@ -245,7 +267,6 @@ class ReservationViewModel @Inject constructor(
     private suspend fun onDeskBookButtonClicked() {
         if (selectedFloor.value == -1) {
             setToastMessage("Please select floor to book")
-            //Toast.makeText(context, "Please select floor to book", Toast.LENGTH_SHORT).show()
         } else {
             callBookDeskApi()
         }
@@ -281,6 +302,24 @@ class ReservationViewModel @Inject constructor(
     private suspend fun callAllApi(employeeId: String) {
         deskHistoryAPICall(employeeId)
         getDeskListApiCall()
+        checkForBanner()
+    }
+
+    private fun checkForBanner() {
+        val todayDAte = Utils.getCurrentDate()
+        val index = _uiState.value.deskHistoryList.indexOfFirst { it.date == todayDAte && it.reservationStatus == AvailabilityType.BOOKED.type }
+        if(index != -1 ){
+            val updatedItems = uiState.value.deskHistoryList.toMutableList()
+            val selectedItem = updatedItems[index]
+            _uiState.update {
+                it.copy(
+                    bookingId = selectedItem.bookingId,
+                    floorNumber = selectedItem.floorNumber,
+                    seatId = selectedItem.seatNumber,
+                )
+            }
+            addBanner(true)
+        }
     }
 
     private suspend fun deskHistoryAPICall(employeeId: String) {
@@ -290,7 +329,6 @@ class ReservationViewModel @Inject constructor(
         } catch (e:Exception) {
             Log.d("Exception","Desk history api call failed")
         }
-
     }
 
     private fun onDeskItemClicked(itm: DeskResponseItemModel, index: Int) {
@@ -415,7 +453,7 @@ class ReservationViewModel @Inject constructor(
         _uiState.update { state ->
             val index = state.currentFilteredList.indexOfFirst { it.seatNumber == seatId }
             if (index != -1) {
-                val updatedItems = state.deskList.toMutableList()
+                val updatedItems = state.currentFilteredList.toMutableList()
                 val selectedItem = updatedItems[index]
                 updatedItems[index] = selectedItem.copy(
                     imageId = R.drawable.reserveddesk,

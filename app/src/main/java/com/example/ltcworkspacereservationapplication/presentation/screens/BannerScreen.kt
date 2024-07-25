@@ -22,7 +22,7 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
 @Composable
-fun BannerScreen(onSubmit: () -> Unit, onCancel: () -> Unit) {
+fun BannerScreen(bookingId:Int,floorNumber: Int, seatNumber: Int, onSubmit: () -> Unit, onCancel: () -> Unit) {
     Card(
         shape = RoundedCornerShape(Spacing.Size_10),
         backgroundColor = Color(0xFFF5F5F5), modifier = Modifier.padding(top = 5.dp)
@@ -33,11 +33,11 @@ fun BannerScreen(onSubmit: () -> Unit, onCancel: () -> Unit) {
             modifier = Modifier.padding(Spacing.Size_5)
         ) {
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.SpaceBetween) {
-                Text(text = "Booking id : 12345")
+                Text(text = "Booking id : ${bookingId}")
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "Floor Number : 5")
+                Text(text = "Floor Number : ${floorNumber}")
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "Seat Number : 23")
+                Text(text = "Seat Number : ${seatNumber}")
             }
             Column(verticalArrangement = Arrangement.SpaceAround) {
                 Button(colors = ButtonDefaults.buttonColors(AppColor.primaryColor), onClick = onSubmit) {

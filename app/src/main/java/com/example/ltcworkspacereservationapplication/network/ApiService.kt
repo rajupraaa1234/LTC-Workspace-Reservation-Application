@@ -30,7 +30,7 @@ interface ApiService {
     @GET("desk/deskHistory")
     suspend fun getAllDeskHistory(@Query("employId") employId:Int): List<DeskHistoryModel>
 
-    @PUT("")
+    @PUT("desk/confirm-seat")
     suspend fun bookInstantDesk(@Body body: InstantBookingRequest) : InstantBookingResponse
 
 

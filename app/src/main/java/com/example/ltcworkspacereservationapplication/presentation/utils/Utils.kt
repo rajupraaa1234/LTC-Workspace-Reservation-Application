@@ -4,6 +4,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.log
@@ -26,4 +27,11 @@ object Utils {
         return false
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getCurrentDate(): String {
+        val currentDate = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return currentDate.format(formatter)
+    }
 }
