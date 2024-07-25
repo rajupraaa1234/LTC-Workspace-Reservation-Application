@@ -100,7 +100,7 @@ fun ScannerScreenComposable() {
                         .padding(bottom = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Selected Seat -> ", color = AppColor.backgroundColor)
+                    Text(text = "Selected Seat -> ${barCodeVal.value}", color = AppColor.backgroundColor)
                     AndroidView(
                         factory = {
                             TextView(context).apply {
