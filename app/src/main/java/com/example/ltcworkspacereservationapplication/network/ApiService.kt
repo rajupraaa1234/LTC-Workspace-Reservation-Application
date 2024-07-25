@@ -20,7 +20,7 @@ interface ApiService {
 
 
     // Desk Related Api
-    @GET("desk/total-seat/{date}")
+    @GET("desk/total-seat/")
     suspend fun getAllDesk(@Query("date") date: String): List<DeskResponseItemModel>
 
     @POST("desk/seat-booking")

@@ -18,10 +18,10 @@ data class AppState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val employeeName: String = "Raju Kumar",
     val selectedDate: String = getCurrentDate(),
 
-    val deskList: List<DeskResponseItemModel> = listData.deskList,
+    var deskList: List<DeskResponseItemModel> = listOf(),
     val cabinList: List<MeetingItemModel> = listData.cabinList,
 
-    var currentFilteredList: List<DeskResponseItemModel> = listData.deskList,
+    var currentFilteredList: List<DeskResponseItemModel> = listOf(),
     var currentMeetingRoomFilteredList: List<MeetingItemModel> = listData.cabinList,
 
     val startDestination : String = Routes.LOGIN,

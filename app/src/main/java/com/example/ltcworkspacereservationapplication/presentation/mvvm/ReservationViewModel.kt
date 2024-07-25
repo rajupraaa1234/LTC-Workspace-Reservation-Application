@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ltcworkspacereservationapplication.R
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
+import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Request.DeskReservationRequest
 import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.DeskResponseItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.BookDeskUseCase
@@ -29,6 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
+import kotlin.math.log
 
 
 @HiltViewModel
@@ -139,6 +141,54 @@ class ReservationViewModel @Inject constructor(
         }
     }
 
+    private suspend fun getDeskListApiCall() {
+        viewModelScope.launch {
+            try {
+                isLoading.value = true
+                val response = getDeskListUseCase(uiState.value.selectedDate)
+                if(response != null && response.size > 0){
+                    _uiState.value.deskList = response
+                    _uiState.value.currentFilteredList = response
+                    updateDeskListUI()
+                }
+                isLoading.value = false
+            } catch (e: Exception) {
+                isLoading.value = false
+                setToastMessage(e.toString())
+                e.printStackTrace()
+            }
+        }
+    }
+
+    // Updating DeskList UI After Calling DeskList UI
+    private fun updateDeskListUI() {
+        _uiState.update { state ->
+            val updatedItems = state.currentFilteredList.mapIndexed { i, item ->
+                    if (item.reservationStatus == AvailabilityType.RESERVED.type) {
+                        item.copy(imageId = R.drawable.reserveddesk)
+                    } else if (item.reservationStatus == AvailabilityType.BOOKED.type) {
+                        item.copy(imageId = R.drawable.deskbooked)
+                    } else {
+                        item.copy(imageId = R.drawable.availabledesk)
+                }
+            }
+            state.copy(currentFilteredList = updatedItems)
+        }
+        _uiState.update { state ->
+            val updatedItems = state.deskList.mapIndexed { i, item ->
+                if (item.reservationStatus == AvailabilityType.RESERVED.type) {
+                    item.copy(imageId = R.drawable.reserveddesk)
+                } else if (item.reservationStatus == AvailabilityType.BOOKED.type) {
+                    item.copy(imageId = R.drawable.deskbooked)
+                } else {
+                    item.copy(imageId = R.drawable.availabledesk)
+                }
+            }
+            state.copy(deskList = updatedItems)
+        }
+        ReservationViewModelEffects.Composable.deskListUpdated.send()
+    }
+
 
     // Api Calls for Booking the Desk
     private suspend fun callBookDeskApi() {
@@ -147,9 +197,23 @@ class ReservationViewModel @Inject constructor(
             if (response) {
                 viewModelScope.launch {
                     isLoading.value = true
-                    delay(2000)
-                    updateCurrentDeskList()
-                    updateDeskList()
+                    val deskObject = selectedDesk.value?.let { it1 ->
+                        DeskReservationRequest(employId = _uiState.value.employeeId.toInt(),
+                            name = _uiState.value.employeeName,
+                            date = _uiState.value.selectedDate,
+                            seatNumber = it1.seatNumber,
+                            floorNumber = selectedDesk.value!!.floorNumber,
+                            reservationStatus = AvailabilityType.BOOKED.type
+                        )
+                    }
+
+                    val response = deskObject?.let { it1 -> bookDeskUseCase(it1) }
+                    if(response!!.status == "Already Reserved"){
+                        setToastMessage("You have already booked one desk for this date")
+                    }else{
+                        updateCurrentDeskList()
+                        updateDeskList()
+                    }
                     isLoading.value = false
                 }
             }
@@ -209,10 +273,8 @@ class ReservationViewModel @Inject constructor(
 
     //Call All Api from here
    suspend private fun callAllApi(employeeId: String) {
-        val response = deskHistoryUseCase(employeeId.toInt())
-        Log.d(TAG, ":  ${response}")
-        Log.d(TAG, "onLoginClicked: onLoginClicked ${employeeId}")
-    }
+        getDeskListApiCall()
+   }
 
     private fun onDeskItemClicked(itm: DeskResponseItemModel, index: Int) {
         selectedDesk.value = itm
