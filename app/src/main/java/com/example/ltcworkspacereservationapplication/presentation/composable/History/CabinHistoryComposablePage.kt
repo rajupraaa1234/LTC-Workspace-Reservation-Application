@@ -15,11 +15,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
-import com.example.ltcworkspacereservationapplication.domain.model.History.CabinHistoryModel
-import com.example.ltcworkspacereservationapplication.domain.model.History.MeetingRoomHistoryResponse
+import com.example.ltcworkspacereservationapplication.domain.model.History.MeetingHistory.MeetingRoomHistoryResponse
 import com.example.ltcworkspacereservationapplication.presentation.composable.EmptyMessageComposable
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
@@ -84,8 +82,8 @@ private fun ElevatedCard(item: MeetingRoomHistoryResponse) {
                         style = MaterialTheme.typography.subtitle1.copy(fontSize = 12.sp),
                     )
                     Text(
-                        text = "Status : $reservationStatus",
-                        color = if (reservationStatus == AvailabilityType.RESERVED.type) AppColor.primaryColorLight else AppColor.bookedDeskBackgroundColour,
+                        text = "Status : Booked",
+                        color =  AppColor.primaryColorLight,
                         style = MaterialTheme.typography.subtitle2,
                     )
                 }

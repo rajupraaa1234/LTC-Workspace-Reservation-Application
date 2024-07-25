@@ -1,18 +1,21 @@
 package com.example.ltcworkspacereservationapplication.presentation.mvvm
 
-import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ltcworkspacereservationapplication.R
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
-import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
+import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.DeskResponseItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
+import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.BookDeskUseCase
+import com.example.ltcworkspacereservationapplication.domain.usecase.DeskReservationUsecase.GetDeskListUseCase
+import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseCase.DeskHistoryUseCase
+import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseCase.MeetingHistoryUseCase
+import com.example.ltcworkspacereservationapplication.domain.usecase.MeetingRoomReservationUseCase.GetMeetingListUseCase
+import com.example.ltcworkspacereservationapplication.domain.usecase.MeetingRoomReservationUseCase.MeetingRoomReservationUseCase
 import com.example.ltcworkspacereservationapplication.presentation.state.AppState
-import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,12 +23,28 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 
-class ReservationViewModel(val context: Context) : ViewModel() {
+@HiltViewModel
+class ReservationViewModel @Inject constructor(
+    private val getDeskListUseCase: GetDeskListUseCase,
+    private val bookDeskUseCase: BookDeskUseCase,
+    private val deskHistoryUseCase: DeskHistoryUseCase,
+    private val meetingHistoryUseCase: MeetingHistoryUseCase,
+    private val meetingRoomReservationUseCase: MeetingRoomReservationUseCase,
+    private val getMeetingRoomListUseCase: GetMeetingListUseCase
+) : ViewModel() {
+
     private val _uiState = MutableStateFlow(AppState())
 
     private val _effects = MutableSharedFlow<ReservationViewModelEffects>()
+
+
+    //Toast Message State
+    private val _toastMessage = MutableStateFlow<String?>(null)
+    val toastMessage: StateFlow<String?> = _toastMessage.asStateFlow()
 
 
     val uiState: StateFlow<AppState>
@@ -40,11 +59,14 @@ class ReservationViewModel(val context: Context) : ViewModel() {
 
     private val selectedFloor = mutableIntStateOf(-1)
 
-    private var selectedDesk = mutableStateOf<DeskItemModel?>(null)
+    private var selectedDesk = mutableStateOf<DeskResponseItemModel?>(null)
 
-
-    val TAG = "ReservationViewModel"
-
+    init {
+        viewModelScope.launch {
+//            val response = getDeskListUseCase()
+//            Log.d(TAG, ": ${response} ")
+        }
+    }
 
     suspend fun sendIntent(intent: AppIntent) {
         when (intent) {
@@ -75,7 +97,7 @@ class ReservationViewModel(val context: Context) : ViewModel() {
 
     }
 
-    private fun OnDeskListFilterUpdate(listItem: List<DeskItemModel>) {
+    private fun OnDeskListFilterUpdate(listItem: List<DeskResponseItemModel>) {
         _uiState.update { it.copy(currentFilteredList = listItem) }
     }
 
@@ -87,11 +109,9 @@ class ReservationViewModel(val context: Context) : ViewModel() {
         val seatString = seatId.split("-")
         val floorNo = seatString[0]
         val seatNumber = seatString[1].toInt()
-        Log.d("scanner", seatNumber.toString())
         val response = true
         if (response) {
             viewModelScope.launch {
-                Log.d("scanner", "onQRCodeScanned inside")
                 isLoading.value = true
                 delay(2000)
                 updateInstantBookingDeskList(seatId = seatNumber)
@@ -120,7 +140,8 @@ class ReservationViewModel(val context: Context) : ViewModel() {
 
     private suspend fun onDeskBookButtonClicked() {
         if (selectedFloor.value == -1) {
-            Toast.makeText(context, "Please select floor to book", Toast.LENGTH_SHORT).show()
+            setToastMessage("Please select floor to book 1")
+            //Toast.makeText(context, "Please select floor to book", Toast.LENGTH_SHORT).show()
         } else {
             callBookDeskApi()
         }
@@ -133,18 +154,18 @@ class ReservationViewModel(val context: Context) : ViewModel() {
         meetingId: String
     ) {
         if (selectedFloor.value == -1) {
-            Toast.makeText(context, "Please select floor to book", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "Please select floor to book", Toast.LENGTH_SHORT).show()
         } else {
-            Log.d(TAG, "onDeskBookButtonClicked: booked")
+//            Log.d(TAG, "onDeskBookButtonClicked: booked")
         }
-        Log.d(TAG, "onMeetingBooking: ${startTime} ${endTime} ${capacity} ${meetingId}")
+//        Log.d(TAG, "onMeetingBooking: ${startTime} ${endTime} ${capacity} ${meetingId}")
     }
 
     fun updateStartDestination(startDestination: String) {
         _uiState.update { it.copy(startDestination = startDestination) }
     }
 
-    private fun onDeskItemClicked(itm: DeskItemModel, index: Int) {
+    private fun onDeskItemClicked(itm: DeskResponseItemModel, index: Int) {
         selectedDesk.value = itm
         _uiState.update { state ->
             val updatedItems = state.currentFilteredList.mapIndexed { i, item ->
@@ -212,7 +233,7 @@ class ReservationViewModel(val context: Context) : ViewModel() {
     }
 
 
-    fun filterByFloor(floorNumber: Int): List<DeskItemModel> {
+    fun filterByFloor(floorNumber: Int): List<DeskResponseItemModel> {
         return _uiState.value.deskList.filter { it.floorNumber == floorNumber }
     }
 
@@ -295,6 +316,15 @@ class ReservationViewModel(val context: Context) : ViewModel() {
                 state
             }
         }
+    }
+
+
+    fun clearToastMessage() {
+        _toastMessage.value = null
+    }
+
+    fun setToastMessage(text: String) {
+        _toastMessage.value = text
     }
 
 }

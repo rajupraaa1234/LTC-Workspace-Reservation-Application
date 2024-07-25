@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.ltcworkspacereservationapplication" />
+                  <option name="mobileSdkAppId" value="1:866741623122:android:7950d9ae77961452f1028b" />
+                  <option name="projectId" value="ltc-workspace-reservation" />
+                  <option name="projectNumber" value="866741623122" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

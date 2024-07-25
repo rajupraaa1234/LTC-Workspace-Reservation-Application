@@ -38,7 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
-import com.example.ltcworkspacereservationapplication.domain.model.DeskItemModel
+import com.example.ltcworkspacereservationapplication.domain.model.DeskReservation.Response.DeskResponseItemModel
 import com.example.ltcworkspacereservationapplication.domain.model.MeetingItemModel
 import com.example.ltcworkspacereservationapplication.presentation.composable.ConfirmationPopup
 import com.example.ltcworkspacereservationapplication.presentation.composable.EmptyMessageComposable
@@ -79,7 +79,7 @@ fun CustomGridItem(
                 }
         ) {
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
@@ -88,7 +88,10 @@ fun CustomGridItem(
                     Modifier
                         .size(Spacing.Size_40)
                 )
-                Text(text = "R-${item.meetingRoomId}", style = MaterialTheme.typography.body2)
+                Column(modifier = Modifier.padding(Spacing.Size_10)) {
+                    Text(text = "R-${item.meetingRoomId}", style = MaterialTheme.typography.body2)
+                    Text(text = "Size-${item.capacity}", style = MaterialTheme.typography.subtitle2)
+                }
             }
 
             Box(
@@ -133,7 +136,7 @@ fun CabinGridList(
                 )
             } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
+                    columns = GridCells.Fixed(2),
                 ) {
                     items(items.size) { index ->
                         CustomGridItem(items[index], onClickItem, onSubmit, index)
@@ -148,8 +151,8 @@ fun CabinGridList(
 
 @Composable
 fun DeskGridList(
-    items: List<DeskItemModel>,
-    onClickItem: (DeskItemModel, Int) -> Unit,
+    items: List<DeskResponseItemModel>,
+    onClickItem: (DeskResponseItemModel, Int) -> Unit,
     onSubmit: () -> Unit
 ) {
     var isAnyItemClicked by remember { mutableStateOf(false) }
@@ -258,7 +261,7 @@ fun Indicator(text: String, color: Color) {
 
 
 @Composable
-fun DeskGridItem(item: DeskItemModel, onClickItem: (DeskItemModel, Int) -> Unit, index: Int) {
+fun DeskGridItem(item: DeskResponseItemModel, onClickItem: (DeskResponseItemModel, Int) -> Unit, index: Int) {
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

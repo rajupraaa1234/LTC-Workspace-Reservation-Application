@@ -1,9 +1,9 @@
 package com.example.ltcworkspacereservationapplication
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -28,14 +28,15 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -47,7 +48,6 @@ import com.example.ltcworkspacereservationapplication.presentation.composable.Cu
 import com.example.ltcworkspacereservationapplication.presentation.composable.CustomDropdownMenu
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.LogoutButton
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.AppIntent
-import com.example.ltcworkspacereservationapplication.presentation.mvvm.MyViewModelFactory
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
 import com.example.ltcworkspacereservationapplication.presentation.screens.BannerScreen
 import com.example.ltcworkspacereservationapplication.presentation.screens.HistoryScreen
@@ -60,24 +60,33 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.Prefere
 import com.example.ltcworkspacereservationapplication.presentation.utils.Routes
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel = ViewModelProvider(
-            this,
-            MyViewModelFactory(application)
-        ).get(ReservationViewModel::class.java)
-
+        val viewModel: ReservationViewModel by viewModels()
         enableEdgeToEdge()
         setContent {
+            showToastMessage(viewModel, this@MainActivity)
             val employeeId = PreferencesManager.getEmployeeId(this)
             val startDestination =
                 if (employeeId.isNullOrEmpty()) Routes.LOGIN else Routes.HOME_SCREEN
             viewModel.updateStartDestination(startDestination)
-
             BottomTabNavigation(viewModel)
+        }
+    }
+}
+
+@Composable
+fun showToastMessage(viewModel: ReservationViewModel, mainActivity: MainActivity) {
+    val toastMessage by viewModel.toastMessage.collectAsState()
+    toastMessage?.let { message ->
+        LaunchedEffect(message) {
+            Toast.makeText(mainActivity, message, Toast.LENGTH_SHORT).show()
+            viewModel.clearToastMessage()
         }
     }
 }
