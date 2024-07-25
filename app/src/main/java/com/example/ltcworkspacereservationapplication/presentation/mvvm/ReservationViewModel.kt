@@ -1,5 +1,7 @@
 package com.example.ltcworkspacereservationapplication.presentation.mvvm
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -15,6 +17,7 @@ import com.example.ltcworkspacereservationapplication.domain.usecase.HistoryUseC
 import com.example.ltcworkspacereservationapplication.domain.usecase.MeetingRoomReservationUseCase.GetMeetingListUseCase
 import com.example.ltcworkspacereservationapplication.domain.usecase.MeetingRoomReservationUseCase.MeetingRoomReservationUseCase
 import com.example.ltcworkspacereservationapplication.presentation.state.AppState
+import com.example.ltcworkspacereservationapplication.presentation.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -57,6 +60,8 @@ class ReservationViewModel @Inject constructor(
     var isLoading = mutableStateOf(false)
         protected set
 
+    val TAG = "ReservationViewModel"
+
     private val selectedFloor = mutableIntStateOf(-1)
 
     private var selectedDesk = mutableStateOf<DeskResponseItemModel?>(null)
@@ -94,7 +99,6 @@ class ReservationViewModel @Inject constructor(
     private fun addBanner(showBanner: Boolean) {
         _uiState.update { it.copy(showBanner=showBanner)
         }
-
     }
 
     private fun OnDeskListFilterUpdate(listItem: List<DeskResponseItemModel>) {
@@ -138,15 +142,31 @@ class ReservationViewModel @Inject constructor(
         }
     }
 
+    // Will Call Meeting Booking Api
+    private fun callBookMeetingApi(startTime: String, endTime: String, meetingId: String, item: MeetingItemModel) {
+        val response = true
+        if(response){
+            viewModelScope.launch {
+                isLoading.value = true
+                delay(2000)
+                updateCurrentMeetingRoomList(item,startTime,endTime)
+                updateCabinMeetingRoomList(item,startTime,endTime)
+                isLoading.value = false
+            }
+        }
+    }
+
+
     private suspend fun onDeskBookButtonClicked() {
         if (selectedFloor.value == -1) {
-            setToastMessage("Please select floor to book 1")
+            setToastMessage("Please select floor to book")
             //Toast.makeText(context, "Please select floor to book", Toast.LENGTH_SHORT).show()
-        } else {
+        } else{
             callBookDeskApi()
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun onMeetingBooking(
         startTime: String,
         endTime: String,
@@ -154,12 +174,18 @@ class ReservationViewModel @Inject constructor(
         meetingId: String
     ) {
         if (selectedFloor.value == -1) {
+            setToastMessage("Please select floor to book")
             //Toast.makeText(context, "Please select floor to book", Toast.LENGTH_SHORT).show()
         } else {
-//            Log.d(TAG, "onDeskBookButtonClicked: booked")
+            val item : MeetingItemModel = getItemByMeetingRoom(meetingId.toInt())!!;
+            if(Utils.isTimeSlotOverlapping(item.reservedSlot,startTime,endTime)){
+                setToastMessage("Please select other slot this slot getting conflict with other slot")
+            }else{
+                callBookMeetingApi(startTime,endTime,meetingId,item)
+            }
         }
-//        Log.d(TAG, "onMeetingBooking: ${startTime} ${endTime} ${capacity} ${meetingId}")
     }
+
 
     fun updateStartDestination(startDestination: String) {
         _uiState.update { it.copy(startDestination = startDestination) }
@@ -325,6 +351,60 @@ class ReservationViewModel @Inject constructor(
 
     fun setToastMessage(text: String) {
         _toastMessage.value = text
+    }
+
+    private fun getItemByMeetingRoom(meetingId : Int): MeetingItemModel? {
+        val index = uiState.value.cabinList.indexOfFirst { it.meetingRoomId == meetingId }
+        if(index != -1){
+            val updatedItems = uiState.value.cabinList.toMutableList()
+            val selectedItem = updatedItems[index]
+            return selectedItem
+        }
+        return null;
+    }
+
+
+    fun updateCurrentMeetingRoomList(meetingItem: MeetingItemModel,startTime : String, endTime : String) {
+        _uiState.update { state ->
+            val index = state.currentMeetingRoomFilteredList.indexOfFirst { it.meetingRoomId == meetingItem.meetingRoomId }
+            if (index != -1) {
+                val mutableList = meetingItem.reservedSlot.toMutableList()
+                mutableList.add("${startTime}-${endTime}")
+                val newList = mutableList.toList()
+                val updatedItems = state.currentMeetingRoomFilteredList.toMutableList()
+                val selectedItem = updatedItems[index]
+                updatedItems[index] = selectedItem.copy(
+                    imageId = R.drawable.reservedcabin,
+                    reservedSlot = newList
+                )
+                state.copy(currentMeetingRoomFilteredList = updatedItems)
+            } else {
+                state
+            }
+        }
+        ReservationViewModelEffects.Composable.meetingListUpdated.send()
+    }
+
+
+    fun updateCabinMeetingRoomList(meetingItem: MeetingItemModel,startTime : String, endTime : String) {
+        _uiState.update { state ->
+            val index = state.cabinList.indexOfFirst { it.meetingRoomId == meetingItem.meetingRoomId }
+            if (index != -1) {
+                val mutableList = meetingItem.reservedSlot.toMutableList()
+                mutableList.add("${startTime}-${endTime}")
+                val newList = mutableList.toList()
+                val updatedItems = state.cabinList.toMutableList()
+                val selectedItem = updatedItems[index]
+                updatedItems[index] = selectedItem.copy(
+                    imageId = R.drawable.reservedcabin,
+                    reservedSlot = newList
+                )
+                state.copy(cabinList = updatedItems)
+            } else {
+                state
+            }
+        }
+        ReservationViewModelEffects.Composable.meetingListUpdated.send()
     }
 
 }

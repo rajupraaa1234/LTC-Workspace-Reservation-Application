@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">LTC WorkSpot</string>
-    <string name="popup_instruction">Please enter below details before book meeting room</string>
+    <string name="popup_instruction">Please select meeting start time and end time before book meeting room</string>
 </resources>
