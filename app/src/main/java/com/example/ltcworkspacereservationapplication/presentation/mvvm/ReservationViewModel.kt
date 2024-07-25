@@ -20,14 +20,14 @@ import com.example.ltcworkspacereservationapplication.domain.usecase.MeetingRoom
 import com.example.ltcworkspacereservationapplication.presentation.state.AppState
 import com.example.ltcworkspacereservationapplication.presentation.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 
@@ -99,19 +99,21 @@ class ReservationViewModel @Inject constructor(
 
 
     suspend fun saveEmployeeId(employeeId: String) {
-        if(employeeId.isNotEmpty() && employeeId.length >0 ){
+        if (employeeId.isNotEmpty() && employeeId.length > 0) {
             saveEmployeeIdInAppState(employeeId)
             callAllApi(employeeId)
         }
     }
 
     private fun saveEmployeeIdInAppState(employeeId: String) {
-        _uiState.update { it.copy(employeeId=employeeId)
+        _uiState.update {
+            it.copy(employeeId = employeeId)
         }
     }
 
     private fun addBanner(showBanner: Boolean) {
-        _uiState.update { it.copy(showBanner=showBanner)
+        _uiState.update {
+            it.copy(showBanner = showBanner)
         }
     }
 
@@ -157,14 +159,19 @@ class ReservationViewModel @Inject constructor(
     }
 
     // Will Call Meeting Booking Api
-    private fun callBookMeetingApi(startTime: String, endTime: String, meetingId: String, item: MeetingItemModel) {
+    private fun callBookMeetingApi(
+        startTime: String,
+        endTime: String,
+        meetingId: String,
+        item: MeetingItemModel
+    ) {
         val response = true
-        if(response){
+        if (response) {
             viewModelScope.launch {
                 isLoading.value = true
                 delay(2000)
-                updateCurrentMeetingRoomList(item,startTime,endTime)
-                updateCabinMeetingRoomList(item,startTime,endTime)
+                updateCurrentMeetingRoomList(item, startTime, endTime)
+                updateCabinMeetingRoomList(item, startTime, endTime)
                 isLoading.value = false
             }
         }
@@ -175,7 +182,7 @@ class ReservationViewModel @Inject constructor(
         if (selectedFloor.value == -1) {
             setToastMessage("Please select floor to book")
             //Toast.makeText(context, "Please select floor to book", Toast.LENGTH_SHORT).show()
-        } else{
+        } else {
             callBookDeskApi()
         }
     }
@@ -191,11 +198,11 @@ class ReservationViewModel @Inject constructor(
             setToastMessage("Please select floor to book")
             //Toast.makeText(context, "Please select floor to book", Toast.LENGTH_SHORT).show()
         } else {
-            val item : MeetingItemModel = getItemByMeetingRoom(meetingId.toInt())!!;
-            if(Utils.isTimeSlotOverlapping(item.reservedSlot,startTime,endTime)){
+            val item: MeetingItemModel = getItemByMeetingRoom(meetingId.toInt())!!;
+            if (Utils.isTimeSlotOverlapping(item.reservedSlot, startTime, endTime)) {
                 setToastMessage("Please select other slot this slot getting conflict with other slot")
-            }else{
-                callBookMeetingApi(startTime,endTime,meetingId,item)
+            } else {
+                callBookMeetingApi(startTime, endTime, meetingId, item)
             }
         }
     }
@@ -206,13 +213,24 @@ class ReservationViewModel @Inject constructor(
     }
 
 
-
     //Call All Api from here
-   suspend private fun callAllApi(employeeId: String) {
-        val response = deskHistoryUseCase(employeeId.toInt())
-        Log.d(TAG, ":  ${response}")
-        Log.d(TAG, "onLoginClicked: onLoginClicked ${employeeId}")
+    private suspend fun callAllApi(employeeId: String) {
+        deskHistoryAPICall(employeeId)
+
     }
+
+    private suspend fun deskHistoryAPICall(employeeId: String) {
+        try {
+            val response = deskHistoryUseCase(employeeId.toInt())
+            //Log.d(TAG, ":  ${response}")
+            _uiState.update { it.copy(deskHistoryList = response) }
+            //Log.d(TAG, "onLoginClicked: onLoginClicked ${employeeId}")
+        } catch (e:Exception) {
+            Log.d("Exception","Desk history api call failed")
+        }
+
+    }
+
 
     private fun onDeskItemClicked(itm: DeskResponseItemModel, index: Int) {
         selectedDesk.value = itm
@@ -255,9 +273,9 @@ class ReservationViewModel @Inject constructor(
         ReservationViewModelEffects.Composable.meetingListUpdated.send()
     }
 
-   suspend private fun onLoginClicked(employeeId: String) {
+    suspend private fun onLoginClicked(employeeId: String) {
         _uiState.update { it.copy(employeeId = employeeId) }
-       callAllApi(employeeId)
+        callAllApi(employeeId)
     }
 
     private fun onFloorSelected(floor: Int) {
@@ -377,9 +395,9 @@ class ReservationViewModel @Inject constructor(
         _toastMessage.value = text
     }
 
-    private fun getItemByMeetingRoom(meetingId : Int): MeetingItemModel? {
+    private fun getItemByMeetingRoom(meetingId: Int): MeetingItemModel? {
         val index = uiState.value.cabinList.indexOfFirst { it.meetingRoomId == meetingId }
-        if(index != -1){
+        if (index != -1) {
             val updatedItems = uiState.value.cabinList.toMutableList()
             val selectedItem = updatedItems[index]
             return selectedItem
@@ -388,9 +406,14 @@ class ReservationViewModel @Inject constructor(
     }
 
 
-    fun updateCurrentMeetingRoomList(meetingItem: MeetingItemModel,startTime : String, endTime : String) {
+    fun updateCurrentMeetingRoomList(
+        meetingItem: MeetingItemModel,
+        startTime: String,
+        endTime: String
+    ) {
         _uiState.update { state ->
-            val index = state.currentMeetingRoomFilteredList.indexOfFirst { it.meetingRoomId == meetingItem.meetingRoomId }
+            val index =
+                state.currentMeetingRoomFilteredList.indexOfFirst { it.meetingRoomId == meetingItem.meetingRoomId }
             if (index != -1) {
                 val mutableList = meetingItem.reservedSlot.toMutableList()
                 mutableList.add("${startTime}-${endTime}")
@@ -410,9 +433,14 @@ class ReservationViewModel @Inject constructor(
     }
 
 
-    fun updateCabinMeetingRoomList(meetingItem: MeetingItemModel,startTime : String, endTime : String) {
+    fun updateCabinMeetingRoomList(
+        meetingItem: MeetingItemModel,
+        startTime: String,
+        endTime: String
+    ) {
         _uiState.update { state ->
-            val index = state.cabinList.indexOfFirst { it.meetingRoomId == meetingItem.meetingRoomId }
+            val index =
+                state.cabinList.indexOfFirst { it.meetingRoomId == meetingItem.meetingRoomId }
             if (index != -1) {
                 val mutableList = meetingItem.reservedSlot.toMutableList()
                 mutableList.add("${startTime}-${endTime}")
