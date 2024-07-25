@@ -235,8 +235,11 @@ class ReservationViewModel @Inject constructor(
                     if(response!!.status == "Already Reserved"){
                         setToastMessage("You have already booked one desk for this date")
                     }else{
+                        setToastMessage("Your desk has been booked for  ${_uiState.value.selectedDate} date")
                         updateCurrentDeskList()
                         updateDeskList()
+                        deskHistoryAPICall(_uiState.value.employeeId)
+                        checkForBanner()
                     }
                     isLoading.value = false
                 }
@@ -325,6 +328,7 @@ class ReservationViewModel @Inject constructor(
     private suspend fun deskHistoryAPICall(employeeId: String) {
         try {
             val response = deskHistoryUseCase(employeeId.toInt())
+            Log.d(TAG, "deskHistoryAPICall 2: ${response}")
             _uiState.update { it.copy(deskHistoryList = response) }
         } catch (e:Exception) {
             Log.d("Exception","Desk history api call failed")
@@ -338,7 +342,6 @@ class ReservationViewModel @Inject constructor(
                 if (item.seatId == itm.seatId) {
                     item.copy(imageId = R.drawable.selecteddesk) // Change to desired color
                 } else {
-
                     if (item.reservationStatus == AvailabilityType.RESERVED.type) {
                         item.copy(imageId = R.drawable.reserveddesk)
                     } else if (item.reservationStatus == AvailabilityType.BOOKED.type) {
