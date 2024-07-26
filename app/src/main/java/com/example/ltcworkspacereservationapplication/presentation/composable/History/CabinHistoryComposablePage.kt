@@ -102,6 +102,10 @@ private fun ElevatedCard(item: MeetingRoomHistoryResponse) {
                         style = MaterialTheme.typography.caption,
                     )
                     Text(
+                        text = "Booking Date : LTC$bookingId",
+                        style = MaterialTheme.typography.caption,
+                    )
+                    Text(
                         text = "Booking Time : ${extractHourAndMinute(startTime)}-${extractHourAndMinute(endTime)}",
                         style = MaterialTheme.typography.caption,
                     )

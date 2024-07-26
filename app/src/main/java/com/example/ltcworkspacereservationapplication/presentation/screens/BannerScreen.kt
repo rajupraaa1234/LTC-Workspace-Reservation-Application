@@ -37,53 +37,26 @@ fun BannerScreen(bookingId:Int,floorNumber: Int, seatNumber: Int, onSubmit: () -
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(Spacing.Size_5)
         ) {
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.SpaceBetween) {
-                Text(text = "Booking id : ${bookingId}")
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .semantics { contentDescription = "Booking details" },
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Booking id : 12345",
-                    modifier = Modifier.semantics { contentDescription = "Booking ID: 12345" }
-                )
+            Column(modifier = Modifier
+                .weight(1f)
+                .semantics { contentDescription = "Booking details" },
+                verticalArrangement = Arrangement.SpaceBetween) {
+                Text(text = "Booking id : LTC${bookingId}", modifier = Modifier.semantics { contentDescription = "Booking ID: ${bookingId}" })
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "Floor Number : ${floorNumber}")
-                Text(text = "Floor Number : 5",
-                    modifier = Modifier.semantics {
-                        contentDescription = "Floor Number: 5"
-                    }
-                )
+                Text(text = "Floor Number : ${floorNumber}", modifier = Modifier.semantics {
+                    contentDescription = "Floor Number: ${floorNumber}"
+                })
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "Seat Number : ${seatNumber}")
-                Text(text = "Seat Number : 23",
-                    modifier = Modifier.semantics { contentDescription = "Seat Number: 23" }
-                )
+                Text(text = "Seat Number : ${seatNumber}",modifier = Modifier.semantics { contentDescription = "Seat Number: ${seatNumber}" })
             }
-            Column(
-                verticalArrangement = Arrangement.SpaceAround,
-                modifier = Modifier.semantics { contentDescription = "Actions" }
-            ) {
-                Button(
-                    colors = ButtonDefaults.buttonColors(AppColor.primaryColor),
-                    onClick = onSubmit,
-                    modifier = Modifier.semantics { contentDescription = "Reserve button" }
-
-                ) {
+            Column(verticalArrangement = Arrangement.SpaceAround,modifier = Modifier.semantics { contentDescription = "Actions" }) {
+                Button(colors = ButtonDefaults.buttonColors(AppColor.primaryColor), onClick = onSubmit,modifier = Modifier.semantics { contentDescription = "Reserve button" }) {
                     Text(text = "Reserve", color = AppColor.backgroundColor)
 
                 }
                 Spacer(modifier = Modifier.width(10.dp))
-                Button(
-                    colors = ButtonDefaults.buttonColors(AppColor.errorColor),
-                    onClick = onCancel,
-                    modifier = Modifier.semantics { contentDescription = "Cancel button" }
-
-                ) {
+                Button(colors = ButtonDefaults.buttonColors(AppColor.errorColor),onClick = onCancel,modifier = Modifier.semantics { contentDescription = "Cancel button" }) {
                     Text(text = "Cancel", color = AppColor.backgroundColor)
-
                 }
             }
         }

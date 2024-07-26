@@ -94,7 +94,7 @@ private fun ElevatedCard(item: DeskHistoryModel) {
                         style = MaterialTheme.typography.caption,
                     )
                     Text(
-                        text = "Booking Id : $bookingId",
+                        text = "Booking Id : LTC$bookingId",
                         style = MaterialTheme.typography.caption,
                     )
                 }
