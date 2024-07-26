@@ -35,6 +35,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
@@ -66,7 +68,8 @@ fun CustomGridItem(
     Card(
         shape = RoundedCornerShape(Spacing.Size_10),
         backgroundColor = Color(0xFFF5F5F5),
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier.padding(8.dp).semantics { contentDescription = "Meeting room item" }
+
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -84,7 +87,7 @@ fun CustomGridItem(
             ) {
                 Image(
                     painter = painterResource(item.imageId),
-                    contentDescription = "Filter Icon",
+                    contentDescription = "Meeting room image",
                     Modifier
                         .size(Spacing.Size_40)
                 )
@@ -94,20 +97,19 @@ fun CustomGridItem(
                 }
             }
 
-            if(item.reservedSlot.size > 0) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(Spacing.Size_5)
-                        .background(AppColor.primaryColorLight)
-                ) {
-                    LazyRow(modifier = Modifier.padding(2.dp)) {
-                        items(item.reservedSlot.size) { index ->
-                            if (item.reservedSlot.size == index + 1)
-                                Text(text = item.reservedSlot[index], color = Color.White)
-                            else
-                                Text(text = "${item.reservedSlot[index]}, ", color = Color.White)
-                        }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Spacing.Size_5)
+                    .background(AppColor.primaryColorLight)
+                    .semantics { contentDescription = "Reserved slots" }
+            ) {
+                LazyRow(modifier = Modifier.padding(2.dp)) {
+                    items(item.reservedSlot.size) { index ->
+                        if (item.reservedSlot.size == index + 1)
+                            Text(text = item.reservedSlot[index], color = Color.White)
+                        else
+                            Text(text = "${item.reservedSlot[index]}, ", color = Color.White)
                     }
                 }
             }
@@ -242,7 +244,7 @@ fun TimeCard(isBookedShow: Boolean) {
 @Composable
 fun Indicator(text: String, color: Color) {
     Row(
-        modifier = Modifier.padding(2.dp),
+        modifier = Modifier.padding(2.dp).semantics { contentDescription = "$text indicator" },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -276,6 +278,7 @@ fun DeskGridItem(item: DeskResponseItemModel, onClickItem: (DeskResponseItemMode
                     index
                 )
             }
+            .semantics { contentDescription = "Desk item" }
     ) {
         Image(
             painter = painterResource(id = item.imageId),

@@ -10,6 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.zIndex
 
 @Composable
@@ -27,7 +29,7 @@ fun LoaderOverlay(
                     .pointerInput(Unit) {}
                     .zIndex(1f)
                     .wrapContentSize(Alignment.Center)
-
+                    .semantics { contentDescription = "Loading, please wait" }
             ) {
                 CustomLoader()
             }

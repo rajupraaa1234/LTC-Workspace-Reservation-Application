@@ -6,6 +6,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 import com.example.ltcworkspacereservationapplication.presentation.utils.color.AppColor
 
@@ -16,7 +18,8 @@ fun LogoutButton(onLogout: () -> Unit) {
         color = AppColor.primaryColor,
         modifier = Modifier
             .clickable(onClick = onLogout)
-            .padding(vertical = Spacing.Size_8),
+            .padding(vertical = Spacing.Size_8)
+            .semantics { contentDescription = "Logout button" },
         style = MaterialTheme.typography.body1
     )
 }

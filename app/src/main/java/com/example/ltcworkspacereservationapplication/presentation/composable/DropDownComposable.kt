@@ -12,6 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.example.ltcworkspacereservationapplication.domain.model.Floors
 import com.example.ltcworkspacereservationapplication.presentation.utils.Spacing
 
@@ -23,7 +25,8 @@ fun CustomDropdownMenu(modifier: Modifier, onSelect: (Int) -> Unit) {
     Box(
         modifier = modifier
             .padding(Spacing.Size_8)
-            .clickable { expanded = true },
+            .clickable { expanded = true }
+            .semantics { contentDescription = "Select floor" },
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -32,6 +35,7 @@ fun CustomDropdownMenu(modifier: Modifier, onSelect: (Int) -> Unit) {
         ) {
             Text(
                 text = selectedText,
+                modifier = Modifier.semantics { contentDescription = "Selected floor: $selectedText" }
             )
             DropdownMenu(
                 expanded = expanded,
@@ -48,7 +52,7 @@ fun CustomDropdownMenu(modifier: Modifier, onSelect: (Int) -> Unit) {
                             expanded = false
                         },
                         modifier = Modifier
-                            .align(alignment = Alignment.CenterHorizontally)
+                            .align(alignment = Alignment.CenterHorizontally).semantics { contentDescription = "Floor: ${floor.text}" }
                     ) {
                         Text(floor.text)
                     }
@@ -58,12 +62,11 @@ fun CustomDropdownMenu(modifier: Modifier, onSelect: (Int) -> Unit) {
             if (expanded) {
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowUp,
-                    contentDescription = null
-                )
+                    contentDescription = "Collapse dropdown"                )
             } else {
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowDown,
-                    contentDescription = null
+                    contentDescription = "Expand dropdown"
                 )
             }
         }

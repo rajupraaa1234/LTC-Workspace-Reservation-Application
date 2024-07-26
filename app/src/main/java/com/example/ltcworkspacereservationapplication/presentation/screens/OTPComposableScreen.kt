@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,7 +49,12 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.color.A
 import com.google.firebase.auth.PhoneAuthProvider
 
 @Composable
-fun OtpComposableScreen(navController: NavHostController,verificationId:String, phoneNumber: String, onLogin: () -> Unit) {
+fun OtpComposableScreen(
+    navController: NavHostController,
+    verificationId: String,
+    phoneNumber: String,
+    onLogin: () -> Unit
+) {
     var otp by remember { mutableStateOf("") }
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
@@ -69,6 +76,9 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(bottom = 16.dp, top = 16.dp)
+                .semantics {
+                    contentDescription = "Back"
+                }
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
@@ -85,6 +95,9 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
             modifier = Modifier
                 .padding(bottom = 16.dp)
                 .fillMaxWidth()
+                .semantics {
+                    contentDescription = "Enter the OTP"
+                }
         )
 
         Text(
@@ -95,6 +108,9 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
             modifier = Modifier
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
+                .semantics {
+                    contentDescription = "Sent to $phoneNumber"
+                }
         )
 
         Row(
@@ -163,7 +179,11 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
                                     onLogin()
                                     navController.navigate(Routes.HOME_SCREEN)
                                 } else {
-                                    Toast.makeText(navController.context, "Invalid OTP, Please try again",Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        navController.context,
+                                        "Invalid OTP, Please try again",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                     Log.d("firebase", "Sign in failed: ${task.exception?.message}")
                                 }
                             }
@@ -172,7 +192,11 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
                         Log.d("otp", "Exception: ${e.message}")
                     }
                 } else {
-                    Toast.makeText(navController.context, "Invalid OTP, Please try again",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        navController.context,
+                        "Invalid OTP, Please try again",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     Log.d("otp", "Invalid OTP")
                 }
 
@@ -190,6 +214,9 @@ fun OtpComposableScreen(navController: NavHostController,verificationId:String, 
                     1.dp,
                     if (isOTPValid) AppColor.primaryColor else AppColor.primaryColorLight
                 )
+                .semantics {
+                    contentDescription = "Confirm OTP"
+                }
         ) {
             Text(
                 text = "Confirm",
@@ -227,7 +254,10 @@ fun OtpBox(
         modifier = Modifier
             .width(50.dp)
             .height(50.dp)
-            .focusRequester(focusRequester),
+            .focusRequester(focusRequester)
+            .semantics {
+                contentDescription = "OTP box ${otp}"
+            },
         textStyle = TextStyle(fontSize = 18.sp, textAlign = TextAlign.Center),
         singleLine = true,
         maxLines = 1
