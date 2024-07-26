@@ -20,34 +20,18 @@ interface ApiService {
 
 
     // Desk Related Api
-    @GET("desk/total-seat/{date}")
+    @GET("desk/total-seat/")
     suspend fun getAllDesk(@Query("date") date: String): List<DeskResponseItemModel>
 
     @POST("desk/seat-booking")
     suspend fun bookDesk(@Body body : DeskReservationRequest): DeskReservationResponse
 
 
-    @GET("/deskdeskHistory/{employeeId}")
-    suspend fun getAllDeskHistory(@Query("employeeId") employeeId:Int): List<DeskHistoryModel>
+    @GET("desk/deskHistory")
+    suspend fun getAllDeskHistory(@Query("employId") employId:Int): List<DeskHistoryModel>
 
-    @PUT("")
+    @PUT("desk/confirm-seat")
     suspend fun bookInstantDesk(@Body body: InstantBookingRequest) : InstantBookingResponse
 
-
-    // Meeting Related Api
-
-    @POST("room/create-booking")
-    suspend fun bookMeetingRoom(@Body body : BookMeetingRoomRequest): BookMeetingRoomResponse
-
-    @GET("/room/bookings/{employeeId}")
-    suspend fun getAllMeetingHistory(@Query("employeeId") employeeId:Int): List<MeetingRoomHistoryResponse>
-
-    @GET("/room/bookings/{date}")
-    suspend fun getAllMeetingRooms(@Query("date") date : String) : GetMeetingItemResponse
-
-
-    // Dummy Api for Testing Api Services Layer
-    @GET("movies")
-    suspend fun getData() : Any
 
 }

@@ -12,6 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,13 +29,14 @@ fun EmptyMessageComposable(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(Spacing.Size_16),
+            .padding(Spacing.Size_16)
+            .semantics { contentDescription = "Empty state: $title. $subtitle" },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painterResource(id = R.drawable.emptyimg),
-            contentDescription = null,
+            contentDescription =  "No items available",
             modifier = Modifier
                 .size(150.dp)
                 .padding(bottom = 16.dp)
@@ -44,12 +47,13 @@ fun EmptyMessageComposable(
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom  = 8.dp)
+                .semantics { contentDescription = "Title: $title" }
         )
         Text(
             text = subtitle,
             fontSize = 16.sp,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 16.dp).semantics { contentDescription = "Subtitle: $subtitle" }
         )
     }
 }

@@ -8,7 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -65,13 +64,26 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModel: ReservationViewModel by viewModels()
+        val TAG = "MainActivity1"
         enableEdgeToEdge()
         setContent {
             showToastMessage(viewModel, this@MainActivity)
             val employeeId = PreferencesManager.getEmployeeId(this)
+            val employeeName = PreferencesManager.getEmployeeName(this)
+            if (!employeeId.isNullOrEmpty()){
+                viewModel.viewModelScope.launch {
+                    viewModel.saveEmployeeId(employeeId)
+                }
+            }
+            if(!employeeName.isNullOrEmpty()){
+                viewModel.viewModelScope.launch {
+                    viewModel.saveEmployeeName(employeeName)
+                }
+            }
             val startDestination =
                 if (employeeId.isNullOrEmpty()) Routes.LOGIN else Routes.HOME_SCREEN
             viewModel.updateStartDestination(startDestination)
@@ -251,6 +263,8 @@ private fun HomePage(
     viewModel: ReservationViewModel,
 ) {
     val userName = viewModel.uiState.value.employeeName
+    val userId = viewModel.uiState.value.employeeId
+
     val selectedDate = remember { mutableStateOf(viewModel.uiState.value.selectedDate) }
     val showDialog = remember { mutableStateOf(false) }
 
@@ -269,13 +283,16 @@ private fun HomePage(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Dear $userName",
+                text = "Dear $userName (${userId})",
                 modifier = Modifier.padding(vertical = Spacing.Size_8),
                 style = MaterialTheme.typography.body2
             )
             LogoutButton(onLogout = {
                 PreferencesManager.clearEmployeeId(navController.context)
                 viewModel.updateStartDestination(Routes.LOGIN)
+                viewModel.viewModelScope.launch {
+                    viewModel.clearAllAppStateWhileLogout()
+                }
                 navController.navigate(Routes.LOGIN) {
                     popUpTo(navController.graph.startDestinationId) {
                         inclusive = true
@@ -328,7 +345,11 @@ private fun HomePage(
             }
         }
         if (viewModel.uiState.value.showBanner) {
-            BannerScreen(onSubmit = {
+            BannerScreen(
+                bookingId = viewModel.uiState.value.bookingId,
+                floorNumber = viewModel.uiState.value.floorNumber,
+                seatNumber = viewModel.uiState.value.seatId,
+                onSubmit = {
                 navController.navigate(Routes.SCANNER)
                 //viewModel.updateStartDestination(startDestination = Routes.SCANNER)
             }, onCancel = {

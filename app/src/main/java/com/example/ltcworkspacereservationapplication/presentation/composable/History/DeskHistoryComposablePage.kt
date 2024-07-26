@@ -16,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.example.ltcworkspacereservationapplication.domain.model.AvailabilityType
 import com.example.ltcworkspacereservationapplication.domain.model.History.DeskHistoryModel
 import com.example.ltcworkspacereservationapplication.presentation.composable.EmptyMessageComposable
@@ -42,7 +44,8 @@ fun DeskHistoryComposablePage(deskHistoryList: List<DeskHistoryModel>) {
 @Composable
 private fun DeskHistoryItem(item: DeskHistoryModel) {
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().semantics { contentDescription = "Desk reservation history item" }
+        ,
     ) {
         ElevatedCard(item)
     }
@@ -56,7 +59,7 @@ private fun ElevatedCard(item: DeskHistoryModel) {
         elevation = Spacing.Size_8,
         modifier = Modifier
             .padding(Spacing.Size_10)
-            .fillMaxWidth()
+            .fillMaxWidth().semantics { contentDescription = "Desk reservation details" }
     ) {
         Row(
             modifier = Modifier
@@ -66,7 +69,9 @@ private fun ElevatedCard(item: DeskHistoryModel) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             with(item) {
-                Column {
+                Column(
+                    modifier = Modifier.semantics { contentDescription = "Desk details" }
+                )  {
                     Text(
                         text = "Desk Id : $seatNumber",
                         style = MaterialTheme.typography.subtitle2,
@@ -77,7 +82,9 @@ private fun ElevatedCard(item: DeskHistoryModel) {
                         style = MaterialTheme.typography.subtitle2,
                     )
                 }
-                Column {
+                Column(
+                    modifier = Modifier.semantics { contentDescription = "Booking  details" }
+                )  {
                     Text(
                         text = "Floor : $floorNumber",
                         style = MaterialTheme.typography.caption,
@@ -87,7 +94,7 @@ private fun ElevatedCard(item: DeskHistoryModel) {
                         style = MaterialTheme.typography.caption,
                     )
                     Text(
-                        text = "Booking Id : $bookingId",
+                        text = "Booking Id : LTC$bookingId",
                         style = MaterialTheme.typography.caption,
                     )
                 }

@@ -8,7 +8,4 @@ class GetDeskListUseCase @Inject constructor(private val repository : ApiService
     suspend operator fun invoke(date : String) : List<DeskResponseItemModel>{
         return repository.getAllDesk(date)
     }
-//    suspend operator fun invoke(): Any {
-//        return repository.getData()
-//    }
 }

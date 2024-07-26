@@ -15,6 +15,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.sp
 import com.example.ltcworkspacereservationapplication.domain.model.History.MeetingHistory.MeetingRoomHistoryResponse
 import com.example.ltcworkspacereservationapplication.presentation.composable.EmptyMessageComposable
@@ -41,7 +43,7 @@ fun CabinHistoryComposablePage(cabinHistoryList: List<MeetingRoomHistoryResponse
 @Composable
 private fun CabinHistoryItem(item: MeetingRoomHistoryResponse) {
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().semantics { contentDescription = "Meeting room reservation history item" },
     ) {
         ElevatedCard(item)
     }
@@ -65,7 +67,7 @@ private fun ElevatedCard(item: MeetingRoomHistoryResponse) {
         elevation = Spacing.Size_8,
         modifier = Modifier
             .padding(Spacing.Size_10)
-            .fillMaxWidth()
+            .fillMaxWidth().semantics { contentDescription = "Meeting room reservation details" }
     ) {
         Row(
             modifier = Modifier
@@ -75,7 +77,9 @@ private fun ElevatedCard(item: MeetingRoomHistoryResponse) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             with(item) {
-                Column {
+                Column(
+                    modifier = Modifier.semantics { contentDescription = "Meeting room details" }
+                ) {
                     Text(
                         text = "Meeting Room Id : R:$floorNumber-$roomNumber",
                         style = MaterialTheme.typography.subtitle1.copy(fontSize = 12.sp),
@@ -86,13 +90,19 @@ private fun ElevatedCard(item: MeetingRoomHistoryResponse) {
                         style = MaterialTheme.typography.subtitle2,
                     )
                 }
-                Column {
+                Column(
+                    modifier = Modifier.semantics { contentDescription = "Booking details" }
+                ) {
                     Text(
                         text = "Floor : $bookingId",
                         style = MaterialTheme.typography.caption,
                     )
                     Text(
                         text = "Booking Date : $date",
+                        style = MaterialTheme.typography.caption,
+                    )
+                    Text(
+                        text = "Booking Date : LTC$bookingId",
                         style = MaterialTheme.typography.caption,
                     )
                     Text(

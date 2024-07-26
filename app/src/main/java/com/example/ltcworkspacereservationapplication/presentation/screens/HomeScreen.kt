@@ -24,6 +24,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.CabinReservationComposablePage
 import com.example.ltcworkspacereservationapplication.presentation.composable.HomePage.DeskReservationComposablePage
 import com.example.ltcworkspacereservationapplication.domain.model.HomeTabs
@@ -89,26 +91,32 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
     }
 
 
-    Scaffold() {
+    Scaffold(modifier = Modifier.semantics { contentDescription = "Home Screen" }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = it.calculateTopPadding())
         ) {
-            TabSelection(modifier = Modifier) {
+            TabSelection(modifier = Modifier.semantics { contentDescription = "Tab Selection" }
+            ) {
                 scope.launch {
                     pagerState.animateScrollToPage(it.ordinal)
                 }
             }
         }
         LoaderOverlay(isLoading = viewModel.isLoading.value) {
-            Scaffold() {
+            Scaffold(modifier = Modifier.semantics { contentDescription = "Home Content" }
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(top = it.calculateTopPadding())
                 ) {
-                    TabSelection(modifier = Modifier) {
+                    TabSelection(modifier = Modifier.semantics {
+                        contentDescription = "Tab Selection"
+                    }
+                    ) {
                         scope.launch {
                             pagerState.animateScrollToPage(it.ordinal)
                         }
@@ -119,6 +127,8 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
+                            .semantics { contentDescription = "Pager Content" }
+
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -165,6 +175,7 @@ internal fun HomeScreen(viewModel: ReservationViewModel) {
                                                 )
                                             )
                                         }
+
                                     }
                                 )
                             }

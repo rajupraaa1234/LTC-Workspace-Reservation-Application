@@ -43,6 +43,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -60,7 +62,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 @Composable
-fun ScannerScreenComposable(viewModel: ReservationViewModel,navController: NavController) {
+fun ScannerScreenComposable(viewModel: ReservationViewModel, navController: NavController) {
     val scope = rememberCoroutineScope()
     val barCodeVal = remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -109,7 +111,12 @@ fun ScannerScreenComposable(viewModel: ReservationViewModel,navController: NavCo
                         .padding(bottom = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Selected Seat -> ${barCodeVal.value}", color = AppColor.backgroundColor)
+                    Text(
+                        text = "Selected Seat -> ${barCodeVal.value}",
+                        color = AppColor.backgroundColor,
+                        modifier = Modifier.semantics {
+                            contentDescription = "Selected Seat: ${barCodeVal.value}"
+                        })
                     AndroidView(
                         factory = {
                             TextView(context).apply {
@@ -117,10 +124,13 @@ fun ScannerScreenComposable(viewModel: ReservationViewModel,navController: NavCo
                             }
                         },
                         update = { textView ->
-                            Log.d("code",barCodeVal.value)
+                            Log.d("code", barCodeVal.value)
                             textView.text = barCodeVal.value
                             LinkifyCompat.addLinks(textView, Linkify.ALL)
                             textView.movementMethod = LinkMovementMethod.getInstance()
+                        },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Scanned QR Code Text: ${barCodeVal.value}"
                         }
                     )
                 }
@@ -130,6 +140,9 @@ fun ScannerScreenComposable(viewModel: ReservationViewModel,navController: NavCo
                         .size(250.dp)
                         .background(Color.Transparent)
                         .align(Alignment.CenterHorizontally)
+                        .semantics {
+                            contentDescription = "Camera preview area"
+                        }
                 ) {
                     AndroidView(
                         factory = { context ->
@@ -215,7 +228,10 @@ fun ScannerScreenComposable(viewModel: ReservationViewModel,navController: NavCo
                     shape = RectangleShape,
                     modifier = Modifier
                         .padding(vertical = 16.dp)
-                        .align(Alignment.CenterHorizontally),
+                        .align(Alignment.CenterHorizontally)
+                        .semantics {
+                            contentDescription = "Camera preview area"
+                        },
                     enabled = !isScanning
                 ) {
                     Text(text = "Scan QR Code", color = Color.White)
@@ -226,7 +242,11 @@ fun ScannerScreenComposable(viewModel: ReservationViewModel,navController: NavCo
                         scope.launch {
                             viewModel.sendIntent(AppIntent.OnQRCodeScanned(seatId = barCodeVal.value))
                             navController.navigate(Routes.HOME_SCREEN)
-                            Toast.makeText(context,"Your Booking ${barCodeVal.value} is confirmed",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Your Booking ${barCodeVal.value} is confirmed",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
 
                     },
@@ -234,7 +254,10 @@ fun ScannerScreenComposable(viewModel: ReservationViewModel,navController: NavCo
                     shape = RectangleShape,
                     modifier = Modifier
                         .padding(vertical = 16.dp)
-                        .align(Alignment.CenterHorizontally),
+                        .align(Alignment.CenterHorizontally)
+                        .semantics {
+                            contentDescription = "Confirm the booking"
+                        },
                     enabled = isScanning
                 ) {
                     Text(text = "Confirm the Booking", color = Color.White)
@@ -242,6 +265,11 @@ fun ScannerScreenComposable(viewModel: ReservationViewModel,navController: NavCo
             }
         }
     } else {
-        Text(text = "Camera permission not granted", color = Color.Red)
+        Text(
+            text = "Camera permission not granted",
+            color = Color.Red,
+            modifier = Modifier.semantics {
+                contentDescription = "Camera permission not granted message"
+            })
     }
 }

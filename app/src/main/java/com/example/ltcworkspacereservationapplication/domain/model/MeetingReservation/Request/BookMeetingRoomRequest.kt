@@ -8,5 +8,4 @@ data class BookMeetingRoomRequest(
     val date: String,
     val startTime: String,
     val endTime: String,
-    val reservationStatus: String
 )
