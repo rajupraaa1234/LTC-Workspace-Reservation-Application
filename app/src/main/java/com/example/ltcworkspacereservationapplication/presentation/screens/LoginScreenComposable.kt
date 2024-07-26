@@ -32,6 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -55,7 +57,7 @@ import com.example.ltcworkspacereservationapplication.presentation.utils.color.A
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreenComposable(navController: NavHostController,viewModel: ReservationViewModel) {
+fun LoginScreenComposable(navController: NavHostController, viewModel: ReservationViewModel) {
     var employeeName by remember { mutableStateOf(TextFieldValue("")) }
     var employeeNameError by remember { mutableStateOf(false) }
     var employeeId by remember { mutableStateOf(TextFieldValue("")) }
@@ -68,22 +70,26 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
     val employeeIdRegex = Regex("^\\d{7}\$")
     val passwordRegex = Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}\$")
     val context = LocalContext.current
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .semantics { contentDescription = "Login Screen" },
+
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(painterResource(id = R.drawable.workspot_logo),
+        Image(
+            painterResource(id = R.drawable.workspot_logo),
             contentDescription = "Login",
             modifier = Modifier
                 .fillMaxWidth(0.5f)
                 .aspectRatio(1f)
                 .padding(bottom = 32.dp)
                 .height(50.dp)
-                .width(50.dp))
+                .width(50.dp)
+        )
         Text(
             text = buildAnnotatedString {
                 withStyle(
@@ -108,6 +114,8 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
             modifier = Modifier
                 .padding(bottom = 8.dp)
                 .fillMaxWidth()
+                .semantics { contentDescription = "Welcome to WorkSpot" }
+
         )
 
         Text(
@@ -118,6 +126,8 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
             modifier = Modifier
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
+                .semantics { contentDescription = "Instructions to enter credentials" }
+
         )
 
         Text(
@@ -138,7 +148,8 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
             isError = employeeIdError,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(bottom = 16.dp)
+                .semantics { contentDescription = "Employee ID Input Field" },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
         if (employeeIdError) {
@@ -148,6 +159,8 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
+                    .semantics { contentDescription = "Employee ID Error Message" }
+
             )
         }
         Text(
@@ -168,7 +181,8 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
             isError = employeeNameError,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(bottom = 16.dp)
+                .semantics { contentDescription = "Employee Name Input Field" },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
         )
         if (employeeNameError) {
@@ -178,6 +192,8 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
+                    .semantics { contentDescription = "Employee Name Error Message" }
+
             )
         }
 
@@ -198,7 +214,9 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
                 },
                 placeholder = { Text("Enter your Password") },
                 isError = passwordError,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { contentDescription = "Password Input Field" },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
@@ -221,15 +239,20 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
+                    .semantics { contentDescription = "Password Error Message" }
+
             )
         }
 
         val isButtonEnabled = !employeeNameError && !employeeIdError && !passwordError &&
-                    employeeName.text.isNotEmpty() && employeeId.text.isNotEmpty() && password.text.isNotEmpty()
+                employeeName.text.isNotEmpty() && employeeId.text.isNotEmpty() && password.text.isNotEmpty()
         Button(
             onClick = {
                 if (isButtonEnabled) {
-                    PreferencesManager.setEmployeeId(context = context, employeeId = employeeId.text)
+                    PreferencesManager.setEmployeeId(
+                        context = context,
+                        employeeId = employeeId.text
+                    )
                     viewModel.viewModelScope.launch {
                         viewModel.sendIntent(AppIntent.onLoginClick(employeeId.text))
                     }
@@ -250,6 +273,8 @@ fun LoginScreenComposable(navController: NavHostController,viewModel: Reservatio
                     1.dp,
                     if (isButtonEnabled) AppColor.primaryColor else AppColor.primaryColorLight
                 )
+                .semantics { contentDescription = "Continue Button" }
+
         ) {
             Text(
                 text = "Continue",

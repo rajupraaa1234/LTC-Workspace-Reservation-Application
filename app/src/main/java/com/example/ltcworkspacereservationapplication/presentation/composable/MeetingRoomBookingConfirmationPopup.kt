@@ -36,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -202,6 +204,7 @@ fun CloseButton(modifier: Modifier, onClose: () -> Unit) {
                 .size(Spacing.Size_20)
                 .clip(CircleShape)
                 .background(Color.Gray)
+                .semantics { contentDescription = "Close dialog" }
                 .clickable { onClose() }
         ) {
             Icon(
@@ -223,6 +226,7 @@ fun TimeCard(label: String, time: String, onClick: () -> Unit) {
             .width(Spacing.Size_120)
             .height(Spacing.Size_60)
             .clickable { onClick() }
+            .semantics { contentDescription = "$label time: $optedTime" }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

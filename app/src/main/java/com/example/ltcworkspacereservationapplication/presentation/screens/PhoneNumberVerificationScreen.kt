@@ -25,6 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -53,7 +55,9 @@ fun PhoneNumberVerificationScreen(navController: NavHostController) {
             onClick = { navController.popBackStack() },
             modifier = Modifier
                 .align(Alignment.Start)
-                .padding(bottom = 16.dp, top = 16.dp)
+                .padding(bottom = 16.dp, top = 16.dp).semantics {
+                    contentDescription = "Back"
+                }
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
@@ -69,7 +73,9 @@ fun PhoneNumberVerificationScreen(navController: NavHostController) {
             color = AppColor.primaryColor,
             modifier = Modifier
                 .padding(bottom = 16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth()  .semantics {
+                    contentDescription = "Verify Your Phone Number"
+                }
         )
 
         OutlinedTextField(
@@ -82,7 +88,9 @@ fun PhoneNumberVerificationScreen(navController: NavHostController) {
             isError = phoneNumber.isEmpty() || !isPhoneNumberValid,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp),
+                .padding(bottom = 8.dp).semantics {
+                    contentDescription = "Phone number input field"
+                },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 textColor = Color.Black,
                 focusedLabelColor = Color.Blue,
@@ -95,7 +103,9 @@ fun PhoneNumberVerificationScreen(navController: NavHostController) {
                 color = Color.Red,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 16.dp).semantics {
+                        contentDescription = "Phone number validation message"
+                    }
             )
         }
 
@@ -124,7 +134,9 @@ fun PhoneNumberVerificationScreen(navController: NavHostController) {
                 .border(
                     1.dp,
                     if (isPhoneNumberValid) AppColor.primaryColor else AppColor.primaryColorLight
-                )
+                ).semantics {
+                    contentDescription = "Verify button"
+                }
         ) {
             Text(
                 text = "Verify",

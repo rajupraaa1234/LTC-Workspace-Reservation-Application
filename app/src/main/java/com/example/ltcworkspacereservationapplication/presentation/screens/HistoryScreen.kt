@@ -17,6 +17,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.example.ltcworkspacereservationapplication.presentation.composable.History.CabinHistoryComposablePage
 import com.example.ltcworkspacereservationapplication.presentation.composable.History.DeskHistoryComposablePage
 import com.example.ltcworkspacereservationapplication.presentation.mvvm.ReservationViewModel
@@ -39,9 +41,15 @@ fun HistoryScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(Spacing.Size_20)
+            .semantics { contentDescription = "Booking History Screen" }
+
     ) {
 
-        Text(text = "Booking History", style = MaterialTheme.typography.h5)
+        Text(
+            text = "Booking History",
+            style = MaterialTheme.typography.h5,
+            modifier = Modifier.semantics { contentDescription = "Booking History Title" }
+        )
 
         TabSelection(modifier = Modifier.padding(top = Spacing.Size_30)) {
             scope.launch {
@@ -54,6 +62,7 @@ fun HistoryScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+                .semantics { contentDescription = "Booking History Pager" }
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),

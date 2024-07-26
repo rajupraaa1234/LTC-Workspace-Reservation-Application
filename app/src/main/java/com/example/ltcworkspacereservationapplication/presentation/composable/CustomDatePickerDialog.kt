@@ -47,6 +47,7 @@ fun DatePickerDialog(
             AndroidView(
                 factory = { context ->
                     DatePicker(context).apply {
+                        contentDescription = "Date picker"
                         minDate = startDate.timeInMillis
                         maxDate = endDate.timeInMillis
                         init(
